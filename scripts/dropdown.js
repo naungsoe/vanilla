@@ -20,8 +20,8 @@
     
     function bindDropdown(context) {
 	  if (context.items.length > 0) {
-		var menu = helpers(".menu", context.container);
-		menu.innerHTML = getMenuHTML(context);
+		var menu = helpers.query(".menu", context.container);
+        menu.innerHTML = getMenuHTML(context);
 	  }
 	  
       var toggle = helpers.query('.toggle', context.container);
@@ -61,7 +61,7 @@
       docClickHandler = bindDocClick(context.container);
       document.addEventListener('click', docClickHandler, false);
     }
-	
+    
 	function getMenuHTML(context) {
 	  var html = '';
       context.items.forEach(function(item) {
@@ -70,10 +70,19 @@
       });
 	  return html;
 	}
-    
+	
     function bindToggle(container) {
       return function(event) {
-	    container.classList.toggle('open');
+        var menu = helpers.query(".menu", container);
+        if (menu.classList.contains("selectable")
+            && !menu.classList.contains("up")) {
+          var item = helpers.query(".selected", menu),
+            offsetTop = item.offsetTop;
+          
+          offsetTop = (offsetTop < 280) ? offsetTop : 280;
+          menu.style.top = -offsetTop + 'px';
+        }
+        container.classList.toggle('open');
       };
     }
     

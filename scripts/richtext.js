@@ -16,26 +16,15 @@
       
     }
 	
-    function bindChange(context, callback, data) {
+    function bindExecuteCommand(context) {
       return function(event) {
-        callback.call(context, data);
+        
       };
     }
     
-    function bindDocClick(popover) {
+    function bindChange(context, callback, data) {
       return function(event) {
-		var target = event.target;
-		while (!target.classList.contains('popover')) {
-		  if (target.nodeName === "BODY") {
-		    break;
-		  }
-		  target = target.parentNode;
-		}
-		
-        if ((target !== popover)
-		    && (popover.classList.contains('open'))) {
-		  popover.classList.toggle('open');
-        }
+        callback.call(context, data);
       };
     }
     

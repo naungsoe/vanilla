@@ -41,7 +41,7 @@
 	"tablePageTotalSeparator": "of",
 	"singleRecordDelete": "Delete the course?",
 	"multipleRecordsDelete": "Delete {{number}} courses?",
-	"singleRecordDeleteSuccess": "User deleted.",
+	"singleRecordDeleteSuccess": "Course deleted.",
 	"multipleRecordsDeleteSuccess": "{{number}} courses deleted.",
 	"singleRecordDeleteFailed": "Delete failed.",
 	"multipleRecordsDeleteFailed": "Delete failed.",

@@ -123,23 +123,16 @@ table {
   width: 100%;
 }
 
-table > thead > tr > th > .fixed,
-table > tbody > tr > td > .fixed {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .transition {
-  transition: background-color .2s, bottom .2s, left .2s, opacity .1s, right .2s, top .2s, width .2s;
+  transition: bottom .2s, left .2s, max-height .2s, max-width .2s, opacity .1s, right .2s, top .2s;
 }
 
 .transition-portrait {
-  transition: bottom .2s, left .2s, max-height .2s, max-width .3s, opacity .1s, right .2s, top .2s, width .2s;
+  transition: bottom .2s, left .2s, max-height .2s, max-width .3s, opacity .1s, right .2s, top .2s;
 }
 
 .transition-landscape {
-  transition: bottom .2s, left .2s, max-height .3s, max-width .2s, opacity .1s, right .2s, top .2s, width .2s;
+  transition: bottom .2s, left .2s, max-height .3s, max-width .2s, opacity .1s, right .2s, top .2s;
 }
 
 .hide {
@@ -157,6 +150,12 @@ table > tbody > tr > td > .fixed {
 .table-cell {
   display: table-cell !important;
   vertical-align: top;
+}
+
+.fixed {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .checkbox  {
@@ -288,16 +287,17 @@ table > tbody > tr > td > .fixed {
 .dropdown > .menu.selectable  > .item > .text,
 .dropdown > .menu.selectable  > .item > i {
   display: table-cell;
-}
-
-.dropdown > .menu.selectable  > .item > .text {
-  text-align: right;
-  min-width: 25px;
+  vertical-align: middle;
 }
 
 .dropdown > .menu.selectable  > .item > i {
   color: rgba(0,0,0,.54);
   visibility: hidden;
+  width: 20px;
+}
+
+.dropdown > .menu.selectable  > .selected {
+  background-color: #f5f5f5;
 }
 
 .dropdown > .menu.selectable  > .selected > i {
@@ -335,6 +335,15 @@ table > tbody > tr > td > .fixed {
   z-index: 3;
 }
 
+.dropdown.full > .menu {
+  left: 0;
+  right: 0;
+}
+
+.dropdown.full > .toggle {
+  margin: 0;
+}
+
 .dropdown.open > .menu,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
@@ -344,6 +353,8 @@ table > tbody > tr > td > .fixed {
 
 .dropdown.open > .menu,
 .popover.open > .content {
+  overflow-x: hidden;
+  overflow-y: auto;
   max-height: 280px;
   max-width: 380px;
 }
@@ -520,6 +531,11 @@ table > tbody > tr > td > .fixed {
 
 .table > .foot > .right > .pagination > .dropdown > .menu > .item {
   min-width: 50px;
+}
+
+.table > .foot > .right > .pagination > .dropdown > .menu > .item > .text {
+  min-width: 25px;
+  text-align: right;
 }
 
 .table tbody > tr {
@@ -910,7 +926,6 @@ table > tbody > tr > td > .fixed {
 
 .app-side-nav > .filters > .dropdown > .toggle {
   border-bottom: 1px solid #ddd;
-  margin: 0;
   padding: 8px 0;
 }
 
@@ -994,7 +1009,7 @@ table > tbody > tr > td > .fixed {
 .app-message > .warning,
 .app-message > .error,
 .app-message > .success {
-  background-color: #ffc60c;
+  background-color: #ffe07a;
 }
 
 .popover-notifications > .content {

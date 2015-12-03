@@ -37,9 +37,9 @@
     pageResource = response;
     pageMessage = UI.Message('#pageMessage');
     appNavigation = UI.AppNavigation('#appNavigation');
-    sideNavigation = UI.Navigation('#sideNavigation');
     userNodifications = UI.Popover('#userNodifications');
     userProfile = UI.Popover('#userProfile');
+    sideNavigation = UI.Navigation('#sideNavigation');
     usersSearch = UI.Search('#usersSearch');
     usersActions = UI.Actions('#usersActions');
     usersViewOptions = UI.Dropdown('#usersViewOptions');

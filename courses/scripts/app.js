@@ -21,7 +21,6 @@
 	coursesActions = {},
     coursesView = {},
     coursesViewOptions = {},
-    userCreateModal = {},
     usersDeleteModal = {},
     coursesViewColumnsModal = {},
     coursesViewColumnsCheckboxGroup = {},
@@ -42,15 +41,17 @@
     pageMessage = UI.Message('#pageMessage');
     appNavigation = UI.AppNavigation('#appNavigation');
     userNodifications = UI.Popover('#userNodifications');
-    userProfile = UI.Dropdown('#userProfile');
+    userProfile = UI.Popover('#userProfile');
     sideNavigation = UI.Navigation('#sideNavigation');
-    subjectFilter = UI.Dropdown('#coursesViewOptions');
+    subjectFilter = UI.Dropdown('#coursesSubject');
+    gradeFilter = UI.Dropdown('#coursesGrade');
     coursesSearch = UI.Search('#coursesSearch');
     coursesActions = UI.Actions('#coursesActions');
     coursesViewOptions = UI.Dropdown('#coursesViewOptions');
 	loadAppNavigation();
     loadNotifications();
     bindUserProfile();
+    bindCoursesFilters();
     bindCoursesSearch();
     bindCoursesActions();
     loadCourses();
@@ -80,14 +81,14 @@
   
   function loadSideNavigation(response, selected) {
     var create = helpers.query('#createUser');
-    create.removeEventListener('click', loadUserCreateFormView);
-    create.addEventListener('click', loadUserCreateFormView, false);
+    create.removeEventListener('click', loadCourseCreateView);
+    create.addEventListener('click', loadCourseCreateView, false);
 
     var appNav = response.filter(function(item) {
       return (item.id === selected);
     });
     var navData = { items: appNav[0].items,
-      selected: coursesCriteria.status };
+      selected: coursesCriteria.scope };
     sideNavigation.bind(navData)
       .select(executeSideNavigation);
   }
@@ -136,6 +137,27 @@
     userProfile.bind({ content: {}});
   }
   
+  function bindCoursesFilters() {
+    var subjectData = { items: pageResource.subjects, selected: 'all' },
+      gradeData = { items: pageResource.grades, selected: 'all' };
+    
+    subjectFilter.bind(subjectData)
+      .change(changeSubjectFilter);
+    
+    gradeFilter.bind(gradeData)
+      .change(changeGradeFilter);
+  }
+  
+  function changeSubjectFilter() {
+    coursesCriteria.subject = this.selected;
+    loadCourses();
+  }
+  
+  function changeGradeFilter() {
+    coursesCriteria.grade = this.selected;
+    loadCourses();    
+  }
+  
   function bindCoursesSearch() {
     var searchData = { url: '/Polymer/vanilla/coursessearch.json',
       fields: 'name,email,image', filter: 'name' };
@@ -166,7 +188,7 @@
   function executeCoursesAction() {
     switch (coursesActions.selected) {
       case "edit":
-        loadUserEditFormView();
+        loadCourseEditView();
         break;
       
       case "delete":
@@ -213,7 +235,7 @@
     response.selected = coursesView.selected || [];
     coursesView.bind(response, pageResource)
 	  .sort(sortCourses)
-      .changePage(changePageUsers)
+      .changePage(changePageCourses)
       .select(bindCoursesActions);
     
     coursesViewOptions.bind({})
@@ -234,58 +256,19 @@
 	loadCourses();
   }
   
-  function changePageUsers() {
+  function changePageCourses() {
     coursesCriteria.offset = coursesView.offset;
     coursesCriteria.limit = coursesView.limit;
     loadCourses();
   }
   
-  function loadUserCreateFormView() {
-    var view = helpers.query('#userCreateModal');
-    if (helpers.isEmpty(view)) {
-      loadUserCreateModalTemplate();
-    }
-    else {
-      bindUserCreateModal();
-    }
+  function loadCourseCreateView() {
+    helpers.redirect('course.html');
   }
   
-  function loadUserCreateModalTemplate() {
-    var template = helpers.query('#createUserModalTemplate'),
-      fragment = document.importNode(template.content, true);
-
-    var view = document.createElement('div');
-    view.setAttribute('id', 'userCreateModal');
-    view.appendChild(fragment);
-    
-    userCreateModal = UI.Modal(view);
-    bindUserCreateModal();
-    
-    template.parentNode.insertBefore(view, template);
-  }
-  
-  function bindUserCreateModal() {
-	var form = helpers.query('.form', userCreateModal.container);
-    var userCreateForm = UI.UserForm(form);
-    userCreateForm.bind({}, pageResource);
-    
-    userCreateModal.bind({})
-      .proceed(saveUserDetails, userCreateForm)
-      .cancel(cancelSaveUserDetails);
-  }
-  
-  function saveUserDetails(userCreateForm) {
-    if (userCreateForm.valid) {
-      userCreateModal.container.classList.add("hide");
-    }
-  }
-  
-  function cancelSaveUserDetails() {
-    userCreateModal.container.classList.add("hide");
-  }
-  
-  function loadUserEditFormView() {
-    
+  function loadCourseEditView() {
+    var courseId = coursesView.selected[0].id;
+    helpers.redirect('course.html?id=' + courseId);
   }
   
   function loadCoursesDeleteModal() {
