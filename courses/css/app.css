@@ -1,0 +1,32 @@
+.table-users .head > table > colgroup > .checkbox,
+.table-users .body > .scrollable > table > colgroup > .checkbox {
+  width: 66px;
+}
+
+.table-users .head > table > colgroup > .name,
+.table-users .body > .scrollable > table > colgroup > .name {
+  width: auto;
+}
+
+.table-users .head > table > colgroup > .email,
+.table-users .body > .scrollable > table > colgroup > .email {
+  width: auto;
+}
+
+.table-users .head > table > colgroup > .status,
+.table-users .body > .scrollable > table > colgroup > .status {
+  width: 140px;
+}
+
+.table-users .head > table > colgroup > .accessed,
+.table-users .body > .scrollable > table > colgroup > .accessed {
+  width: 140px;
+}
+
+.form-setup-user > .fieldset > .field {
+  width: 480px;
+}
+
+.form-setup-user > .fieldset > .field > .label {
+  width: 160px;
+}

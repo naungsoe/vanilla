@@ -1,0 +1,1053 @@
+body {
+  color: rgba(0,0,0,.87);
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+a {
+  color: #1976d2;
+  outline: none;
+}
+
+hr {
+  display: block;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+  margin: 8px 0;
+}
+
+input[type='text'],
+input[type='password'] {
+  border: 1px solid #bdbdbd;
+  height: 22px;
+  outline: none;
+  padding: 8px;
+  width: 230px;
+}
+
+input[type='text']:hover,
+input[type='password']:hover {
+  border: 1px solid #9e9e9e;
+}
+
+input[type='text']:focus,
+input[type='password']:focus {
+  border: 1px solid #1976d2;
+}
+
+button {
+  border: 0;
+  border-radius: 2px;
+  cursor: default;
+  font-size: 14px;
+  outline: none;
+  position: relative;
+  margin: 0 8px;
+  padding: 10px 16px;
+  text-transform: uppercase;
+}
+
+button[raised] {
+  color: rgba(0,0,0,.87);
+  background-color: #eee;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+}
+
+button[raised]:hover {
+  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+}
+
+button[raised]:active {
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 5px -1px rgba(0,0,0,.54);
+}
+
+button[raised][disabled] {
+  color: rgba(0,0,0,.54);
+}
+
+button[raised][primary] {
+  background-color: #ff5b0c;
+  border: 0;
+  color: #fff;
+}
+
+button[raised][primary]:active {
+  background-color: #bf6337;
+}
+
+button[flat],
+button[flat-icon] {
+  background: transparent;
+  box-shadow: none;
+  color: #1976d2;
+}
+
+button[flat]:hover,
+button[flat-icon]:hover {
+  background-color: #f5f5f5;
+}
+
+button[flat]:active,
+button[flat-icon]:active {
+  background-color: #e0e0e0;
+}
+
+button[flat][primary] {
+  font-weight: bold;
+}
+
+button[flat-icon] {
+  color: rgba(0,0,0,.54);
+  padding: 8px;
+}
+
+button[flat-icon][disabled] {
+  color: rgba(0,0,0,.38);
+  padding: 8px;
+}
+
+button[flat-icon][disabled]:hover {
+  background: transparent;
+}
+
+button[flat-icon] > i {
+  display: inline-block;
+  font-size: 20px;
+  width: 20px;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+table > thead > tr > th > .fixed,
+table > tbody > tr > td > .fixed {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transition {
+  transition: background-color .2s, bottom .2s, left .2s, opacity .1s, right .2s, top .2s, width .2s;
+}
+
+.transition-portrait {
+  transition: bottom .2s, left .2s, max-height .2s, max-width .3s, opacity .1s, right .2s, top .2s, width .2s;
+}
+
+.transition-landscape {
+  transition: bottom .2s, left .2s, max-height .3s, max-width .2s, opacity .1s, right .2s, top .2s, width .2s;
+}
+
+.hide {
+  display: none !important;
+}
+
+.block {
+  display: block !important;
+}
+
+.inline-block {
+  display: inline-block !important;
+}
+
+.table-cell {
+  display: table-cell !important;
+  vertical-align: top;
+}
+
+.checkbox  {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.checkbox > .unchecked,
+.checkbox > .checked {
+  cursor: default;
+  color: rgba(0,0,0,.54);
+  font-size: 20px;
+  vertical-align: middle;
+  width: 24px;
+}
+
+.checkbox > .unchecked {
+  display: inline-block;
+}
+
+.checkbox > .checked {
+  animation: checkbox .2s 1;
+  color: #1976d2;
+  display: none;
+}
+
+.checkbox[checked] > .checked {
+  display: inline-block;
+}
+
+.checkbox[checked] > .unchecked {
+  display: none;
+}
+
+.checkbox > span {
+  display: inline-block;
+  padding: 4px;
+}
+
+@keyframes checkbox
+{
+  from { opacity: .5; }
+  to { opacity: 1; }
+}
+
+.checkbox-group > .item {
+  cursor: default;
+  display: inline-block;
+  margin: 10px 0;
+  min-width: 140px;
+}
+
+.dropdown,
+.popover {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdown > .toggle,
+.popover > .toggle {
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.dropdown > .toggle > .text,
+.dropdown > .toggle > i,
+.popover > .toggle > .text,
+.popover > .toggle > i {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.dropdown > .toggle > .text,
+.popover > .toggle > .text {
+  font-size: 14px;
+  text-align: left;
+}
+
+.dropdown > .toggle > i,
+.popover > .toggle > i {
+  min-width: 24px;
+}
+
+.dropdown > .menu,
+.popover > .content {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px -1px rgba(0,0,0,.3);
+  list-style-type: none;
+  margin: 0;
+  max-height: 0;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 1;
+}
+
+.dropdown > .menu {
+  right: 8px;
+  top: 0;
+}
+
+.dropdown > .menu  > .item {
+  color: rgba(0,0,0,.87);
+  cursor: default;
+  display: block;
+  min-width: 90px;
+  padding: 13px 16px;
+  position: relative;
+}
+
+.dropdown > .menu  > .highlight {
+  background-color: #eee;
+}
+
+.dropdown > .menu.selectable  > .item {
+  padding: 13px 8px;
+}
+
+.dropdown > .menu.selectable  > .item > .text,
+.dropdown > .menu.selectable  > .item > i {
+  display: table-cell;
+}
+
+.dropdown > .menu.selectable  > .item > .text {
+  text-align: right;
+  min-width: 25px;
+}
+
+.dropdown > .menu.selectable  > .item > i {
+  color: rgba(0,0,0,.54);
+  visibility: hidden;
+}
+
+.dropdown > .menu.selectable  > .selected > i {
+  visibility: visible;
+}
+
+.dropdown > .menu.up {
+  top: auto;
+  bottom: 0;
+}
+
+.popover > .content {
+  margin-top: 7px;
+}
+
+.popover > .toggle > .arrow,
+.popover > .toggle > .arrow:after {
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ddd;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  right: 27%;
+  top: 100%;
+  width: 0;
+  z-index: 2;
+}
+
+.popover > .toggle > .arrow:after {
+  content: '';
+  border-bottom-color: #fff;
+  margin-right: -7px;
+  top: 1px;
+  z-index: 3;
+}
+
+.dropdown.open > .menu,
+.popover.open > .toggle > .arrow,
+.popover.open > .toggle > .arrow:after,
+.popover.open > .content {
+  opacity: 1;
+}
+
+.dropdown.open > .menu,
+.popover.open > .content {
+  max-height: 280px;
+  max-width: 380px;
+}
+
+.search-box {
+  background-color: #fff;
+  left: 235px;
+  position: absolute;
+  top: 14px;
+}
+
+.search-box > .query,
+.search-box > .search {
+  border: 0;
+  display: inline-block;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.search-box > .query {
+  border: 0;
+  padding: 7px 8px;
+  width: 320px;
+}
+
+.search-box > .query:hover,
+.search-box > .query:focus {
+  border: 0;
+}
+
+.search-box > .search {
+  border-radius: 0;
+  background-color: #f5f5f5;
+}
+
+.search-box > .result {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  color: rgba(0,0,0,.87);
+  font-size: 14px;
+  max-height: 0;
+  max-width: 0;
+  opacity: 0;
+  padding: 8px 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 100%;
+  max-width: 200%;
+  overflow: auto;
+  z-index: 1;
+}
+
+.search-box > .result > .item {
+  cursor: default;
+  padding: 8px 0;
+}
+
+.search-box > .result > .item.highlight {
+  background-color: #eee;
+}
+
+.search-box > .result > .item > .left,
+.search-box > .result > .item > .right {
+  display: table-cell;
+  padding: 0 8px;
+  vertical-align: middle;
+}
+
+.search-box > .result > .item > .right {
+  padding: 0 8px 0 0;
+}
+
+.search-box > .result > .item > .left > .picture {
+  max-height: 36px;
+  max-width: 36px;
+}
+
+.search-box > .result > .item > .right > .name {
+  margin-bottom: 3px;
+}
+
+.search-box > .result > .item > .right > .email {
+  color: #777;
+}
+
+.search-box.open > .result {
+  max-height: 280px;
+  max-width: 380px;
+  opacity: 1;
+}
+
+.table > .head {
+  border-bottom: 1px solid #ddd;
+  color: rgba(0,0,0,.54);
+  font-size: 13px;
+  height: 55px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.table > .body {
+  bottom: 56px;
+  color: rgba(0,0,0,.87);
+  font-size: 14px;
+  left: 0;
+  position: absolute;
+  top: 56px;
+  width: 100%;
+}
+
+.table > .body > .scrollable {
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.table > .body > .scrollable > table {
+  margin-bottom: 27px;
+}
+
+.table > .foot {
+  border-top: 1px solid #ddd;
+  bottom: 0;
+  color: rgba(0,0,0,.54);
+  font-size: 13px;
+  height: 55px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.table > .foot > .left {
+  float: left;  
+}
+
+.table > .foot > .right {
+  float: right;
+}
+
+.table > .foot > .right > .pagination {
+  display: table;
+  margin: 9px 16px;
+}
+
+.table > .foot > .right > .pagination > .label,
+.table > .foot > .right > .pagination > .limit,
+.table > .foot > .right > .pagination > .offset,
+.table > .foot > .right > .pagination > .end,
+.table > .foot > .right > .pagination > .total,
+.table > .foot > .right > .pagination > .previous,
+.table > .foot > .right > .pagination > .next {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.table > .foot > .right > .pagination > .label {
+  padding: 0 4px;
+}
+
+.table > .foot > .right > .pagination > .offset {
+  padding-left: 8px;
+}
+
+.table > .foot > .right > .pagination > .total {
+  padding-right: 8px;
+}
+
+.table > .foot > .right > .pagination > .dropdown > .menu > .item {
+  min-width: 50px;
+}
+
+.table tbody > tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.table thead > tr > th,
+.table tbody > tr > td {
+  font-weight: normal;
+  text-align: left;
+}
+
+.table thead > tr > th > .checkbox,
+.table thead > tr > th > .title {
+  cursor: default;
+}
+
+.table thead > tr > th > .checkbox {
+  padding: 16px 24px 16px 24px;
+}
+
+.table thead > tr > th > .title {
+  position: relative;
+  padding: 20px 24px 20px 18px;
+}
+
+.table thead > tr > th > .sortable > .up,
+.table thead > tr > th > .sortable > .down {
+  display: none;
+  font-size: 14px;
+  left: 6px;
+  position: absolute;
+  top: 20px;
+  width: 10px;
+}
+
+.table thead > tr > th > .sortable:hover {
+  background-color: #eee;
+}
+
+.table thead > tr > th > .ascending,
+.table thead > tr > th > .descending {
+  color: rgba(0,0,0,.87);
+}
+
+.table thead > tr > th > .ascending > .up,
+.table thead > tr > th > .descending > .down {
+  display: inline-block;
+}
+
+.table tbody > tr:hover {
+  background-color: #eee;
+}
+
+.table tbody > .selected {
+  background-color: #f5f5f5;
+}
+
+.table thead > .selected > th > .checkbox > .unchecked,
+.table tbody > .selected > td > .checkbox > .unchecked {
+  display: none;
+}
+
+.table thead > .selected > th > .checkbox > .checked,
+.table tbody > .selected > td > .checkbox > .checked {
+  display: inline-block;
+}
+
+.table tbody > .deleted {
+  display: none;
+}
+
+.table tbody > tr > td {
+  padding: 14px 24px 14px 18px;
+}
+
+.table tbody > tr > td:first-child {
+  padding: 14px 24px;
+}
+
+.form > .fieldset {
+  border: 0;
+  padding: 16px 0;
+}
+
+.form > .fieldset > .field {
+  display: block;
+  padding: 8px 0;
+}
+
+.form > .fieldset > .field > .label,
+.form > .fieldset > .field > .control {
+  display: inline-block;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.form > .fieldset > .field > .label {
+  width: 90px;
+  padding: 12px 0;
+  text-align: right;
+}
+
+.form > .fieldset > .field > .control {
+  padding: 0 8px;
+}
+
+.form > .fieldset > .error > .control  > input[type='text'],
+.form > .fieldset > .error > .control  > input[type='password'] {
+  border-color: #f44336;
+}
+
+.form > .fieldset > .error > .control  > .hint {
+  color: #f44336;
+  margin: 8px 0;
+}
+
+.backdrop {
+  background-color: rgba(0,0,0,.2);
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+
+.modal {
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 2px 3px 2px 0 rgba(0,0,0,.3);
+  left: 50%;
+  min-width: 300px;
+  max-height: 580px;
+  max-width: 780px;
+  opacity: 0;
+  position: fixed;
+  top: 50%;
+  z-index: 4;
+}
+
+.modal > .header {
+  display: block;
+}
+
+.modal > .header > .title {
+  margin: 0;
+  padding: 24px 24px 20px 24px;
+}
+
+.modal > .content {
+  padding: 0 24px 24px 24px;
+}
+
+.modal > .scrollable {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  max-height: 460px;
+  max-width: 680px;
+  overflow: auto;
+  padding: 0 24px;
+}
+
+.modal > .actions {
+  text-align: right;
+  padding: 8px;
+}
+
+.modal-small > .content {
+  max-width: 300px;
+  padding: 24px 24px 24px 24px;
+}
+
+.backdrop.open,
+.modal.open {
+  opacity: 1;
+}
+
+.badge {
+  background-color: rgba(0,0,0,.54);
+  border-radius: 50%;
+  font-size: 10px;
+  padding: 1px 4px;
+  position: absolute;
+  right: 15%;
+  top: 20%;
+}
+
+.nav {
+  margin: 0;
+  padding: 0;
+}
+
+.nav > .link {
+  display: block;
+  color: rgba(0,0,0,.87);
+  font-size: 14px;
+  margin: 0;
+  padding: 15px 16px;
+  text-decoration: none;
+}
+
+.nav > .link:hover {
+  background-color: #eee;
+}
+
+.nav > .link > i,
+.nav > .link > span {
+  display: table-cell;
+}
+
+.nav > .link > i {
+  font-size: 16px;
+  width: 27px;
+}
+
+.nav > .selected {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.app-bar {
+  background-color: #1976d2;
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  display: block;
+  height: 64px;
+  min-width: 300px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.app-bar > .left {
+  float: left;  
+}
+
+.app-bar > .right {
+  float: right;
+}
+
+.app-bar > .left > .nav {
+  display: inline-block;
+  vertical-align: top;
+  margin: 14px 10px;
+}
+
+.app-bar  > .left > .nav > .menu,
+.app-bar  > .left > .nav > .name {
+  display: inline-block;
+  font-size: 24px;
+  padding: 4px 6px;
+  text-transform: capitalize;
+}
+
+.app-bar  > .left > .nav > .menu,
+.app-bar  > .left > .nav > .name {
+  color: #fff;
+}
+
+.app-bar  > .left > .nav > .menu:hover,
+.app-bar  > .left > .nav > .name:hover {
+  background-color: transparent;
+}
+
+.app-bar > .right > .nav {
+  display: inline-block;
+  vertical-align: top;
+  margin: 14px 10px;
+}
+
+.app-bar > .right > .nav > .popover {
+  text-decoration: none;
+}
+
+.app-bar > .right > .nav > .popover > .toggle {
+  color: #fff;
+  padding: 7px 8px;
+  text-transform: capitalize;
+}
+
+.app-bar > .right > .nav > .popover > .toggle:hover {
+  background-color: transparent;
+}
+
+.app-bar > .right > .nav > .popover > .toggle > .text {
+  font-size: 16px;
+}
+
+.app-bar > .right > .nav > .popover > .toggle > i {
+  font-size: 22px;
+}
+
+.app-bar > .right > .nav > .popover > .content {
+  font-size: 14px;
+}
+
+.app-global-nav {
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  padding: 15px 0;
+  position: absolute;
+  top: 112px;
+  width: 230px;
+}
+
+.app-global-nav {
+  background-color: #fff;
+  left: -230px;
+  opacity: 0;
+  padding: 0;
+  top: 0;
+  z-index: 4;
+}
+
+.app-global-nav.open {
+  left: 0;
+  opacity: 1;
+}
+
+.app-global-nav > .nav > .logo {
+  color: #1976d2;
+  display: block;
+  font-size: 27px;
+  margin: 15px 15px;
+  text-decoration: none;
+}
+
+.app-global-nav > .nav > .link {
+  font-size: 14px;
+  padding: 15px 16px;
+}
+
+.app-global-nav > .nav > .link > i {
+  font-size: 18px;
+}
+
+.app-side-nav {
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  padding: 15px 0;
+  position: absolute;
+  top: 62px;
+  width: 210px;
+}
+
+.app-side-nav > .tool-bar {
+  display: block;
+  margin: 10px 24px;
+}
+
+.app-side-nav > .tool-bar > button[raised] {
+  margin: 0;
+  padding: 10px 32px;
+}
+
+.app-side-nav > .nav > .link {
+  padding: 12px 24px;
+}
+
+.app-side-nav > .nav > .link:hover {
+  background-color: #e0e0e0;
+}
+
+.app-side-nav > .nav > .selected {
+  background: transparent;
+}
+
+.app-side-nav > .filters {
+  margin: 0 24px;
+}
+
+.app-side-nav > .filters > .header {
+  padding: 8px 0;
+}
+
+.app-side-nav > .filters > .dropdown {
+  margin-bottom: 16px;
+}
+
+.app-side-nav > .filters > .dropdown > .toggle {
+  border-bottom: 1px solid #ddd;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.app-side-nav > .filters > .dropdown > .toggle > .text {
+  font-size: 13px;
+  padding: 2px 0;
+  width: 136px;
+}
+
+.app-side-nav > .filters > .dropdown > .toggle > i {
+  font-size: 16px;
+}
+
+.app-tool-bar {
+  border-bottom: 1px solid #ddd;
+  display: block;
+  height: 63px;
+  left: 211px;
+  position: absolute;
+  right: 0;
+  top: 64px;
+}
+
+.app-tool-bar > .left {
+  float: left;
+}
+
+.app-tool-bar > .left > .title {
+  font-size: 18px;
+  margin: 20px 24px;
+}
+
+.app-tool-bar > .right {
+  float: right;
+}
+
+.app-tool-bar > .right > .nav {
+  display: inline-block;
+  margin: 13px 10px;
+}
+
+.app-tool-bar > .right > .nav > button,
+.app-tool-bar > .right > .nav > .dropdown {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.app-tool-bar > .right > .nav > .dropdown > .menu {
+  min-width: 160px;
+}
+
+.app-content {
+  bottom: 0;
+  left: 211px;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 128px;
+}
+
+.app-message {
+  font-size: 14px;
+  left: 50%;
+  max-width: 300px;
+  position: absolute;
+  transform: translate(-50%, 0%);
+  top: 50px;
+  z-index: 5;
+}
+
+.app-message > .info,
+.app-message > .warning,
+.app-message > .error,
+.app-message > .success {
+  padding: 10px;
+  border-radius: 2px;
+  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+}
+
+.app-message > .info,
+.app-message > .warning,
+.app-message > .error,
+.app-message > .success {
+  background-color: #ffc60c;
+}
+
+.popover-notifications > .content {
+  right: -98px;
+  width: 270px;
+}
+
+.popover-notifications > .content > .notifications {
+  padding: 5px 0;
+}
+
+.popover-notifications > .content > .notifications > .item {
+  padding: 10px;
+}
+
+.popover-notifications > .content > .error {
+  line-height: 23px;
+  padding: 15px;
+}
+
+.popover-profile > .content > .left,
+.popover-profile > .content > .right {
+  display: table-cell;
+  padding: 16px;
+  vertical-align: top;
+}
+
+.popover-profile > .content > .left {
+  padding-right: 0;
+}
+
+.popover-profile > .content > .left > .picture  {
+  height: 60px;
+  width: 80px;
+}
+
+.popover-profile > .content > .left > .link {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.popover-profile > .content > .right > .name {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.popover-profile > .content > .nav > .link {
+  background-color: #f5f5f5;
+  padding: 10px 16px;
+}
+
+.popover-profile > .content > .nav > .link:hover {
+  background-color: #e0e0e0;
+}

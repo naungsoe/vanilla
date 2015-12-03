@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Users</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../fonts/font-awesome-4.4.0/css/font-awesome.css" />
+  <link rel="stylesheet" href="../css/normalize.css" />
+  <link rel="stylesheet" href="../css/vanilla.css" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div id="pageMessage" class="app-message">
+  </div>
+  <header class="app-bar">
+    <aside class="left">
+      <nav id="appNavigation" class="nav">
+        <button type="button" class="menu" flat><i class="fa fa-bars"></i></button><button type="button" class="name" flat>Users</button>
+      </nav>
+    </aside>
+    <aside class="right">
+      <div id="usersSearch" class="search-box">
+        <input type="text" class="query"/><button type="button" class="search" flat-icon><i class="fa fa-search"></i></button>
+        <div class="transition-landscape result"></div>
+      </div>
+      <nav class="nav">
+        <div id="userNodifications" class="popover popover-notifications">
+          <button type="button" class="toggle" flat>
+            <i class="fa fa-bell"></i>
+            <span class="badge">3</span>
+            <div class="arrow"></div>
+          </button>
+          <div class="transition-portrait content"></div>
+        </div>
+        <div id="userProfile" class="popover popover-profile">
+          <button type="button" class="toggle" flat>
+            <i class="fa fa-user"></i>
+            <span class="text">Andrew</span>
+            <div class="arrow"></div>
+          </button>
+          <div class="transition-landscape content">
+            <div class="left">
+              <img src="../images/profile.jpg" alt="Profile picture" class="picture" />
+              <a href="/Polymer/vanilla/signout/index.html" class="link">Change</a>
+            </div>
+            <div class="right">
+              <div class="name">Andrew</div>
+              <div class="email">andrew@yahoo.com.sg</div>
+            </div>
+            <nav class="nav">
+              <a href="/Polymer/vanilla/profile/index.html" class="link">Edit Profile</a>
+              <a href="/Polymer/vanilla/settings/index.html" class="link">Edit Settings</a>
+              <a href="/Polymer/vanilla/signout/index.html" class="link">Sign out</a>
+            </nav>
+          </div>
+        </div>
+      </nav>
+    </aside>
+  </header>
+  <aside class="transition app-global-nav">
+    <nav class="nav">
+      <a href="/Polymer/vanilla/index.html" class="logo"><strong>Vanilla</strong></a>
+    </nav>
+    <hr>
+    <nav id="globalNavigation" class="nav"></nav>
+  </aside>
+  <aside class="app-side-nav">
+    <header class="tool-bar">
+      <button id="createUser" type="button" data-action="create" raised primary>Create</button>
+    </header>
+    <nav id="sideNavigation" class="nav"></nav>
+  </aside>
+  <section class="app-tool-bar">
+    <aside class="left">
+      <h3 id="usersViewTitle" class="title">Active users</h3>
+    </aside>
+    <aside class="right">
+      <nav id="usersActions" class="nav">
+        <button type="button" class="hide" data-action="edit" flat-icon><i class="fa fa-pencil"></i></button>
+        <button type="button" class="hide" data-action="delete" flat-icon><i class="fa fa-trash"></i></button>
+        <div id="usersViewOptions" class="view-options dropdown">
+          <button type="button" class="toggle" flat-icon><i class="fa fa-ellipsis-v"></i></button>
+          <ul class="transition-portrait menu">
+            <li data-value="columns" class="item">Select columns</li>
+            <li data-value="download" class="item">Download users</li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+  </section>
+  <section class="app-content">
+    <template id="usersViewTemplate">
+      <div class="table table-users"></div>
+    </template>
+  </section>
+  <template id="createUserModalTemplate">
+    <div class="modal">
+      <header class="header">
+        <h3 class="title">Create User</h3>
+      </header>
+      <section class="content scrollable">
+        <form class="form form-setup-user">
+          <fieldset class="fieldset">
+            <div class="field">
+              <label for="firstName" class="label">First name</label>
+              <div class="control">
+                <input id="firstName" type="text" value="" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="lastName" class="label">Last name</label>
+              <div class="control">
+                <input id="lastName" type="text" value="" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="email" class="label">Email address</label>
+              <div class="control">
+                <input id="email" type="text" value="" required email />
+              </div>
+            </div>
+            <div class="field">
+              <label for="password" class="label">Password</label>
+              <div class="control">
+                <input id="password" type="password" value="" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="confirmPassword" class="label">Confirm Password</label>
+              <div class="control">
+                <input id="confirmPassword" type="password" value="" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="alternateEmail" class="label">Alternate email address</label>
+              <div class="control">
+                <input id="alternateEmail" type="text" value="" email />
+              </div>
+            </div>
+            <input id="userId" type="hidden" value="" />
+          </fieldset>
+        </form>
+      </section>
+      <nav class="actions">
+        <button type="button" class="cancel" flat>Cancel</button>
+        <button type="button" class="proceed" flat primary>Save</button>
+      </nav>
+    </div>
+  </template>
+  <template id="usersViewColumnsModalTemplate">
+    <div class="modal">
+      <header class="header">
+        <h3 class="title">Select columns</h3>
+      </header>
+      <section class="content"></section>
+      <nav class="actions">
+        <button type="button" class="cancel" flat>Cancel</button>
+        <button type="button" class="proceed" flat primary>Apply</button>
+      </nav>
+    </div>
+  </template>
+  <template id="confirmDeleteModalTemplate">
+    <div class="modal modal-small">
+      <section class="content"></section>
+      <nav class="actions">
+        <button type="button" class="cancel" flat>Cancel</button>
+        <button type="button" class="proceed" flat primary>Delete</button>
+      </nav>
+    </div>
+  </template>
+  <input id="signedInUserId" type="hidden" value="1" />
+  <script src="../scripts/Promise.js"></script>
+  <script src="../scripts/Template.js"></script>
+  <script src="../scripts/helpers.js"></script>
+  <script src="../scripts/navigation.js"></script>
+  <script src="../scripts/checkboxgroup.js"></script>
+  <script src="../scripts/dropdown.js"></script>
+  <script src="../scripts/popover.js"></script>
+  <script src="../scripts/table.js"></script>
+  <script src="../scripts/pagination.js"></script>
+  <script src="../scripts/modal.js"></script>
+  <script src="../scripts/search.js"></script>
+  <script src="../scripts/message.js"></script>
+  <script src="../scripts/appnavigation.js"></script>
+  <script src="scripts/actions.js"></script>
+  <script src="scripts/userform.js"></script>
+  <script src="scripts/app.js"></script>
+  <script>
+    var user = { rights: ['create', 'edit', 'delete']};
+    
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        console.log(mutation.type);
+      });    
+    });
+    
+    var config = { attributes: true, childList: true, 
+      characterData: true, subtree: true };
+    observer.observe(document.body, config);
+  </script>
+</body>
+</html>

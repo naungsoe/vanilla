@@ -1,0 +1,110 @@
+{
+    "name": "users",
+	"offset": "1",
+	"limit": "20",
+    "total": "162",
+	"columns": [
+		{
+			"id": "id",
+			"title": "Id",
+			"sort": "",
+			"hidden": "true"
+		},
+		{
+			"id": "name",
+			"title": "Name",
+			"sort": "ascending",
+			"hidden": "false"
+		},
+		{
+			"id": "email",
+			"title": "Email",
+			"sort": "",
+			"hidden": "false"
+		},
+		{
+			"id": "status",
+			"title": "Status",
+			"sort": "",
+			"hidden": "false"
+		},
+		{
+			"id": "accessed",
+			"title": "Last Accessed",
+			"sort": "",
+			"hidden": "false"
+		}
+	],
+    "items": [
+        {
+            "id": "1",
+			"name": "Andrew",
+			"email": "andrew@yahoo.com.sg",
+			"status": "Active",
+			"accessed": "01 Jan 2016"
+        },
+        {
+			"id": "2",
+            "name": "Martin",
+			"email": "martin@yahoo.com.sg",
+			"status": "Inactive",
+            "accessed": "08 Jan 2016"
+        },
+        {
+            "id": "3",
+			"name": "Leondre",
+			"email": "leondre@yahoo.com.sg",
+			"status": "Active",
+            "accessed": "30 Jan 2016"
+        },
+        {
+            "id": "4",
+			"name": "Taylor",
+			"email": "taylor@yahoo.com.sg",
+			"status": "Active",
+            "accessed": "04 Jan 2016"
+        },
+        {
+            "id": "5",
+			"name": "Peter",
+			"email": "peter@yahoo.com.sg",
+			"status": "Active",
+            "accessed": "17 Jan 2016"
+        },
+        {
+            "id": "6",
+			"name": "Evelyn",
+			"email": "evelyn@yahoo.com.sg",
+			"status": "Active",
+            "accessed": "21 Jan 2016"
+        },
+        {
+            "id": "7",
+			"name": "Patrick",
+			"email": "patrick@yahoo.com.sg",
+			"status": "Active",
+			"accessed": "18 Jan 2016"
+        },
+        {
+            "id": "8",
+			"name": "Kate",
+			"email": "kate@yahoo.com.sg",
+			"status": "Active",
+			"accessed": "20 Jan 2016"
+        },
+        {
+            "id": "9",
+			"name": "Robert",
+			"email": "robert@yahoo.com.sg",
+			"status": "Active",
+			"accessed": "23 Jan 2016"
+        },
+        {
+			"id": "10",
+            "name": "Sweet",
+			"email": "sweet@yahoo.com.sg",
+			"status": "Active",
+			"accessed": "01 Jan 2016"
+        }
+    ]
+}

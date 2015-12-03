@@ -1,0 +1,74 @@
+[
+	{
+		"id": "dashboard",
+		"name": "Dashboard",
+		"icon": "fa fa-home",
+		"url": "http://localhost/Polymer/vanilla/dashboard/index.html"
+	},
+	{
+		"id": "courses",
+		"name": "Courses",
+		"icon": "fa fa-graduation-cap",
+		"url": "http://localhost/Polymer/vanilla/courses/index.html",
+		"items": [
+			{ "id": "mycourses", "name": "My courses", "url": "#mycourses" },
+			{ "id": "sharedwithme", "name": "Shared with me", "url": "#sharedwithme" },
+			{ "id": "recent", "name": "Recent courses", "url": "#recent" },
+			{ "id": "deleted", "name": "Deleted courses", "url": "#deleted" }
+		]
+	},
+	{
+		"id": "facilities",
+		"name": "Facilities",
+		"icon": "fa fa-flask",
+		"url": "http://localhost/Polymer/vanilla/facilities/index.html"
+	},
+	{
+		"id": "attendance",
+		"name": "Attendance",
+		"icon": "fa fa-calendar-check-o",
+		"url": "http://localhost/Polymer/vanilla/attendance/index.html"
+	},
+	{
+		"id": "survey",
+		"name": "Survey",
+		"icon": "fa fa-bar-chart",
+		"url": "http://localhost/Polymer/vanilla/survey/index.html"
+	},
+	{
+		"id": "social",
+		"name": "Social",
+		"icon": "fa fa-comments-o",
+		"url": "http://localhost/Polymer/vanilla/social/index.html"
+	},
+	{
+		"id": "portfolio",
+		"name": "Portfolio",
+		"icon": "fa fa-newspaper-o",
+		"url": "http://localhost/Polymer/vanilla/portfolio/index.html"
+	},
+	{
+		"id": "badges",
+		"name": "Badges",
+		"icon": "fa fa-certificate",
+		"url": "http://localhost/Polymer/vanilla/badges/index.html"
+	},
+	{
+		"id": "groups",
+		"name": "Groups",
+		"icon": "fa fa-group",
+		"url": "http://localhost/Polymer/vanilla/groups/index.html"
+	},
+	{
+		"id": "users",
+		"name": "Users",
+		"icon": "fa fa-user",
+		"url": "http://localhost/Polymer/vanilla/users/index.html",
+		"items": [
+			{ "id": "active", "name": "Active users", "url": "#active" },
+			{ "id": "inactive", "name": "Inactive users", "url": "#inactive" },
+			{ "id": "deleted", "name": "Deleted users", "url": "#deleted" },
+			{ "id": "all", "name": "All users", "url": "#all" }
+		]
+	}
+]
