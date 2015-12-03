@@ -79,7 +79,7 @@
           var item = helpers.query(".selected", menu),
             offsetTop = item.offsetTop;
           
-          offsetTop = (offsetTop < 280) ? offsetTop : 280;
+          offsetTop = (offsetTop < 230) ? offsetTop : 230;
           menu.style.top = -offsetTop + 'px';
         }
         container.classList.toggle('open');

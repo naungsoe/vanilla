@@ -20,10 +20,6 @@
       </nav>
     </aside>
     <aside class="right">
-      <div id="coursesSearch" class="search-box">
-        <input type="text" class="query"/><button type="button" class="search" flat-icon><i class="fa fa-search"></i></button>
-        <div class="transition-landscape result"></div>
-      </div>
       <nav class="nav">
         <div id="userNodifications" class="popover popover-notifications">
           <button type="button" class="toggle" flat>
@@ -65,122 +61,71 @@
     <hr>
     <nav id="globalNavigation" class="nav"></nav>
   </aside>
-  <aside class="app-side-nav">
-    <header class="tool-bar">
-      <button id="createUser" type="button" data-action="create" raised primary>Create</button>
-    </header>
-    <nav id="sideNavigation" class="nav"></nav>
-    <hr>
-    <section class="filters">
-      <header class="header">Filter by</header>
-      <div id="coursesSubject" class="dropdown full">
-        <button type="button" class="toggle" flat-icon><span class="text">Subject</span><i class="fa fa-caret-down"></i></button>
-        <ul class=" transition menu selectable"></ul>
-      </div>
-      <div id="coursesGrade" class="dropdown full">
-        <button type="button" class="toggle" flat-icon><span class="text">Grade</span><i class="fa fa-caret-down"></i></button>
-        <ul class="transition  menu selectable"></ul>
-      </div>
-    </section>
-  </aside>
-  <section class="app-tool-bar">
-    <aside class="left">
-      <h3 id="coursesViewTitle" class="title">My courses</h3>
-    </aside>
-    <aside class="right">
-      <nav id="coursesActions" class="nav">
-        <button type="button" class="hide" data-action="edit" flat-icon><i class="fa fa-pencil"></i></button>
-        <button type="button" class="hide" data-action="delete" flat-icon><i class="fa fa-trash"></i></button>
-        <div id="coursesViewOptions" class="view-options dropdown">
-          <button type="button" class="toggle" flat-icon><i class="fa fa-ellipsis-v"></i></button>
-          <ul class="transition-portrait menu">
-            <li data-value="columns" class="item">Select columns</li>
-            <li data-value="download" class="item">Download courses</li>
-          </ul>
+  <section class="app-tool-bar tab-tool-bar full">
+    <nav class="tabs">
+      <a href="#details" class="tab selected">Course details</a>
+      <a href="#activity" class="tab">Activity / Resource</a>
+    </nav>
+  </section>
+  <section class="app-content tab-content full">
+    <form class="form form-course-setup">
+      <fieldset class="fieldset">
+        <div class="field">
+          <label for="name" class="label">Name</label>
+          <div class="control">
+            <input id="name" type="text" value="" required />
+          </div>
         </div>
-      </nav>
-    </aside>
+        <div class="field">
+          <label for="code" class="label">Code</label>
+          <div class="control">
+            <input id="code" type="text" value="" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="subject" class="label">Subject</label>
+          <div class="control">
+            <input id="subject" type="text" value="" required email />
+          </div>
+        </div>
+        <div class="field">
+          <label for="grade" class="label">Grade</label>
+          <div class="control">
+            <input id="grade" type="password" value="" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="start" class="label">Start date</label>
+          <div class="control">
+            <input id="start" type="password" value="" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="summary" class="label">Summary</label>
+          <div class="control">
+            <textarea id="summary"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label for="summary" class="label">Summary</label>
+          <div class="control">
+            <textarea id="summary"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label for="summary" class="label">Summary</label>
+          <div class="control">
+            <textarea id="summary"></textarea>
+          </div>
+        </div>
+        <input id="courseId" type="hidden" value="" />
+      </fieldset>
+    </form>
+    <nav class="actions">
+      <button type="button" class="cancel" flat>Cancel</button>
+      <button type="button" class="proceed" flat primary>Save</button>
+    </nav>
   </section>
-  <section class="app-content">
-    <template id="coursesViewTemplate">
-      <div class="table table-users"></div>
-    </template>
-  </section>
-  <template id="createUserModalTemplate">
-    <div class="modal">
-      <header class="header">
-        <h3 class="title">Create User</h3>
-      </header>
-      <section class="content scrollable">
-        <form class="form form-setup-user">
-          <fieldset class="fieldset">
-            <div class="field">
-              <label for="firstName" class="label">First name</label>
-              <div class="control">
-                <input id="firstName" type="text" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="lastName" class="label">Last name</label>
-              <div class="control">
-                <input id="lastName" type="text" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="email" class="label">Email address</label>
-              <div class="control">
-                <input id="email" type="text" value="" required email />
-              </div>
-            </div>
-            <div class="field">
-              <label for="password" class="label">Password</label>
-              <div class="control">
-                <input id="password" type="password" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="confirmPassword" class="label">Confirm Password</label>
-              <div class="control">
-                <input id="confirmPassword" type="password" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="alternateEmail" class="label">Alternate email address</label>
-              <div class="control">
-                <input id="alternateEmail" type="text" value="" email />
-              </div>
-            </div>
-            <input id="userId" type="hidden" value="" />
-          </fieldset>
-        </form>
-      </section>
-      <nav class="actions">
-        <button type="button" class="cancel" flat>Cancel</button>
-        <button type="button" class="proceed" flat primary>Save</button>
-      </nav>
-    </div>
-  </template>
-  <template id="coursesViewColumnsModalTemplate">
-    <div class="modal">
-      <header class="header">
-        <h3 class="title">Select columns</h3>
-      </header>
-      <section class="content"></section>
-      <nav class="actions">
-        <button type="button" class="cancel" flat>Cancel</button>
-        <button type="button" class="proceed" flat primary>Apply</button>
-      </nav>
-    </div>
-  </template>
-  <template id="confirmDeleteModalTemplate">
-    <div class="modal modal-small">
-      <section class="content"></section>
-      <nav class="actions">
-        <button type="button" class="cancel" flat>Cancel</button>
-        <button type="button" class="proceed" flat primary>Delete</button>
-      </nav>
-    </div>
-  </template>
   <input id="signedInUserId" type="hidden" value="1" />
   <script src="../scripts/Promise.js"></script>
   <script src="../scripts/Template.js"></script>
@@ -195,9 +140,7 @@
   <script src="../scripts/search.js"></script>
   <script src="../scripts/message.js"></script>
   <script src="../scripts/appnavigation.js"></script>
-  <script src="scripts/actions.js"></script>
-  <script src="scripts/userform.js"></script>
-  <script src="scripts/app.js"></script>
+  <script src="scripts/course.js"></script>
   <script>
     var user = { rights: ['create', 'edit', 'delete']};
     

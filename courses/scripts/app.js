@@ -80,7 +80,7 @@
   }
   
   function loadSideNavigation(response, selected) {
-    var create = helpers.query('#createUser');
+    var create = helpers.query('#createCourse');
     create.removeEventListener('click', loadCourseCreateView);
     create.addEventListener('click', loadCourseCreateView, false);
 

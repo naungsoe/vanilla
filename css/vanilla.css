@@ -17,7 +17,8 @@ hr {
 }
 
 input[type='text'],
-input[type='password'] {
+input[type='password'],
+textarea  {
   border: 1px solid #bdbdbd;
   height: 22px;
   outline: none;
@@ -26,13 +27,19 @@ input[type='password'] {
 }
 
 input[type='text']:hover,
-input[type='password']:hover {
+input[type='password']:hover,
+textarea:hover {
   border: 1px solid #9e9e9e;
 }
 
 input[type='text']:focus,
-input[type='password']:focus {
+input[type='password']:focus,
+textarea:focus {
   border: 1px solid #1976d2;
+}
+
+textarea  {
+  height: 100px;
 }
 
 button {
@@ -355,7 +362,7 @@ table {
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 280px;
+  max-height: 230px;
   max-width: 380px;
 }
 
@@ -758,6 +765,25 @@ table {
   font-weight: bold;
 }
 
+.tabs {
+  display: table;
+}
+
+.tabs > .tab {
+  color: rgba(0,0,0,.87);
+  display: table-cell;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 16px 24px;
+  text-decoration: none;
+  text-transform: uppercase;  
+}
+
+.tabs > .selected {
+  border-bottom: 2px solid #ff5b0c;
+  padding: 16px 24px 14px 24px;
+}
+
 .app-bar {
   background-color: #1976d2;
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
@@ -886,7 +912,7 @@ table {
   overflow: auto;
   padding: 15px 0;
   position: absolute;
-  top: 62px;
+  top: 64px;
   width: 210px;
 }
 
@@ -977,6 +1003,14 @@ table {
   min-width: 160px;
 }
 
+.app-tool-bar.tab-tool-bar {
+  height: 47px;
+}
+
+.app-tool-bar.full {
+  left: 0;
+}
+
 .app-content {
   bottom: 0;
   left: 211px;
@@ -984,6 +1018,42 @@ table {
   position: absolute;
   right: 0;
   top: 128px;
+}
+
+.app-content > .form {
+  bottom: 56px;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.app-content > .form > .fieldset > .field > .label {
+  width: 160px;
+}
+
+.app-content > .form > .fieldset > .field > .control > input[type='text'],
+.app-content > .form > .fieldset > .field > .control > textarea {
+  width: 320px;
+}
+
+.app-content > .actions {
+  border-top: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  padding: 10px 24px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+.app-content.tab-content{
+  top: 112px;
+}
+
+.app-content.full {
+  left: 0;
 }
 
 .app-message {

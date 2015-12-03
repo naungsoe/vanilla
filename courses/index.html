@@ -67,7 +67,7 @@
   </aside>
   <aside class="app-side-nav">
     <header class="tool-bar">
-      <button id="createUser" type="button" data-action="create" raised primary>Create</button>
+      <button id="createCourse" type="button" data-action="create" raised primary>Create</button>
     </header>
     <nav id="sideNavigation" class="nav"></nav>
     <hr>
@@ -103,63 +103,9 @@
   </section>
   <section class="app-content">
     <template id="coursesViewTemplate">
-      <div class="table table-users"></div>
+      <div class="table table-courses"></div>
     </template>
   </section>
-  <template id="createUserModalTemplate">
-    <div class="modal">
-      <header class="header">
-        <h3 class="title">Create User</h3>
-      </header>
-      <section class="content scrollable">
-        <form class="form form-setup-user">
-          <fieldset class="fieldset">
-            <div class="field">
-              <label for="firstName" class="label">First name</label>
-              <div class="control">
-                <input id="firstName" type="text" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="lastName" class="label">Last name</label>
-              <div class="control">
-                <input id="lastName" type="text" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="email" class="label">Email address</label>
-              <div class="control">
-                <input id="email" type="text" value="" required email />
-              </div>
-            </div>
-            <div class="field">
-              <label for="password" class="label">Password</label>
-              <div class="control">
-                <input id="password" type="password" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="confirmPassword" class="label">Confirm Password</label>
-              <div class="control">
-                <input id="confirmPassword" type="password" value="" required />
-              </div>
-            </div>
-            <div class="field">
-              <label for="alternateEmail" class="label">Alternate email address</label>
-              <div class="control">
-                <input id="alternateEmail" type="text" value="" email />
-              </div>
-            </div>
-            <input id="userId" type="hidden" value="" />
-          </fieldset>
-        </form>
-      </section>
-      <nav class="actions">
-        <button type="button" class="cancel" flat>Cancel</button>
-        <button type="button" class="proceed" flat primary>Save</button>
-      </nav>
-    </div>
-  </template>
   <template id="coursesViewColumnsModalTemplate">
     <div class="modal">
       <header class="header">
@@ -196,7 +142,6 @@
   <script src="../scripts/message.js"></script>
   <script src="../scripts/appnavigation.js"></script>
   <script src="scripts/actions.js"></script>
-  <script src="scripts/userform.js"></script>
   <script src="scripts/app.js"></script>
   <script>
     var user = { rights: ['create', 'edit', 'delete']};
