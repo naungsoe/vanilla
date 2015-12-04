@@ -1,32 +1,42 @@
-.table-users .head > table > colgroup > .checkbox,
-.table-users .body > .scrollable > table > colgroup > .checkbox {
+.table-courses .head > table > colgroup > .checkbox,
+.table-courses .body > .scrollable > table > colgroup > .checkbox {
   width: 66px;
 }
 
-.table-users .head > table > colgroup > .name,
-.table-users .body > .scrollable > table > colgroup > .name {
+.table-courses .head > table > colgroup > .name,
+.table-courses .body > .scrollable > table > colgroup > .name {
   width: auto;
 }
 
-.table-users .head > table > colgroup > .email,
-.table-users .body > .scrollable > table > colgroup > .email {
+.table-courses .head > table > colgroup > .code,
+.table-courses .body > .scrollable > table > colgroup > .code {
   width: auto;
 }
 
-.table-users .head > table > colgroup > .status,
-.table-users .body > .scrollable > table > colgroup > .status {
+.table-courses .head > table > colgroup > .subject,
+.table-courses .body > .scrollable > table > colgroup > .subject {
+  width: auto;
+}
+
+.table-courses .head > table > colgroup > .grade,
+.table-courses .body > .scrollable > table > colgroup > .grade {
+  width: auto;
+}
+
+.table-courses .head > table > colgroup > .start,
+.table-courses .body > .scrollable > table > colgroup > .start {
   width: 140px;
 }
 
-.table-users .head > table > colgroup > .accessed,
-.table-users .body > .scrollable > table > colgroup > .accessed {
-  width: 140px;
-}
-
-.form-setup-user > .fieldset > .field {
-  width: 480px;
-}
-
-.form-setup-user > .fieldset > .field > .label {
+.form-course-setup > .fieldset > .field > .label {
   width: 160px;
+}
+
+.form-course-setup > .fieldset > .field > .control > input[type='text'],
+.form-course-setup > .fieldset > .field > .control > textarea {
+  width: 280px;
+}
+
+.form-course-setup > .fieldset > .field > .control > .dropdown > .toggle > .text {
+  width: 260px;
 }

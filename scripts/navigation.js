@@ -38,7 +38,7 @@
         if (!helpers.isEmpty(item.icon)) {
           html = html + '<i class="' + item.icon + '"></i>';
         }
-        html = html + '<span>' + item.name + '</span></a>';
+        html = html + '<span class="text">' + item.name + '</span></a>';
       });
 	  return html;
 	}

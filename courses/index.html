@@ -36,7 +36,6 @@
         <div id="userProfile" class="popover popover-profile">
           <button type="button" class="toggle" flat>
             <i class="fa fa-user"></i>
-            <span class="text">Andrew</span>
             <div class="arrow"></div>
           </button>
           <div class="transition-landscape content">
@@ -45,8 +44,8 @@
               <a href="/Polymer/vanilla/signout/index.html" class="link">Change</a>
             </div>
             <div class="right">
-              <div class="name">Andrew</div>
-              <div class="email">andrew@yahoo.com.sg</div>
+              <div class="name fixed">Andrew</div>
+              <div class="email fixed">andrew@yahoo.com.sg</div>
             </div>
             <nav class="nav">
               <a href="/Polymer/vanilla/profile/index.html" class="link">Edit Profile</a>
@@ -73,11 +72,11 @@
     <hr>
     <section class="filters">
       <header class="header">Filter by</header>
-      <div id="coursesSubject" class="dropdown full">
+      <div id="coursesSubject" class="dropdown" select>
         <button type="button" class="toggle" flat-icon><span class="text">Subject</span><i class="fa fa-caret-down"></i></button>
         <ul class=" transition menu selectable"></ul>
       </div>
-      <div id="coursesGrade" class="dropdown full">
+      <div id="coursesGrade" class="dropdown" select>
         <button type="button" class="toggle" flat-icon><span class="text">Grade</span><i class="fa fa-caret-down"></i></button>
         <ul class="transition  menu selectable"></ul>
       </div>

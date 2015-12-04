@@ -19,23 +19,26 @@ hr {
 input[type='text'],
 input[type='password'],
 textarea  {
-  border: 1px solid #bdbdbd;
-  height: 22px;
+  border: 0;
+  border-bottom: 1px solid #bdbdbd;
+  font-size: 14px;
+  height: 23px;
   outline: none;
-  padding: 8px;
-  width: 230px;
+  padding: 4px 0 8px 0;
+  width: 240px;
 }
 
 input[type='text']:hover,
 input[type='password']:hover,
 textarea:hover {
-  border: 1px solid #9e9e9e;
+  border-bottom: 1px solid #9e9e9e;
 }
 
 input[type='text']:focus,
 input[type='password']:focus,
 textarea:focus {
-  border: 1px solid #1976d2;
+  padding-bottom: 7px;
+  border-bottom: 2px solid #1976d2;
 }
 
 textarea  {
@@ -156,7 +159,11 @@ table {
 
 .table-cell {
   display: table-cell !important;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.no-shadow {
+  box-shadow: none !important;
 }
 
 .fixed {
@@ -242,12 +249,13 @@ table {
 .dropdown > .toggle > .text,
 .popover > .toggle > .text {
   font-size: 14px;
+  line-height: 20px;
   text-align: left;
 }
 
 .dropdown > .toggle > i,
 .popover > .toggle > i {
-  min-width: 24px;
+  font-size: 16px;
 }
 
 .dropdown > .menu,
@@ -278,8 +286,9 @@ table {
   color: rgba(0,0,0,.87);
   cursor: default;
   display: block;
+  line-height: 16px;
   min-width: 90px;
-  padding: 13px 16px;
+  padding: 10px 16px;
   position: relative;
 }
 
@@ -288,7 +297,7 @@ table {
 }
 
 .dropdown > .menu.selectable  > .item {
-  padding: 13px 8px;
+  padding: 10px 16px;
 }
 
 .dropdown > .menu.selectable  > .item > .text,
@@ -314,6 +323,18 @@ table {
 .dropdown > .menu.up {
   top: auto;
   bottom: 0;
+}
+
+.dropdown[select] > .toggle {
+  border-bottom: 1px solid #bdbdbd;
+  line-height: 19px;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.dropdown[select] > .menu {
+  left: 0;
+  right: 0;
 }
 
 .popover > .content {
@@ -382,7 +403,7 @@ table {
 }
 
 .search-box > .query {
-  border: 0;
+  border: 0 !important;
   padding: 7px 8px;
   width: 320px;
 }
@@ -642,12 +663,12 @@ table {
 
 .form > .fieldset > .field > .label {
   width: 90px;
-  padding: 12px 0;
+  padding: 8px 24px;
   text-align: right;
 }
 
 .form > .fieldset > .field > .control {
-  padding: 0 8px;
+  padding: 0 24px 0 0;
 }
 
 .form > .fieldset > .error > .control  > input[type='text'],
@@ -751,13 +772,14 @@ table {
 }
 
 .nav > .link > i,
-.nav > .link > span {
+.nav > .link > .text {
   display: table-cell;
+  vertical-align: middle;
 }
 
 .nav > .link > i {
   font-size: 16px;
-  width: 27px;
+  width: 30px;
 }
 
 .nav > .selected {
@@ -765,23 +787,90 @@ table {
   font-weight: bold;
 }
 
-.tabs {
-  display: table;
+.wizard {
+  margin: 12px 8px;
 }
 
-.tabs > .tab {
+.wizard > .step {
   color: rgba(0,0,0,.87);
   display: table-cell;
   font-size: 14px;
   font-weight: bold;
-  padding: 16px 24px;
+  padding: 8px 16px 8px 8px;
   text-decoration: none;
-  text-transform: uppercase;  
 }
 
-.tabs > .selected {
-  border-bottom: 2px solid #ff5b0c;
-  padding: 16px 24px 14px 24px;
+.wizard > .step:hover {
+  background-color: #eee;
+}
+
+.wizard > .step > .icon,
+.wizard > .step > .text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.wizard > .step > .icon {
+  height: 24px;
+  background-color: #9e9e9e;
+  border-radius: 50%;
+  margin: 4px 8px;
+  width: 25px;
+}
+
+.wizard > .step > .icon > label,
+.wizard > .step > .icon > i {
+  color: #fff;
+  display: block;
+  line-height: 24px;
+  text-align: center;
+}
+
+.wizard > .step > .icon > i {
+  display: none;
+}
+
+.wizard > .step > .text {
+  color: rgba(0,0,0,.26);
+}
+
+.wizard > .selected > .icon {
+  background-color: #1976d2;
+}
+
+.wizard > .selected > .text {
+  color: rgba(0,0,0,.87);
+}
+
+.wizard-content > .content {
+  bottom: 56px;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.wizard-content > .actions {
+  border-top: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+.wizard-content > .actions > .left,
+.wizard-content > .actions > .right {
+  margin: 9px 16px;
+}
+
+.wizard-content > .actions > .left {
+  float: left;
+}
+
+.wizard-content > .actions > .right {
+  float: right;
 }
 
 .app-bar {
@@ -950,19 +1039,18 @@ table {
   margin-bottom: 16px;
 }
 
-.app-side-nav > .filters > .dropdown > .toggle {
-  border-bottom: 1px solid #ddd;
-  padding: 8px 0;
-}
-
 .app-side-nav > .filters > .dropdown > .toggle > .text {
   font-size: 13px;
-  padding: 2px 0;
+  line-height: 19px;
   width: 136px;
 }
 
 .app-side-nav > .filters > .dropdown > .toggle > i {
   font-size: 16px;
+}
+
+.app-side-nav > .filters > .dropdown > .menu > .item {
+  font-size: 13px;
 }
 
 .app-tool-bar {
@@ -981,7 +1069,7 @@ table {
 
 .app-tool-bar > .left > .title {
   font-size: 18px;
-  margin: 20px 24px;
+  margin: 21px 24px;
 }
 
 .app-tool-bar > .right {
@@ -990,7 +1078,7 @@ table {
 
 .app-tool-bar > .right > .nav {
   display: inline-block;
-  margin: 13px 10px;
+  margin: 14px 10px;
 }
 
 .app-tool-bar > .right > .nav > button,
@@ -999,12 +1087,18 @@ table {
   vertical-align: middle;
 }
 
+.app-tool-bar > .right > .nav > .dropdown > .toggle > i {
+  font-size: 20px;
+}
+
 .app-tool-bar > .right > .nav > .dropdown > .menu {
   min-width: 160px;
 }
 
-.app-tool-bar.tab-tool-bar {
-  height: 47px;
+.app-tool-bar.wizard-tool-bar {
+  height: 71px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  z-index: 1;
 }
 
 .app-tool-bar.full {
@@ -1020,36 +1114,8 @@ table {
   top: 128px;
 }
 
-.app-content > .form {
-  bottom: 56px;
-  left: 0;
-  overflow: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.app-content > .form > .fieldset > .field > .label {
-  width: 160px;
-}
-
-.app-content > .form > .fieldset > .field > .control > input[type='text'],
-.app-content > .form > .fieldset > .field > .control > textarea {
-  width: 320px;
-}
-
-.app-content > .actions {
-  border-top: 1px solid #ddd;
-  bottom: 0;
-  left: 0;
-  padding: 10px 24px;
-  position: absolute;
-  right: 0;
-  text-align: right;
-}
-
-.app-content.tab-content{
-  top: 112px;
+.app-content.wizard-content {
+  top: 136px;
 }
 
 .app-content.full {
@@ -1083,7 +1149,7 @@ table {
 }
 
 .popover-notifications > .content {
-  right: -98px;
+  right: -60px;
   width: 270px;
 }
 
@@ -1103,12 +1169,13 @@ table {
 .popover-profile > .content > .left,
 .popover-profile > .content > .right {
   display: table-cell;
-  padding: 16px;
+  padding: 16px 0;
   vertical-align: top;
 }
 
 .popover-profile > .content > .left {
-  padding-right: 0;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .popover-profile > .content > .left > .picture  {
@@ -1121,6 +1188,15 @@ table {
   font-size: 12px;
   text-align: center;
   text-decoration: none;
+}
+
+.popover-profile > .content > .right {
+  padding-right: 16px;
+}
+
+.popover-profile > .content > .right > .name,
+.popover-profile > .content > .right > .email {
+  width: 190px;
 }
 
 .popover-profile > .content > .right > .name {

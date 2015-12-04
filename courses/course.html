@@ -13,10 +13,10 @@
 <body>
   <div id="pageMessage" class="app-message">
   </div>
-  <header class="app-bar">
+  <header class="app-bar no-shadow">
     <aside class="left">
       <nav id="appNavigation" class="nav">
-        <button type="button" class="menu" flat><i class="fa fa-bars"></i></button><button type="button" class="name" flat>Courses</button>
+        <button type="button" class="menu" flat><i class="fa fa-arrow-left"></i></button><button type="button" class="name" flat>Create</button>
       </nav>
     </aside>
     <aside class="right">
@@ -32,7 +32,6 @@
         <div id="userProfile" class="popover popover-profile">
           <button type="button" class="toggle" flat>
             <i class="fa fa-user"></i>
-            <span class="text">Andrew</span>
             <div class="arrow"></div>
           </button>
           <div class="transition-landscape content">
@@ -41,8 +40,8 @@
               <a href="/Polymer/vanilla/signout/index.html" class="link">Change</a>
             </div>
             <div class="right">
-              <div class="name">Andrew</div>
-              <div class="email">andrew@yahoo.com.sg</div>
+              <div class="name fixed">Andrew</div>
+              <div class="email fixed">andrew@yahoo.com.sg</div>
             </div>
             <nav class="nav">
               <a href="/Polymer/vanilla/profile/index.html" class="link">Edit Profile</a>
@@ -54,76 +53,89 @@
       </nav>
     </aside>
   </header>
-  <aside class="transition app-global-nav">
-    <nav class="nav">
-      <a href="/Polymer/vanilla/index.html" class="logo"><strong>Vanilla</strong></a>
-    </nav>
-    <hr>
-    <nav id="globalNavigation" class="nav"></nav>
-  </aside>
-  <section class="app-tool-bar tab-tool-bar full">
-    <nav class="tabs">
-      <a href="#details" class="tab selected">Course details</a>
-      <a href="#activity" class="tab">Activity / Resource</a>
+  <section class="app-tool-bar wizard-tool-bar full">
+    <nav class="wizard">
+      <a href="#details" class="step selected">
+        <span class="icon"><label>1</label><i class="fa fa-check completed"></i></span><span class="text">Course details</span>
+      </a>
+      <a href="#activity" class="step">
+        <span class="icon"><label>2</label><i class="fa fa-check"></i></span><span class="text">Activity / Resource</span>
+      </a>
     </nav>
   </section>
-  <section class="app-content tab-content full">
-    <form class="form form-course-setup">
-      <fieldset class="fieldset">
-        <div class="field">
-          <label for="name" class="label">Name</label>
-          <div class="control">
-            <input id="name" type="text" value="" required />
+  <section class="app-content wizard-content full">
+    <div id="courseDetails" class="content">
+      <form class="form form-course-setup">
+        <fieldset class="fieldset">
+          <div class="field">
+            <label for="name" class="label">Name</label>
+            <div class="control">
+              <input id="name" type="text" value="" required />
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="code" class="label">Code</label>
-          <div class="control">
-            <input id="code" type="text" value="" required />
+          <div class="field">
+            <label for="code" class="label">Code</label>
+            <div class="control">
+              <input id="code" type="text" value="" required />
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="subject" class="label">Subject</label>
-          <div class="control">
-            <input id="subject" type="text" value="" required email />
+          <div class="field">
+            <label for="subject" class="label">Subject</label>
+            <div class="control">
+              <div id="subject" class="dropdown" select>
+                <button type="button" class="toggle" flat-icon><span class="text">Subject</span><i class="fa fa-caret-down"></i></button>
+                <ul class="transition  menu selectable"></ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="grade" class="label">Grade</label>
-          <div class="control">
-            <input id="grade" type="password" value="" required />
+          <div class="field">
+            <label for="grade" class="label">Grade</label>
+            <div class="control">
+              <div id="grade" class="dropdown" select>
+                <button type="button" class="toggle" flat-icon><span class="text">Grade</span><i class="fa fa-caret-down"></i></button>
+                <ul class="transition  menu selectable"></ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="start" class="label">Start date</label>
-          <div class="control">
-            <input id="start" type="password" value="" required />
+          <div class="field">
+            <label for="start" class="label">Start date</label>
+            <div class="control">
+              <div id="start" class="datepicker">
+                <input id="code" type="text" value="" />
+                <button type="button" class="toggle" flat-icon><i class="fa fa-calendar"></i></button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="summary" class="label">Summary</label>
-          <div class="control">
-            <textarea id="summary"></textarea>
+          <div class="field">
+            <label for="summary" class="label">Summary</label>
+            <div class="control">
+              <textarea id="summary"></textarea>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="summary" class="label">Summary</label>
-          <div class="control">
-            <textarea id="summary"></textarea>
+          <div class="field">
+            <label for="summary" class="label">Summary</label>
+            <div class="control">
+              <textarea id="summary"></textarea>
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="summary" class="label">Summary</label>
-          <div class="control">
-            <textarea id="summary"></textarea>
+          <div class="field">
+            <label for="summary" class="label">Summary</label>
+            <div class="control">
+              <textarea id="summary"></textarea>
+            </div>
           </div>
-        </div>
-        <input id="courseId" type="hidden" value="" />
-      </fieldset>
-    </form>
+          <input id="courseId" type="hidden" value="" />
+        </fieldset>
+      </form>
+    </div>
     <nav class="actions">
-      <button type="button" class="cancel" flat>Cancel</button>
-      <button type="button" class="proceed" flat primary>Save</button>
+      <div class="left">
+        <button type="button" class="cancel" flat>Back</button>
+      </div>
+      <div class="right">
+        <button type="button" class="cancel" flat>Cancel</button>
+        <button type="button" class="proceed" flat primary>Continue</button>
+      </div>
     </nav>
   </section>
   <input id="signedInUserId" type="hidden" value="1" />

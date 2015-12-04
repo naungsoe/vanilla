@@ -66,7 +66,7 @@
 	  var html = '';
       context.items.forEach(function(item) {
         html = html + '<li data-value="' + item.id + '" '
-          + 'class="item">' + item.name + '</li>';
+          + 'class="item fixed">' + item.name + '</li>';
       });
 	  return html;
 	}
@@ -76,11 +76,26 @@
         var menu = helpers.query(".menu", container);
         if (menu.classList.contains("selectable")
             && !menu.classList.contains("up")) {
-          var item = helpers.query(".selected", menu),
-            offsetTop = item.offsetTop;
+          var items = helpers.queryAll(".item", menu),
+            selected = helpers.query(".selected", menu),
+            itemHeight = selected.offsetHeight;
           
-          offsetTop = (offsetTop < 230) ? offsetTop : 230;
-          menu.style.top = -offsetTop + 'px';
+          helpers.toArray(items).forEach(function(item, index, items) {
+            if (item === selected) {
+              var offsetTop = selected.offsetTop,
+                positionTop = index * itemHeight,
+                scrollTop = offsetTop - positionTop;
+              
+              if (positionTop < 194) {
+                menu.style.top = -positionTop + 'px';
+                menu.scrollTop = scrollTop;
+              }
+              else {
+                menu.style.top = -194 + 'px';
+                menu.scrollTop = offsetTop - 194;
+              }
+            }
+          });
         }
         container.classList.toggle('open');
       };
