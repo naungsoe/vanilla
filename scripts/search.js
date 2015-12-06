@@ -220,12 +220,14 @@
       
       if (context.items.length === 0) {
         if (helpers.isEmpty(context.keyword)) {
-          html = html + '<div class="item" disabled><div class="left">'
-            + context.resource.searchRecordsEntry + '</div></div>';
+          html = html + '<div class="item" disabled>'
+            + '<div class="left"></div><div class="right"><div class="name">'
+            + context.resource.searchRecordsEntry + '</div></div></div>';
         }
         else {
-          html = html + '<div class="item" disabled><div class="left">'
-            + context.resource.searchRecordsEmpty + '</div></div>';
+          html = html + '<div class="item" disabled>'
+            + '<div class="left"></div><div class="right"><div class="name">'
+            + context.resource.searchRecordsEmpty + '</div></div></div>';
         }
       }
       else {
@@ -236,6 +238,9 @@
             html = html + '<div class="left">';
             html = html + '<img src="' + item.image + '" '
               + 'alt="' + item.name + '" class="picture" /></div>';
+          }
+          else {
+            html = html + '<div class="left"></div>';
           }
           
           var regexp = new RegExp(context.keyword, 'i');
@@ -265,6 +270,10 @@
     
     function bindItem(context) {
       return function(event) {
+        if (!helpers.isNull(event.currentTarget.getAttribute('disabled'))) {
+          return;
+        }
+        
         context.container.classList.remove('open');
         context.keyword = event.currentTarget.dataset.name;
         
@@ -281,7 +290,9 @@
           item.classList.remove('highlight');
         });
         
-        event.currentTarget.classList.add('highlight');
+        if (helpers.isNull(event.currentTarget.getAttribute('disabled'))) {
+          event.currentTarget.classList.add('highlight');
+        }
       };
     }
     

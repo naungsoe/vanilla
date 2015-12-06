@@ -50,6 +50,7 @@ button {
   border-radius: 2px;
   cursor: default;
   font-size: 14px;
+  line-height: 16px;
   outline: none;
   position: relative;
   margin: 0 8px;
@@ -186,6 +187,7 @@ table {
   cursor: default;
   color: rgba(0,0,0,.54);
   font-size: 20px;
+  line-height: 22px;
   vertical-align: middle;
   width: 24px;
 }
@@ -215,8 +217,8 @@ table {
 
 @keyframes checkbox
 {
-  from { opacity: .5; }
-  to { opacity: 1; }
+  from { color: rgba(0,0,0,.54); }
+  to { color: #1976d2; }
 }
 
 .checkbox-group > .item {
@@ -227,12 +229,14 @@ table {
 }
 
 .dropdown,
+.datepicker,
 .popover {
   display: inline-block;
   position: relative;
 }
 
 .dropdown > .toggle,
+.datepicker > .toggle,
 .popover > .toggle {
   text-decoration: none;
   text-transform: capitalize;
@@ -240,6 +244,8 @@ table {
 
 .dropdown > .toggle > .text,
 .dropdown > .toggle > i,
+.datepicker > .toggle > .date,
+.datepicker > .toggle > i,
 .popover > .toggle > .text,
 .popover > .toggle > i {
   display: table-cell;
@@ -247,6 +253,7 @@ table {
 }
 
 .dropdown > .toggle > .text,
+.datepicker > .toggle > .date,
 .popover > .toggle > .text {
   font-size: 14px;
   line-height: 20px;
@@ -254,11 +261,13 @@ table {
 }
 
 .dropdown > .toggle > i,
+.datepicker > .toggle > i,
 .popover > .toggle > i {
   font-size: 16px;
 }
 
 .dropdown > .menu,
+.datepicker > .calendar,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -325,14 +334,22 @@ table {
   bottom: 0;
 }
 
-.dropdown[select] > .toggle {
+.dropdown[select] > .toggle,
+.datepicker > .toggle {
   border-bottom: 1px solid #bdbdbd;
+  border-radius: 0;
   line-height: 19px;
   margin: 0;
   padding: 8px 0;
 }
 
-.dropdown[select] > .menu {
+.dropdown[select] > .toggle > .text,
+.datepicker > .toggle > .date {
+  color: rgba(0,0,0,.87);
+}
+
+.dropdown[select] > .menu,
+.datepicker > .menu {
   left: 0;
   right: 0;
 }
@@ -363,15 +380,7 @@ table {
   z-index: 3;
 }
 
-.dropdown.full > .menu {
-  left: 0;
-  right: 0;
-}
-
-.dropdown.full > .toggle {
-  margin: 0;
-}
-
+.dropdown.open > .menu,
 .dropdown.open > .menu,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
@@ -383,7 +392,7 @@ table {
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 230px;
+  max-height: 252px;
   max-width: 380px;
 }
 
@@ -397,14 +406,14 @@ table {
 .search-box > .query,
 .search-box > .search {
   border: 0;
-  display: inline-block;
+  display: table-cell;
   margin: 0;
   vertical-align: middle;
 }
 
 .search-box > .query {
   border: 0 !important;
-  padding: 7px 8px;
+  padding: 6px 8px !important;
   width: 320px;
 }
 
@@ -422,7 +431,6 @@ table {
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,.3);
   color: rgba(0,0,0,.87);
-  font-size: 14px;
   max-height: 0;
   max-width: 0;
   opacity: 0;
@@ -452,17 +460,19 @@ table {
   vertical-align: middle;
 }
 
-.search-box > .result > .item > .right {
-  padding: 0 8px 0 0;
-}
-
 .search-box > .result > .item > .left > .picture {
   max-height: 36px;
   max-width: 36px;
 }
 
-.search-box > .result > .item > .right > .name {
-  margin-bottom: 3px;
+.search-box > .result > .item > .right {
+  padding: 0 8px 0 0;
+}
+
+.search-box > .result > .item > .right > .name,
+.search-box > .result > .item > .right > .email {
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .search-box > .result > .item > .right > .email {
@@ -582,18 +592,19 @@ table {
 }
 
 .table thead > tr > th > .checkbox {
-  padding: 16px 24px 16px 24px;
+  padding: 17px 24px 17px 24px;
 }
 
 .table thead > tr > th > .title {
   position: relative;
-  padding: 20px 24px 20px 18px;
+  padding: 19px 24px 19px 18px;
 }
 
 .table thead > tr > th > .sortable > .up,
 .table thead > tr > th > .sortable > .down {
   display: none;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 16px;
   left: 6px;
   position: absolute;
   top: 20px;
@@ -637,11 +648,16 @@ table {
 }
 
 .table tbody > tr > td {
-  padding: 14px 24px 14px 18px;
+  padding: 12px 24px 12px 18px;
 }
 
 .table tbody > tr > td:first-child {
-  padding: 14px 24px;
+  padding: 12px 24px;
+}
+
+.table thead > tr > th > .fixed,
+.table tbody > tr > td > .fixed {
+  line-height: 18px;
 }
 
 .form > .fieldset {
@@ -747,10 +763,12 @@ table {
   background-color: rgba(0,0,0,.54);
   border-radius: 50%;
   font-size: 10px;
-  padding: 1px 4px;
+  line-height: 15px;
+  height: 15px;
   position: absolute;
   right: 15%;
   top: 20%;
+  width: 15px;
 }
 
 .nav {
@@ -762,8 +780,9 @@ table {
   display: block;
   color: rgba(0,0,0,.87);
   font-size: 14px;
+  line-height: 18px;
   margin: 0;
-  padding: 15px 16px;
+  padding: 9px 16px;
   text-decoration: none;
 }
 
@@ -801,6 +820,10 @@ table {
 }
 
 .wizard > .step:hover {
+  background-color: transparent;
+}
+
+.wizard > .step:active {
   background-color: #eee;
 }
 
@@ -897,25 +920,35 @@ table {
 .app-bar > .left > .nav {
   display: inline-block;
   vertical-align: top;
-  margin: 14px 10px;
+  margin: 14px 8px;
 }
 
 .app-bar  > .left > .nav > .menu,
+.app-bar  > .left > .nav > .back,
 .app-bar  > .left > .nav > .name {
+  color: #fff;
   display: inline-block;
   font-size: 24px;
+  line-height: 28px;
   padding: 4px 6px;
   text-transform: capitalize;
 }
 
 .app-bar  > .left > .nav > .menu,
-.app-bar  > .left > .nav > .name {
-  color: #fff;
+.app-bar  > .left > .nav > .back {
+  padding: 4px 8px;
 }
 
 .app-bar  > .left > .nav > .menu:hover,
+.app-bar  > .left > .nav > .back:hover,
 .app-bar  > .left > .nav > .name:hover {
   background-color: transparent;
+}
+
+.app-bar  > .left > .nav > .menu:active,
+.app-bar  > .left > .nav > .back:active,
+.app-bar  > .left > .nav > .name:active {
+  background-color: #bbcefb;
 }
 
 .app-bar > .right > .nav {
@@ -936,6 +969,10 @@ table {
 
 .app-bar > .right > .nav > .popover > .toggle:hover {
   background-color: transparent;
+}
+
+.app-bar > .right > .nav > .popover > .toggle:active {
+  background-color: #bbcefb;
 }
 
 .app-bar > .right > .nav > .popover > .toggle > .text {
@@ -980,12 +1017,14 @@ table {
   color: #1976d2;
   display: block;
   font-size: 27px;
+  line-height: 34px;
   margin: 15px 15px;
   text-decoration: none;
 }
 
 .app-global-nav > .nav > .link {
   font-size: 14px;
+  line-height: 18px;
   padding: 15px 16px;
 }
 
@@ -1016,7 +1055,7 @@ table {
 }
 
 .app-side-nav > .nav > .link {
-  padding: 12px 24px;
+  padding: 11px 24px;
 }
 
 .app-side-nav > .nav > .link:hover {
@@ -1032,6 +1071,7 @@ table {
 }
 
 .app-side-nav > .filters > .header {
+  color: rgba(0,0,0,.54);
   padding: 8px 0;
 }
 
@@ -1069,6 +1109,7 @@ table {
 
 .app-tool-bar > .left > .title {
   font-size: 18px;
+  line-height: 22px;
   margin: 21px 24px;
 }
 
@@ -1098,7 +1139,6 @@ table {
 .app-tool-bar.wizard-tool-bar {
   height: 71px;
   box-shadow: 0 2px 5px rgba(0,0,0,.3);
-  z-index: 1;
 }
 
 .app-tool-bar.full {
@@ -1123,7 +1163,6 @@ table {
 }
 
 .app-message {
-  font-size: 14px;
   left: 50%;
   max-width: 300px;
   position: absolute;
@@ -1136,7 +1175,9 @@ table {
 .app-message > .warning,
 .app-message > .error,
 .app-message > .success {
-  padding: 10px;
+  font-size: 14px;
+  line-height: 16px;
+  padding: 10px 16px;
   border-radius: 2px;
   box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
 }
@@ -1186,6 +1227,7 @@ table {
 .popover-profile > .content > .left > .link {
   display: block;
   font-size: 12px;
+  line-height: 14px;
   text-align: center;
   text-decoration: none;
 }
@@ -1196,6 +1238,8 @@ table {
 
 .popover-profile > .content > .right > .name,
 .popover-profile > .content > .right > .email {
+  font-size: 14px;
+  line-height: 18px;
   width: 190px;
 }
 
@@ -1206,7 +1250,6 @@ table {
 
 .popover-profile > .content > .nav > .link {
   background-color: #f5f5f5;
-  padding: 10px 16px;
 }
 
 .popover-profile > .content > .nav > .link:hover {

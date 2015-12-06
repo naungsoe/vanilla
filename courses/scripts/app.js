@@ -263,12 +263,13 @@
   }
   
   function loadCourseCreateView() {
-    helpers.redirect('course.html');
+    helpers.redirect('course.html?redirect=' + helpers.location.href);
   }
   
   function loadCourseEditView() {
     var courseId = coursesView.selected[0].id;
-    helpers.redirect('course.html?id=' + courseId);
+    helpers.redirect('course.html?redirect=' + helpers.location.href
+      + '&id=' + courseId);
   }
   
   function loadCoursesDeleteModal() {

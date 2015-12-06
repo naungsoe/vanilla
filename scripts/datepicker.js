@@ -3,17 +3,30 @@
   
   window.UI = window.UI || {};
   window.UI.DatePicker = function(selector) {
-    var content = '',
-      boldHandler = function() {},
-      italicHandler = function() {},
-      underlineHandler = function() {};
+    var date = new Date(),
+      format = 'dd/MM/yyyy',
+      dayHandler = function() {},
+      monthHandler = function() {},
+      yearHandler = function() {},
+      docKeydownHandler = function() {},
+      docClickHandler = function() {},
+      changeHandler = function();
       
     function bindData(context, data) {
-      context.content = data.content || '';
+      context.format = data.format || 'dd/MM/yyyy';
+      context.date = data.date || new Date();
+      
     }
     
     function bindDatePicker(context) {
+      document.removeEventListener('keydown', docKeydownHandler, false);
+      document.removeEventListener('click', docClickHandler, false);
       
+      docKeydownHandler = bindDocKeydown(context.container);
+      document.addEventListener('keydown', docKeydownHandler, false);
+      
+      docClickHandler = bindDocClick(context.container);
+      document.addEventListener('click', docClickHandler, false);
     }
 	
     function bindChange(context, callback, data) {
@@ -22,21 +35,31 @@
       };
     }
     
-    function bindDocClick(popover) {
+    function bindDocKeydown(container) {
+      return function(event) {
+      };
+    }
+    
+    function bindDocClick(datepicker) {
       return function(event) {
 		var target = event.target;
-		while (!target.classList.contains('popover')) {
+		while (!target.classList.contains('datepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
 		  target = target.parentNode;
 		}
 		
-        if ((target !== popover)
-		    && (popover.classList.contains('open'))) {
-		  popover.classList.toggle('open');
+        if ((target !== datepicker)
+		    && (datepicker.classList.contains('open'))) {
+		  datepicker.classList.toggle('open');
         }
       };
+    }
+    
+    function updateDate(context) {
+      var date = helpers.query('.date', context.container);
+      date.textContent = context.
     }
     
     return {
@@ -44,17 +67,27 @@
         return helpers.query(selector);
       },
 	  
-	  get content() {
-        return content;
+	  get date() {
+        return date;
       },
       
-      set content(value) {
-        content = value;
-		bindDatePicker(this);
+      set date(value) {
+        date = value;
+        updateDate(this);
+      },
+      
+	  get format() {
+        return format;
+      },
+      
+      set format(value) {
+        format = value;
+        updateDate(this);
       },
       
       bind: function(data) {
-        bindDatePicker(this, data);
+        bindData(this, data);
+		bindDatePicker(this);
         return this;
       },
       

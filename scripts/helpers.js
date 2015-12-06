@@ -25,6 +25,10 @@
   }
   
   var helpers = {
+    get location() {
+      return window.location;
+    },
+    
     query: function(selector, container) {
       if (helpers.isString(selector)) {
         var node = (container || document).querySelector(selector);
@@ -96,8 +100,26 @@
       return base;
     },
     
+    getQuery: function(key) {
+      var url = window.location.href,
+        keyValues = url.split(/[\?&]+/),
+		keyValue = [];
+      
+      for (i = 0; i < keyValues.length; i++) {
+        keyValue = keyValues[i].split("=");
+        if (keyValue[0] == key) {
+          return keyValue[1];
+        }
+      }
+      return "";
+    },
+    
     redirect: function(url) {
       window.location.href = url;
+    },
+    
+    refresh: function() {
+      window.location.reload();
     },
     
     request: function(url) {

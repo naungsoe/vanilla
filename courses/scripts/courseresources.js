@@ -2,7 +2,7 @@
   'user strict';
   
   window.UI = window.UI || {};
-  window.UI.UserForm = function(selector) {
+  window.UI.CourseResources = function(selector) {
     var user = { name: { first: '', last: '' },
         email: '', password: '', confirmPassword: '',
         alternateEmail: '' },
@@ -124,6 +124,11 @@
       
       bind: function(data, resource) {
         bindData(this, data, resource);
+        return this;
+      },
+      
+      toggle: function() {
+        this.container.classList.toggle('hide');
         return this;
       }
     };

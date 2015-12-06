@@ -15,8 +15,8 @@
   </div>
   <header class="app-bar no-shadow">
     <aside class="left">
-      <nav id="appNavigation" class="nav">
-        <button type="button" class="menu" flat><i class="fa fa-arrow-left"></i></button><button type="button" class="name" flat>Create</button>
+      <nav id="pageNavigation" class="nav">
+        <button type="button" class="back" flat><i class="fa fa-arrow-left"></i></button><button type="button" class="name" flat>Create</button>
       </nav>
     </aside>
     <aside class="right">
@@ -54,11 +54,11 @@
     </aside>
   </header>
   <section class="app-tool-bar wizard-tool-bar full">
-    <nav class="wizard">
-      <a href="#details" class="step selected">
+    <nav id="courseWizard" class="wizard">
+      <a href="#details" class="step" data-value="details">
         <span class="icon"><label>1</label><i class="fa fa-check completed"></i></span><span class="text">Course details</span>
       </a>
-      <a href="#activity" class="step">
+      <a href="#activity" class="step" data-value="resources" disabled>
         <span class="icon"><label>2</label><i class="fa fa-check"></i></span><span class="text">Activity / Resource</span>
       </a>
     </nav>
@@ -101,21 +101,9 @@
             <label for="start" class="label">Start date</label>
             <div class="control">
               <div id="start" class="datepicker">
-                <input id="code" type="text" value="" />
-                <button type="button" class="toggle" flat-icon><i class="fa fa-calendar"></i></button>
+                <button type="button" class="toggle" flat-icon><span class="date"></span><i class="fa fa-calendar"></i></button>
+                <ul class="transition  calendar"></ul>
               </div>
-            </div>
-          </div>
-          <div class="field">
-            <label for="summary" class="label">Summary</label>
-            <div class="control">
-              <textarea id="summary"></textarea>
-            </div>
-          </div>
-          <div class="field">
-            <label for="summary" class="label">Summary</label>
-            <div class="control">
-              <textarea id="summary"></textarea>
             </div>
           </div>
           <div class="field">
@@ -127,6 +115,13 @@
           <input id="courseId" type="hidden" value="" />
         </fieldset>
       </form>
+    </div>
+    <div id="courseResources" class="content hide">
+      <div class="resources">
+        <div class="resource">
+          Resource 1
+        </div>
+      </div>
     </div>
     <nav class="actions">
       <div class="left">
@@ -151,15 +146,18 @@
   <script src="../scripts/modal.js"></script>
   <script src="../scripts/search.js"></script>
   <script src="../scripts/message.js"></script>
-  <script src="../scripts/appnavigation.js"></script>
+  <script src="../scripts/wizard.js"></script>
+  <script src="../scripts/pagenavigation.js"></script>
   <script src="scripts/course.js"></script>
+  <script src="scripts/coursedetails.js"></script>
+  <script src="scripts/courseresources.js"></script>
   <script>
     var user = { rights: ['create', 'edit', 'delete']};
     
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         console.log(mutation.type);
-      });    
+      });
     });
     
     var config = { attributes: true, childList: true, 

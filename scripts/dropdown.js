@@ -76,23 +76,31 @@
         var menu = helpers.query(".menu", container);
         if (menu.classList.contains("selectable")
             && !menu.classList.contains("up")) {
-          var items = helpers.queryAll(".item", menu),
+          var maxViewableItems = 7,
+            items = helpers.queryAll(".item", menu),
             selected = helpers.query(".selected", menu),
-            itemHeight = selected.offsetHeight;
+            itemHeight = selected.offsetHeight,
+            itemPositionTop = selected.offsetTop;
           
           helpers.toArray(items).forEach(function(item, index, items) {
             if (item === selected) {
-              var offsetTop = selected.offsetTop,
-                positionTop = index * itemHeight,
-                scrollTop = offsetTop - positionTop;
-              
-              if (positionTop < 194) {
-                menu.style.top = -positionTop + 'px';
-                menu.scrollTop = scrollTop;
+              var itemIndex = (index + 1);
+              if (itemIndex < maxViewableItems) {
+                menu.style.top = -((itemIndex - 1) * itemHeight) + 'px';
+                menu.scrollTop = 0;
               }
               else {
-                menu.style.top = -194 + 'px';
-                menu.scrollTop = offsetTop - 194;
+                if ((items.length - itemIndex) < maxViewableItems) {
+                  menu.style.top = -((maxViewableItems - 1) * itemHeight) + 'px';
+                  menu.scrollTop = ((itemIndex - maxViewableItems) * itemHeight);
+                }
+                else {
+                  while (itemIndex > maxViewableItems) {
+                    itemIndex = itemIndex - maxViewableItems;
+                  }
+                  menu.style.top = -((itemIndex - 1) * itemHeight) + 'px';
+                  menu.scrollTop = (itemPositionTop - (itemIndex * itemHeight) + itemHeight);
+                }
               }
             }
           });
@@ -129,25 +137,41 @@
             case 38:
               var item = helpers.query('.menu > .highlight', container);
               if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
                 item = helpers.query('.menu > .item:last-child', container);
               }
               else {
                 item.classList.remove('highlight');
-                item = item.previousElementSibling || item;
+                item = item.previousElementSibling
+                  || helpers.query('.menu > .item:last-child', container);
               }
               item.classList.add('highlight');
+              
+              var menu = helpers.query('.menu', container);
+              menu.scrollTop = item.offsetTop - item.offsetHeight;
               break;
             
             case 40:
               var item = helpers.query('.menu > .highlight', container);
               if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
                 item = helpers.query('.menu > .item:first-child', container);
               }
               else {
                 item.classList.remove('highlight');
-                item = item.nextElementSibling || item;
+                item = item.nextElementSibling
+                  || helpers.query('.menu > .item:first-child', container);
               }
               item.classList.add('highlight');
+              
+              var menu = helpers.query('.menu', container);
+              menu.scrollTop = item.offsetTop - item.offsetHeight;
               break;
           }
         }
