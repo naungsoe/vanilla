@@ -9,33 +9,33 @@
 	},
 	{
 		"id": "2",
-		"name": "P1 - Eng 01",
-		"code": "P1E01",
+		"name": "P1 - Eng 02",
+		"code": "P1E02",
 		"subject": "English",
 		"grade": "Grade 1",
 		"start": "01 Jan 2016"
 	},
 	{
 		"id": "3",
-		"name": "P1 - Eng 01",
-		"code": "P1E01",
-		"subject": "English",
+		"name": "P1 - Maths 01",
+		"code": "P1M01",
+		"subject": "Mathematics",
 		"grade": "Grade 1",
 		"start": "01 Jan 2016"
 	},
 	{
 		"id": "4",
-		"name": "P1 - Eng 01",
-		"code": "P1E01",
-		"subject": "English",
+		"name": "P1 - Maths 02",
+		"code": "P1M02",
+		"subject": "Mathematics",
 		"grade": "Grade 1",
 		"start": "01 Jan 2016"
 	},
 	{
 		"id": "5",
-		"name": "P1 - Eng 01",
-		"code": "P1E01",
-		"subject": "English",
+		"name": "P1 - Maths 03",
+		"code": "P1M03",
+		"subject": "Mathematics",
 		"grade": "Grade 1",
 		"start": "01 Jan 2016"
 	}

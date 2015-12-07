@@ -44,7 +44,10 @@
       grade.bind(gradeData)
         .change(changeGrade, context);
       
-      start.value = context.course.start;
+      var startData = {};
+      start.bind(startData, context.resource)
+        .change(changeStart, context);
+      
       summary.value = context.course.summary;
     }
     
@@ -54,6 +57,10 @@
     
     function changeGrade(context) {
       context.grade = this.selected;
+    }
+    
+    function changeStart(context) {
+      
     }
     
     function isFormValid(context) {

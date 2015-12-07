@@ -84,24 +84,30 @@
           
           helpers.toArray(items).forEach(function(item, index, items) {
             if (item === selected) {
-              var itemIndex = (index + 1);
+              var itemIndex = (index + 1),
+                positionTop = 0,
+                scrollTop = 0;
+              
               if (itemIndex < maxViewableItems) {
-                menu.style.top = -((itemIndex - 1) * itemHeight) + 'px';
-                menu.scrollTop = 0;
+                positionTop = -((itemIndex - 1) * itemHeight);
+                scrollTop = 0;
               }
               else {
                 if ((items.length - itemIndex) < maxViewableItems) {
-                  menu.style.top = -((maxViewableItems - 1) * itemHeight) + 'px';
-                  menu.scrollTop = ((itemIndex - maxViewableItems) * itemHeight);
+                  positionTop = -((maxViewableItems - 1) * itemHeight);
+                  scrollTop = ((itemIndex - maxViewableItems) * itemHeight);
                 }
                 else {
                   while (itemIndex > maxViewableItems) {
                     itemIndex = itemIndex - maxViewableItems;
                   }
-                  menu.style.top = -((itemIndex - 1) * itemHeight) + 'px';
-                  menu.scrollTop = (itemPositionTop - (itemIndex * itemHeight) + itemHeight);
+                  positionTop = -((itemIndex - 1) * itemHeight);
+                  scrollTop = (itemPositionTop - (itemIndex * itemHeight)
+                    + itemHeight);
                 }
               }
+              menu.style.top = positionTop + 'px';
+              menu.scrollTop = scrollTop;
             }
           });
         }

@@ -55,12 +55,12 @@
   </header>
   <section class="app-tool-bar wizard-tool-bar full">
     <nav id="courseWizard" class="wizard">
-      <a href="#details" class="step" data-value="details">
+      <button type="button" class="step" data-value="details" flat>
         <span class="icon"><label>1</label><i class="fa fa-check completed"></i></span><span class="text">Course details</span>
       </a>
-      <a href="#activity" class="step" data-value="resources" disabled>
+      <button type="button" class="step" data-value="resources" flat disabled>
         <span class="icon"><label>2</label><i class="fa fa-check"></i></span><span class="text">Activity / Resource</span>
-      </a>
+      </button>
     </nav>
   </section>
   <section class="app-content wizard-content full">
@@ -102,7 +102,7 @@
             <div class="control">
               <div id="start" class="datepicker">
                 <button type="button" class="toggle" flat-icon><span class="date"></span><i class="fa fa-calendar"></i></button>
-                <ul class="transition  calendar"></ul>
+                <div class="transition-portrait calendar"></div>
               </div>
             </div>
           </div>
@@ -140,6 +140,7 @@
   <script src="../scripts/navigation.js"></script>
   <script src="../scripts/checkboxgroup.js"></script>
   <script src="../scripts/dropdown.js"></script>
+  <script src="../scripts/datepicker.js"></script>
   <script src="../scripts/popover.js"></script>
   <script src="../scripts/table.js"></script>
   <script src="../scripts/pagination.js"></script>

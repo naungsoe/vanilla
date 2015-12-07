@@ -128,7 +128,8 @@
               }
               else {
                 item.classList.remove('highlight');
-                item = item.previousElementSibling || item;
+                item = item.previousElementSibling
+                  || helpers.query('.result > .item:last-child', container);
               }
               item.classList.add('highlight');
               break;
@@ -140,7 +141,8 @@
               }
               else {
                 item.classList.remove('highlight');
-                item = item.nextElementSibling || item;
+                item = item.nextElementSibling
+                  || helpers.query('.result > .item:first-child', container);
               }
               item.classList.add('highlight');
               break;
