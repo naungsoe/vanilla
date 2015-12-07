@@ -9,9 +9,9 @@
 		{ "id": "6", "name": "Jul" },
 		{ "id": "7", "name": "Aug" },
 		{ "id": "8", "name": "Sep" },
-		{ "id": "9", "name": "Sep" },
-		{ "id": "10", "name": "Sep" },
-		{ "id": "11", "name": "Sep" }
+		{ "id": "9", "name": "Oct" },
+		{ "id": "10", "name": "Nov" },
+		{ "id": "11", "name": "Dec" }
     ],
 	"days": [
 		{ "id": "0", "name": "Sun" },

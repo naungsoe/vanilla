@@ -60,18 +60,18 @@ button {
 
 button[raised] {
   color: rgba(0,0,0,.87);
-  background-color: #eee;
+  background-color: #f5f5f5;
   border: 1px solid #ccc;
-  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.54);
 }
 
 button[raised]:hover {
-  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.54);
 }
 
 button[raised]:active {
   background-color: #e0e0e0;
-  box-shadow: 0 4px 5px -1px rgba(0,0,0,.54);
+  box-shadow: 0 5px 5px -1px rgba(0,0,0,.54);
 }
 
 button[raised][disabled] {
@@ -272,7 +272,7 @@ table {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 2px;
-  box-shadow: 0 2px 2px -1px rgba(0,0,0,.3);
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
   list-style-type: none;
   margin: 0;
   max-height: 0;
@@ -363,13 +363,16 @@ table {
 }
 
 .datepicker > .calendar {
+  border: 0;
   left: 0;
   top: 0;
-  width: 278px;
+  width: 282px;
+  max-width: 282px;
 }
 
 .datepicker > .calendar > .header {
   background-color: #1976d2;
+  border: 1px solid #1976d2;
   padding: 8px 16px;
 }
 
@@ -390,39 +393,76 @@ table {
   margin-bottom: 8px;
 }
 
-.datepicker > .calendar > .tool-bar {
-  margin: 8px 0;
+.datepicker > .calendar > .body {
+  border: 1px solid #ddd;
+  border-top: 0;
+}
+
+.datepicker > .calendar > .body > .tool-bar {
   position: relative;
   text-align: center;
 }
 
-.datepicker > .calendar > .tool-bar > .previous,
-.datepicker > .calendar > .tool-bar > .month,
-.datepicker > .calendar > .tool-bar > .year,
-.datepicker > .calendar > .tool-bar > .next {
+.datepicker > .calendar > .body > .tool-bar > .previous,
+.datepicker > .calendar > .body > .tool-bar > .month,
+.datepicker > .calendar > .body > .tool-bar > .year,
+.datepicker > .calendar > .body > .tool-bar > .next {
   margin: 0;
 }
 
-.datepicker > .calendar > .tool-bar > .previous,
-.datepicker > .calendar > .tool-bar > .next {  
+.datepicker > .calendar > .body > .tool-bar > .previous,
+.datepicker > .calendar > .body > .tool-bar > .next {  
   position: absolute;
   top: 0;
 }
 
-.datepicker > .calendar > .tool-bar > .previous {
+.datepicker > .calendar > .body > .tool-bar > .previous {
   left: 0;
 }
 
-.datepicker > .calendar > .tool-bar > .next {
+.datepicker > .calendar > .body > .tool-bar > .next {
   right: 0;
 }
 
-.datepicker > .calendar > .tool-bar > .month,
-.datepicker > .calendar > .tool-bar > .year {
+.datepicker > .calendar > .body > .tool-bar > .month,
+.datepicker > .calendar > .body > .tool-bar > .year {
   padding: 10px 8px;
+  text-transform: none;
 }
 
-.datepicker > .calendar > .actions {
+.datepicker > .calendar > .body > table > thead > tr > th,
+.datepicker > .calendar > .body > table > tbody > tr > td {
+  color: rgba(0,0,0,.87);
+  cursor: default;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 10px 8px;
+  text-align: center;
+  width: 24px;
+}
+
+.datepicker > .calendar > .body > table > thead > tr > th {
+  color: rgba(0,0,0,.54);
+}
+
+.datepicker > .calendar > .body > table > tbody > tr > td {
+  border-radius: 50%;
+}
+
+.datepicker > .calendar > .body > table > tbody > tr > .selectable:hover {
+  background-color: #f5f5f5;
+}
+
+.datepicker > .calendar > .body > table > tbody > tr > .selectable:active {
+  background-color: #e0e0e0;
+}
+
+.datepicker > .calendar > .body > table > tbody > tr > .selected {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.datepicker > .calendar > .body > .actions {
   text-align: right;
   padding: 8px 0;
 }
@@ -471,7 +511,7 @@ table {
 }
 
 .datepicker.open > .calendar {
-  max-height: 320px;
+  max-height: 480px;
 }
 
 .search-box {
@@ -507,17 +547,17 @@ table {
 
 .search-box > .result {
   background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
   color: rgba(0,0,0,.87);
   max-height: 0;
-  max-width: 0;
+  width: 370px;
   opacity: 0;
   padding: 8px 0;
   position: absolute;
   right: 0;
   top: 100%;
-  min-width: 100%;
-  max-width: 200%;
+  width: 370px;
   overflow: auto;
   z-index: 1;
 }
@@ -559,7 +599,6 @@ table {
 
 .search-box.open > .result {
   max-height: 280px;
-  max-width: 380px;
   opacity: 1;
 }
 
@@ -777,7 +816,7 @@ table {
 }
 
 .backdrop {
-  background-color: rgba(0,0,0,.2);
+  background-color: rgba(0,0,0,.1);
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -790,7 +829,7 @@ table {
 .modal {
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 2px 3px 2px 0 rgba(0,0,0,.3);
+  box-shadow: 0 2px 10px -1px rgba(0,0,0,.26);
   left: 50%;
   min-width: 300px;
   max-height: 580px;
@@ -978,7 +1017,7 @@ table {
 
 .app-bar {
   background-color: #1976d2;
-  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  box-shadow: 0 2px 5px rgba(0,0,0,.26);
   display: block;
   height: 64px;
   min-width: 300px;
@@ -1139,7 +1178,7 @@ table {
 }
 
 .app-side-nav > .nav > .link:hover {
-  background-color: #e0e0e0;
+  background-color: #eee;
 }
 
 .app-side-nav > .nav > .selected {
@@ -1218,7 +1257,7 @@ table {
 
 .app-tool-bar.wizard-tool-bar {
   height: 71px;
-  box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  box-shadow: 0 2px 5px rgba(0,0,0,.26);
 }
 
 .app-tool-bar.full {
@@ -1259,7 +1298,7 @@ table {
   line-height: 16px;
   padding: 10px 16px;
   border-radius: 2px;
-  box-shadow: 0 2px 3px -1px rgba(0,0,0,.54);
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.54);
 }
 
 .app-message > .info,
@@ -1333,5 +1372,5 @@ table {
 }
 
 .popover-profile > .content > .nav > .link:hover {
-  background-color: #e0e0e0;
+  background-color: #eee;
 }

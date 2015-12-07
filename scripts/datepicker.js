@@ -4,9 +4,12 @@
   window.UI = window.UI || {};
   window.UI.DatePicker = function(selector) {
     var date = new Date(),
+      current = new Date(),
       format = 'dd/MM/yyyy',
       resource = {},
       toggleHandler = function() {},
+      previousHandler = function() {},
+      nextHandler = function() {},
       dayHandler = function() {},
       monthHandler = function() {},
       yearHandler = function() {},
@@ -17,7 +20,8 @@
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.format = data.format || 'dd/MM/yyyy';
-      context.date = data.date || new Date();      
+      context.date = data.date || new Date();
+      context.current = new Date(context.date.valueOf());
     }
     
     function bindDatePicker(context) {
@@ -41,15 +45,17 @@
       return function(event) {
         var calendar = helpers.query('.calendar', context.container);
         calendar.innerHTML = getCalendarHTML(context);
-        
+        bindCalendar(context);
+                
         context.container.classList.toggle('open');
       };
     }
-
+    
     function getCalendarHTML(context) {
       var months = context.resource.months,
         days = context.resource.days,
-        date = context.date;
+        date = context.date,
+        current = context.current;
       
       var html = '<div class="header">'
         + '<div class="year">' + date.getFullYear() + '</div>'
@@ -57,13 +63,13 @@
         + months[date.getMonth()].name + ' ' + date.getDate() + '</div>'
         + '</div>';
       
-      html = html + '<nav class="tool-bar">'
+      html = html + '<div class="body"><nav class="tool-bar">'
         + '<button type="button" class="previous" flat-icon>'
         + '<i class="fa fa-angle-left"></i></button>'
         + '<button type="button" class="month" flat>'
-        + months[date.getMonth()].name + '</button>'
+        + months[current.getMonth()].name + '</button>'
         + '<button type="button" class="year" flat>'
-        + date.getFullYear() + '</button>'
+        + current.getFullYear() + '</button>'
         + '<button type="button" class="next" flat-icon>'
         + '<i class="fa fa-angle-right"></i></button></nav>';
       
@@ -73,11 +79,35 @@
       });
       html = html + '</tr></thead>';
       
-      html = html + '<tbody><tr>';
-      days.forEach(function(day) {
-        html = html + '<td>' + day.name.substring(0, 1) + '</td>';
-      });
-      html = html + '</tr></tbody>';
+      html = html + '<tbody>';
+      var temp = new Date(current.valueOf());
+      temp.setDate(1);
+      while (temp.getDay() !== 0) {
+        temp.setDate(temp.getDate() - 1);
+      }
+      
+      while ((temp.getMonth() <= current.getMonth())
+          && (temp.getFullYear() === current.getFullYear())) {
+        if (temp.getDay() === 0) {
+          html = html + '<tr>';
+        }
+        
+        if (temp.getMonth() === current.getMonth()) {
+          var cssClass = (temp.valueOf() === context.date.valueOf())
+            ? 'selected' : 'selectable';
+          html = html + '<td class="' + cssClass + '">'
+            + temp.getDate() + '</td>';
+        }
+        else {
+          html = html + '<td>&nbsp;</td>';
+        }
+        
+        if (temp.getDay === 6) {
+          html = html + '</tr>';
+        }
+        temp.setDate(temp.getDate() + 1);
+      }
+      html = html + '</tbody>';
       html = html + '</table>';
       
       html = html + '<nav class="actions">'
@@ -86,7 +116,27 @@
         + '<button type="button" class="cancel" flat primary>'
         + context.resource.okActionRequest + '</button></nav>';
       
+      html = html + '</div>';
       return html;
+    }
+    
+    function bindCalendar(context) {
+      var previous = helpers.query('.tool-bar > .previous', context.container);
+      previous.removeEventListener('click', previousHandler, false);
+      
+      previousHandler = bindPrevious(context);
+      previous.addEventListener('click', previousHandler, false);
+    }
+    
+    function bindPrevious(context) {
+      return function(event) {
+        context.current.setMonth(context.current.getMonth() - 1);
+        setTimeout(function() {
+          var calendar = helpers.query('.calendar', context.container);
+          calendar.innerHTML = getCalendarHTML(context);
+          bindCalendar(context);
+        }, 100);
+      }
     }
     
     function bindDocKeydown(container) {
@@ -135,6 +185,14 @@
       set date(value) {
         date = value;
         updateDate(this);
+      },
+
+	  get current() {
+        return current;
+      },
+      
+	  set current(value) {
+        current = value;
       },
       
 	  get format() {
