@@ -112,7 +112,21 @@
           });
         }
         container.classList.toggle('open');
+        triggerReflow(container);
       };
+    }
+    
+    function triggerReflow(container) {
+      var reflow = helpers.query('.reflow', container);
+      if (!helpers.isEmpty(reflow)) {
+        return;
+      }
+      
+      setTimeout(function initiateReflow() {
+        reflow = document.createElement('div');
+        reflow.classList.add('reflow');
+        container.appendChild(reflow);
+      }, 100);
     }
     
     function bindDocKeydown(container) {
