@@ -1,3 +1,19 @@
+/***************************************************************************
+Copyright 2015 Yan Naung Soe, e-Learning Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+***************************************************************************/
+
 :invalid {
   box-shadow: none;
 }
@@ -242,6 +258,7 @@ table {
 
 .dropdown,
 .datepicker,
+.timepicker,
 .popover {
   display: inline-block;
   position: relative;
@@ -249,6 +266,7 @@ table {
 
 .dropdown > .toggle,
 .datepicker > .toggle,
+.timepicker > .toggle,
 .popover > .toggle {
   text-decoration: none;
   text-transform: capitalize;
@@ -258,6 +276,8 @@ table {
 .dropdown > .toggle > i,
 .datepicker > .toggle > .date,
 .datepicker > .toggle > i,
+.timepicker > .toggle > .date,
+.timepicker > .toggle > i,
 .popover > .toggle > .text,
 .popover > .toggle > i {
   display: table-cell;
@@ -266,6 +286,7 @@ table {
 
 .dropdown > .toggle > .text,
 .datepicker > .toggle > .date,
+.timepicker > .toggle > .date,
 .popover > .toggle > .text {
   font-size: 14px;
   line-height: 20px;
@@ -274,12 +295,14 @@ table {
 
 .dropdown > .toggle > i,
 .datepicker > .toggle > i,
+.timepicker > .toggle > i,
 .popover > .toggle > i {
   font-size: 16px;
 }
 
 .dropdown > .menu,
 .datepicker > .calendar,
+.timepicker > .calendar,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -347,7 +370,8 @@ table {
 }
 
 .dropdown[select] > .toggle,
-.datepicker > .toggle {
+.datepicker > .toggle,
+.timepicker > .toggle {
   border-bottom: 1px solid #bdbdbd;
   border-radius: 0;
   line-height: 19px;
@@ -356,12 +380,14 @@ table {
 }
 
 .dropdown[select] > .toggle > .text,
-.datepicker > .toggle > .date {
+.datepicker > .toggle > .date,
+.timepicker > .toggle > .date {
   color: rgba(0,0,0,.87);
 }
 
 .dropdown[select] > .menu,
-.datepicker > .menu {
+.datepicker > .menu,
+.timepicker > .menu {
   left: 0;
   right: 0;
 }
@@ -411,6 +437,7 @@ table {
 }
 
 .datepicker > .calendar > .body > .tool-bar {
+  min-height: 36px;
   position: relative;
   text-align: center;
 }
@@ -444,7 +471,8 @@ table {
 
 .datepicker > .calendar > .body > .dates > table > thead > tr > th,
 .datepicker > .calendar > .body > .dates > table > tbody > tr > td,
-.datepicker > .calendar > .body > .months > table > tbody > tr > td {
+.datepicker > .calendar > .body > .months > table > tbody > tr > td,
+.datepicker > .calendar > .body > .years > table > tbody > tr > td {
   color: rgba(0,0,0,.87);
   cursor: default;
   font-size: 14px;
@@ -463,18 +491,38 @@ table {
 }
 
 .datepicker > .calendar > .body > .dates > table > tbody > tr > .selectable:hover,
-.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:hover {
+.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:hover,
+.datepicker > .calendar > .body > .years > table > tbody > tr > .selectable:hover {
   background-color: #f5f5f5;
 }
 
 .datepicker > .calendar > .body > .dates > table > tbody > tr > .selectable:active,
-.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:active {
+.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:active,
+.datepicker > .calendar > .body > .years > table > tbody > tr > .selectable:active {
   background-color: #e0e0e0;
+}
+
+.datepicker > .calendar > .body > .dates > table > tbody > tr > .today {
+  color: #1976d2;
 }
 
 .datepicker > .calendar > .body > .dates > table > tbody > tr > .selected {
   background-color: #1976d2;
   color: #fff;
+}
+
+.timepicker > .toggle {
+  text-transform: none;
+}
+
+.timepicker > .toggle > .time {
+  min-width: 100px;
+}
+
+.timepicker > .time {
+  border: 0;
+  left: 0;
+  top: 0;
 }
 
 .popover > .content {
@@ -505,6 +553,7 @@ table {
 
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
+.timepicker.open > .time,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
 .popover.open > .content {
@@ -513,6 +562,7 @@ table {
 
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
+.timepicker.open > .time,
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;

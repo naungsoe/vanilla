@@ -1,10 +1,27 @@
+/***************************************************************************
+Copyright 2015 Yan Naung Soe, e-Learning Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+***************************************************************************/
+
 (function() {
   'user strict';
   
   window.UI = window.UI || {};
   window.UI.DatePicker = function(selector) {
-    var date = new Date(),
+    var selected = new Date(),
       current = new Date(),
+      today = new Date(),
       format = 'dd/MM/yyyy',
       resource = {},
       toggleHandler = function() {},
@@ -22,8 +39,9 @@
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.format = data.format || 'dd/MM/yyyy';
-      context.date = data.date || new Date();
-      context.current = new Date(context.date.valueOf());
+      context.selected = data.selected || new Date();
+      context.current = new Date(context.selected.valueOf());
+      context.today = data.today || new Date();
     }
     
     function bindDatePicker(context) {
@@ -45,8 +63,8 @@
     
     function bindToggle(context) {
       return function(event) {
-        if (context.current.valueOf() !== context.date.valueOf()) {
-          context.current = new Date(context.date.valueOf());
+        if (context.current.valueOf() !== context.selected.valueOf()) {
+          context.current = new Date(context.selected.valueOf());
         }
         
         var calendar = helpers.query('.calendar', context.container);
@@ -61,14 +79,14 @@
     function getCalendarHTML(context) {
       var months = context.resource.months,
         days = context.resource.days,
-        date = context.date,
+        selected = context.selected,
         current = context.current,
-        today = new Date();
+        today = context.today;
       
       var html = '<div class="header">'
-        + '<div class="year">' + date.getFullYear() + '</div>'
-        + '<div class="date">' + days[date.getDay()].name + ', '
-        + months[date.getMonth()].name + ' ' + date.getDate() + '</div>'
+        + '<div class="year">' + selected.getFullYear() + '</div>'
+        + '<div class="date">' + days[selected.getDay()].name + ', '
+        + months[selected.getMonth()].name + ' ' + selected.getDate() + '</div>'
         + '</div>';
       
       html = html + '<div class="body"><nav class="tool-bar">'
@@ -95,7 +113,7 @@
       var months = context.resource.months,
         days = context.resource.days,
         dates = context.resource.dates,
-        date = context.date,
+        selected = context.selected,
         current = context.current,
         today = new Date();
       
@@ -128,7 +146,7 @@
         }
         
         if (start.getMonth() === current.getMonth()) {
-          var cssClass = (start.valueOf() === context.date.valueOf())
+          var cssClass = (start.valueOf() === context.selected.valueOf())
             ? 'selected' : areDatesSame(today, start)
               ? 'selectable today' : 'selectable';
           html = html + '<td data-value="' + start.getDate() + '" '
@@ -172,6 +190,12 @@
       
       monthHandler = bindMonth(context);
       month.addEventListener('click', monthHandler, false);
+
+      var year = helpers.query('.tool-bar > .year', context.container);
+      year.removeEventListener('click', yearHandler, false);
+      
+      yearHandler = bindYear(context);
+      year.addEventListener('click', yearHandler, false);
       
       bindDates(context);
     }
@@ -204,13 +228,25 @@
     
     function bindPrevious(context) {
       return function(event) {
-        context.current.setMonth(context.current.getMonth() - 1);
-        setTimeout(function() {
-          var dates = helpers.query('.dates', context.container);
-          dates.innerHTML = getDatesHTML(context);
-          updateMonthYear(context);
-          bindDates(context);
-        }, 100);
+        var dates = helpers.query('.body > .dates', context.container),
+          years = helpers.query('.body > .years', context.container);
+        
+        if (!years.classList.contains('hide')) {
+          context.current.setYear(context.current.getFullYear() - 15);
+          setTimeout(function() {
+            years.innerHTML = getYearsHTML(context);
+            bindYears(context);
+          }, 100);
+        }
+        else if (!dates.classList.contains('hide')) {
+          context.current.setMonth(context.current.getMonth() - 1);
+          setTimeout(function() {
+            var dates = helpers.query('.dates', context.container);
+            dates.innerHTML = getDatesHTML(context);
+            updateMonthYear(context);
+            bindDates(context);
+          }, 100);
+        }
       }
     }
     
@@ -225,23 +261,40 @@
     
     function bindNext(context) {
       return function(event) {
-        context.current.setMonth(context.current.getMonth() + 1);
-        setTimeout(function() {
-          var dates = helpers.query('.dates', context.container);
-          dates.innerHTML = getDatesHTML(context);
-          updateMonthYear(context);
-          bindDates(context);
-        }, 100);
+        var dates = helpers.query('.body > .dates', context.container),
+          years = helpers.query('.body > .years', context.container);
+        
+        if (!years.classList.contains('hide')) {
+          context.current.setYear(context.current.getFullYear() + 15);
+          setTimeout(function() {
+            years.innerHTML = getYearsHTML(context);
+            bindYears(context);
+          }, 100);
+        }
+        else if (!dates.classList.contains('hide')) {
+          context.current.setMonth(context.current.getMonth() + 1);
+          setTimeout(function() {
+            dates.innerHTML = getDatesHTML(context);
+            updateMonthYear(context);
+            bindDates(context);
+          }, 100);
+        }
       }
     }
     
     function bindMonth(context) {
       return function(event) {
-        var toolbar = helpers.query('.body > .tool-bar', context.container),
+        var previous = helpers.query('.tool-bar > .previous', context.container),
+          next = helpers.query('.tool-bar > .next', context.container),
+          month = helpers.query('.tool-bar > .month', context.container),
+          year = helpers.query('.tool-bar > .year', context.container),
           dates = helpers.query('.body > .dates', context.container),
           months = helpers.query('.body > .months', context.container);
         
-        toolbar.classList.toggle('hide');
+        previous.setAttribute('disabled', '');
+        next.setAttribute('disabled', '');
+        month.classList.toggle('hide');
+        year.classList.toggle('hide');
         dates.classList.toggle('hide');
         
         months.innerHTML = getMonthsHTML(context);
@@ -286,7 +339,107 @@
     
     function bindMonthCell(context) {
       return function(event) {
+        var month = event.currentTarget.dataset.value;
+        context.current.setMonth(month);
         
+        var previous = helpers.query('.tool-bar > .previous', context.container),
+          next = helpers.query('.tool-bar > .next', context.container),
+          month = helpers.query('.tool-bar > .month', context.container),
+          year = helpers.query('.tool-bar > .year', context.container),
+          dates = helpers.query('.body > .dates', context.container),
+          months = helpers.query('.body > .months', context.container);
+
+        previous.removeAttribute('disabled');
+        next.removeAttribute('disabled');
+        month.classList.toggle('hide');
+        year.classList.toggle('hide');
+        months.classList.toggle('hide');
+        
+        dates.innerHTML = getDatesHTML(context);
+        dates.classList.toggle('hide');
+        updateMonthYear(context);
+        bindDates(context);
+      };
+    }
+    
+    function bindYear(context) {
+      return function(event) {
+        var month = helpers.query('.tool-bar > .month', context.container),
+          year = helpers.query('.tool-bar > .year', context.container),
+          dates = helpers.query('.body > .dates', context.container),
+          years = helpers.query('.body > .years', context.container);
+        
+        month.classList.toggle('hide');
+        year.classList.toggle('hide');
+        dates.classList.toggle('hide');
+        
+        years.innerHTML = getYearsHTML(context);
+        years.classList.toggle('hide');
+        bindYears(context);
+      }
+    }
+    
+    function getYearsHTML(context) {
+      var start = new Date(context.current.valueOf()),
+        end = new Date(context.current.valueOf());;
+      
+      while (start.getFullYear() > (context.current.getFullYear() - 7)) {
+        start.setYear(start.getFullYear() - 1);
+      }
+      
+      while (end.getFullYear() <= (context.current.getFullYear() + 7)) {
+        end.setYear(end.getFullYear() + 1);
+      }
+      
+      var html = '<table><tbody>';
+      for (var i = 0; start.getFullYear() < end.getFullYear(); i++) {
+        if ((i == 0) || (i == 3) || (i == 6)  || (i == 9)) {
+          html = html + '<tr>';
+        }
+        
+        html = html + '<td data-value="' + start.getFullYear() + '" '
+          + 'class="selectable">' + start.getFullYear() + '</td>';
+        
+        if ((i == 2) || (i == 5) || (i == 8)  || (i == 11)) {
+          html = html + '</tr>';
+        }
+        start.setYear(start.getFullYear() + 1);
+      }
+      html = html + '</tbody></table>';
+      return html;
+    }
+    
+    function bindYears(context) {
+      var years = helpers.queryAll(
+        '.years > table > tbody > tr > .selectable', context.container);
+      helpers.toArray(years).forEach(function(year) {
+        year.removeEventListener('click', yearCellHandler, false);
+      });
+      
+      yearCellHandler = bindYearCell(context);
+      helpers.toArray(years).forEach(function(year) {
+        year.addEventListener('click', yearCellHandler, false);
+      });
+    }
+    
+    function bindYearCell(context) {
+      return function(event) {
+        var year = event.currentTarget.dataset.value;
+        context.current.setYear(year);
+        
+        var month = helpers.query('.tool-bar > .month', context.container),
+          year = helpers.query('.tool-bar > .year', context.container),
+          dates = helpers.query('.body > .dates', context.container),
+          years = helpers.query('.body > .years', context.container);
+
+        month.classList.toggle('hide');
+        year.classList.toggle('hide');
+        years.classList.toggle('hide');
+        
+        dates.innerHTML = getDatesHTML(context);
+        dates.classList.toggle('hide');
+        updateMonthYear(context);
+        bindDates(context);
       };
     }
     
@@ -294,14 +447,77 @@
       return function(event) {
         var date = event.currentTarget.dataset.value;
         context.current.setDate(date);
-        context.date = new Date(context.current.valueOf());
+        context.selected = new Date(context.current.valueOf());
         context.container.classList.toggle('open');
       };
     }
     
     function bindDocKeydown(container) {
       return function(event) {
+		var target = event.target;
+        event = event || window.event;
         
+		while (!target.classList.contains('datepicker')) {
+		  if (target.nodeName === "BODY") {
+		    break;
+		  }
+		  target = target.parentNode;
+		}
+		
+        if ((target === container)
+		    && (container.classList.contains('open'))) {
+          switch (event.keyCode) {
+            case 13:
+              var item = helpers.query('.menu > .highlight', container);
+              if (!helpers.isEmpty(item)) {
+                container.classList.toggle('open');
+                
+                var event = new CustomEvent('click', {});
+                item.dispatchEvent(event);
+              }
+              break;
+            
+            case 38:
+              var item = helpers.query('.menu > .highlight', container);
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .item:last-child', container);
+              }
+              else {
+                item.classList.remove('highlight');
+                item = item.previousElementSibling
+                  || helpers.query('.menu > .item:last-child', container);
+              }
+              item.classList.add('highlight');
+              
+              var menu = helpers.query('.menu', container);
+              menu.scrollTop = item.offsetTop - item.offsetHeight;
+              break;
+            
+            case 40:
+              var item = helpers.query('.menu > .highlight', container);
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.menu > .item:first-child', container);
+              }
+              else {
+                item.classList.remove('highlight');
+                item = item.nextElementSibling
+                  || helpers.query('.menu > .item:first-child', container);
+              }
+              item.classList.add('highlight');
+              
+              var menu = helpers.query('.menu', container);
+              menu.scrollTop = item.offsetTop - item.offsetHeight;
+              break;
+          }
+        }
       };
     }
     
@@ -338,12 +554,12 @@
         return helpers.query(selector);
       },
 	  
-	  get date() {
-        return date;
+	  get selected() {
+        return selected;
       },
       
-      set date(value) {
-        date = value;
+      set selected(value) {
+        selected = value;
         updateDate(this);
       },
 
@@ -353,6 +569,14 @@
       
 	  set current(value) {
         current = value;
+      },
+      
+	  get today() {
+        return today;
+      },
+      
+	  set today(value) {
+        today = value;
       },
       
 	  get format() {
@@ -374,9 +598,9 @@
       
       get dateString() {
         var date = this.format;
-        date = date.replace('dd', this.date.getDate());
-        date = date.replace('MM', this.date.getMonth());
-        date = date.replace('yyyy', this.date.getFullYear());
+        date = date.replace('dd', this.selected.getDate());
+        date = date.replace('MM', this.selected.getMonth());
+        date = date.replace('yyyy', this.selected.getFullYear());
         return date;
       },
       
