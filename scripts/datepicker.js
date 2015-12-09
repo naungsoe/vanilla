@@ -28,6 +28,8 @@ limitations under the License.
       previousHandler = function() {},
       nextHandler = function() {},
       dateHandler = function() {},
+      dateMouseEnterHandler = function() {},
+      dateMouseLeaveHandler = function() {},
       monthHandler = function() {},
       monthCellHandler = function() {},
       yearHandler = function() {},
@@ -205,11 +207,23 @@ limitations under the License.
         '.dates > table > tbody > tr > .selectable', context.container);
       helpers.toArray(dates).forEach(function(date) {
         date.removeEventListener('click', dateHandler, false);
+        date.removeEventListener('mouseenter', dateMouseEnterHandler, false);
+        date.removeEventListener('mouseleave', dateMouseLeaveHandler, false);
       });
       
       dateHandler = bindDate(context);
       helpers.toArray(dates).forEach(function(date) {
         date.addEventListener('click', dateHandler, false);
+      });
+      
+      dateMouseEnterHandler = bindDateMouseEnter(context.container);
+      helpers.toArray(dates).forEach(function(date) {
+        date.addEventListener('mouseenter', dateMouseEnterHandler, false);
+      });
+      
+      dateMouseLeaveHandler = bindDateMouseLeave(context.container);
+      helpers.toArray(dates).forEach(function(date) {
+        date.addEventListener('mouseleave', dateMouseLeaveHandler, false);
       });
     }
     
@@ -452,6 +466,28 @@ limitations under the License.
       };
     }
     
+    function bindDateMouseEnter(container) {
+      return function(event) {
+        var dates = helpers.queryAll(
+          '.dates > table > tbody > tr > .selectable', container);
+        helpers.toArray(dates).forEach(function(date) {
+          date.classList.remove('highlight');
+        });
+        
+        event.currentTarget.classList.add('highlight');
+      };
+    }
+    
+    function bindDateMouseLeave(container) {
+      return function(event) {
+        var dates = helpers.queryAll(
+          '.dates > table > tbody > tr > .selectable', container);
+        helpers.toArray(dates).forEach(function(date) {
+          date.classList.remove('highlight');
+        });
+      };
+    }
+    
     function bindDocKeydown(container) {
       return function(event) {
 		var target = event.target;
@@ -466,59 +502,82 @@ limitations under the License.
 		
         if ((target === container)
 		    && (container.classList.contains('open'))) {
-          switch (event.keyCode) {
-            case 13:
-              var item = helpers.query('.menu > .highlight', container);
-              if (!helpers.isEmpty(item)) {
-                container.classList.toggle('open');
-                
-                var event = new CustomEvent('click', {});
-                item.dispatchEvent(event);
-              }
-              break;
-            
-            case 38:
-              var item = helpers.query('.menu > .highlight', container);
-              if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .selected', container);
-              }
-              
-              if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .item:last-child', container);
-              }
-              else {
-                item.classList.remove('highlight');
-                item = item.previousElementSibling
-                  || helpers.query('.menu > .item:last-child', container);
-              }
-              item.classList.add('highlight');
-              
-              var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop - item.offsetHeight;
-              break;
-            
-            case 40:
-              var item = helpers.query('.menu > .highlight', container);
-              if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .selected', container);
-              }
-              
-              if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .item:first-child', container);
-              }
-              else {
-                item.classList.remove('highlight');
-                item = item.nextElementSibling
-                  || helpers.query('.menu > .item:first-child', container);
-              }
-              item.classList.add('highlight');
-              
-              var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop - item.offsetHeight;
-              break;
+          var dates = helpers.query('.body > .dates', container),
+            months = helpers.query('.body > .months', container),
+            years = helpers.query('.body > .years', container);
+          
+          if (!dates.classList.contains('hide')) {
+            updateDatesKeydown(container, event.keyCode);
           }
         }
       };
+    }
+    
+    function updateDatesKeydown(container, keyCode) {
+      switch (keyCode) {
+        case 13:
+          var date = helpers.query(
+            '.dates > table > tbody > tr > .highlight', container);
+          if (!helpers.isEmpty(date)) {
+            var event = new CustomEvent('click', {});
+            date.dispatchEvent(event);
+          }
+          break;
+        
+        case 38:
+          var date = helpers.query(
+            '.dates > table > tbody > tr > .highlight', container);
+          if (helpers.isEmpty(date)) {
+            date = helpers.query(
+              '.dates > table > tbody > tr > .selected', container);
+          }
+          
+          if (helpers.isEmpty(date)) {
+            date = helpers.query(
+              '.dates > table > tbody > tr:last-child '
+                + '> .selectable:last-child', container);
+          }
+          else {
+            date.classList.remove('highlight');
+            date = date.previousElementSibling
+              || helpers.query(
+                '.dates > table > tbody > tr:last-child '
+                  + '> .selectable:last-child', container);
+          }
+          date.classList.add('highlight');
+          break;
+        
+        case 40:
+          var date = helpers.query(
+            '.dates > table > tbody > tr > .highlight', container);
+          if (helpers.isEmpty(date)) {
+            date = helpers.query(
+              '.dates > table > tbody > tr > .selected', container);
+          }
+          
+          if (helpers.isEmpty(date)) {
+            date = helpers.query(
+              '.dates > table > tbody > tr:first-child '
+                + '> .selectable:first-child', container);
+          }
+          else {
+            date.classList.remove('highlight');            
+            
+            var cells = helpers.queryAll(
+              'td', date.parentNode.nextElementSibling);
+            helpers.toArray(cells).forEach(function(cell, index) {
+              if (index === date.cellIndex) {
+                date = cell.clasList.contains('selectable') ? 'cell' : null;
+              }
+            });
+            
+            date = date || helpers.query(
+              '.dates > table > tbody > tr:first-child '
+                + '> .selectable:first-child', container);
+          }
+          date.classList.add('highlight');
+          break;
+      }
     }
     
     function bindDocClick(datepicker) {

@@ -490,16 +490,10 @@ table {
   border-radius: 50%;
 }
 
-.datepicker > .calendar > .body > .dates > table > tbody > tr > .selectable:hover,
-.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:hover,
-.datepicker > .calendar > .body > .years > table > tbody > tr > .selectable:hover {
-  background-color: #f5f5f5;
-}
-
-.datepicker > .calendar > .body > .dates > table > tbody > tr > .selectable:active,
-.datepicker > .calendar > .body > .months > table > tbody > tr > .selectable:active,
-.datepicker > .calendar > .body > .years > table > tbody > tr > .selectable:active {
-  background-color: #e0e0e0;
+.datepicker > .calendar > .body > .dates > table > tbody > tr > .highlight,
+.datepicker > .calendar > .body > .months > table > tbody > tr > .highlight,
+.datepicker > .calendar > .body > .years > table > tbody > tr > .highlight {
+  background-color: #eee;
 }
 
 .datepicker > .calendar > .body > .dates > table > tbody > tr > .today {
@@ -572,6 +566,16 @@ table {
 
 .datepicker.open > .calendar {
   max-height: 480px;
+}
+
+.dropdown[select] > .toggle:focus,
+.datepicker > .toggle:focus,
+.timepicker > .toggle:focus,
+.dropdown[select] > .toggle:active,
+.datepicker > .toggle:active,
+.timepicker > .toggle:active {
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 7px;
 }
 
 .search-box {
@@ -964,6 +968,7 @@ table {
   text-decoration: none;
 }
 
+.nav > .link:focus,
 .nav > .link:hover {
   background-color: #eee;
 }
@@ -1124,6 +1129,9 @@ table {
   background-color: transparent;
 }
 
+.app-bar  > .left > .nav > .menu:focus,
+.app-bar  > .left > .nav > .back:focus,
+.app-bar  > .left > .nav > .name:focus,
 .app-bar  > .left > .nav > .menu:active,
 .app-bar  > .left > .nav > .back:active,
 .app-bar  > .left > .nav > .name:active {
@@ -1150,6 +1158,7 @@ table {
   background-color: transparent;
 }
 
+.app-bar > .right > .nav > .popover > .toggle:focus,
 .app-bar > .right > .nav > .popover > .toggle:active {
   background-color: #bbcefb;
 }
@@ -1237,8 +1246,9 @@ table {
   padding: 11px 24px;
 }
 
+.app-side-nav > .nav > .link:focus,
 .app-side-nav > .nav > .link:hover {
-  background-color: #eee;
+  background-color: #e0e0e0;
 }
 
 .app-side-nav > .nav > .selected {
