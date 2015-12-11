@@ -30,10 +30,16 @@ limitations under the License.
       dateHandler = function() {},
       dateMouseEnterHandler = function() {},
       dateMouseLeaveHandler = function() {},
+      monthViewHandler = function() {},
       monthHandler = function() {},
-      monthCellHandler = function() {},
+      monthMouseEnterHandler = function() {},
+      monthMouseLeaveHandler = function() {},
+      yearViewHandler = function() {},
       yearHandler = function() {},
-      yearCellHandler = function() {},
+      yearMouseEnterHandler = function() {},
+      yearMouseLeaveHandler = function() {},
+      cancelHandler = function() {},
+      proceedHandler = function() {},
       docKeydownHandler = function() {},
       docClickHandler = function() {},
       changeHandler = function() {};
@@ -88,7 +94,8 @@ limitations under the License.
       var html = '<div class="header">'
         + '<div class="year">' + selected.getFullYear() + '</div>'
         + '<div class="date">' + days[selected.getDay()].name + ', '
-        + months[selected.getMonth()].name + ' ' + selected.getDate() + '</div>'
+        + months[selected.getMonth()].name + ' '
+        + selected.getDate() + '</div>'
         + '</div>';
       
       html = html + '<div class="body"><nav class="tool-bar">'
@@ -101,11 +108,18 @@ limitations under the License.
         + '<button type="button" class="next" flat-icon>'
         + '<i class="fa fa-angle-right"></i></button></nav>';
       
-      html = html + '<div class="dates">'
+      html = html + '<div class="dates" tabindex="0">'
         + getDatesHTML(context) + '</div>';
 
-      html = html + '<div class="months hide"></div>';
-      html = html + '<div class="years hide"></div>';
+      html = html + '<div class="months hide" tabindex="0"></div>';
+      html = html + '<div class="years hide" tabindex="0"></div>';
+      
+      html = html + '<nav class="actions">'
+        + '<button type="button" class="cancel" flat>'
+        + context.resource.cancelActionRequest + '</button>'
+        + '<button type="button" class="proceed" flat primary>'
+        + context.resource.okActionRequest + '</button>'
+        + '</nav>';
       
       html = html + '</div>';
       return html;
@@ -144,12 +158,17 @@ limitations under the License.
       
       while (start <= end) {
         if (start.getDay() === 0) {
+          if (start.valueOf() === end.valueOf()) {
+            break;
+          }
           html = html + '<tr>';
         }
         
         if (start.getMonth() === current.getMonth()) {
           var cssClass = (start.valueOf() === context.selected.valueOf())
-            ? 'selected' : areDatesSame(today, start)
+            ? areDatesSame(start, context.selected) 
+              ? 'selectable selected today' : 'selectable selected'
+            : areDatesSame(today, start) 
               ? 'selectable today' : 'selectable';
           html = html + '<td data-value="' + start.getDate() + '" '
             + 'class="' + cssClass + '">'
@@ -175,6 +194,12 @@ limitations under the License.
     }
     
     function bindCalendar(context) {
+      bindToolbar(context);
+      bindDates(context);
+      bindActions(context);
+    }
+    
+    function bindToolbar(context) {
       var previous = helpers.query('.tool-bar > .previous', context.container);
       previous.removeEventListener('click', previousHandler, false);
       
@@ -188,56 +213,16 @@ limitations under the License.
       next.addEventListener('click', nextHandler, false);
       
       var month = helpers.query('.tool-bar > .month', context.container);
-      month.removeEventListener('click', monthHandler, false);
+      month.removeEventListener('click', monthViewHandler, false);
       
-      monthHandler = bindMonth(context);
-      month.addEventListener('click', monthHandler, false);
+      monthViewHandler = bindMonthView(context);
+      month.addEventListener('click', monthViewHandler, false);
 
       var year = helpers.query('.tool-bar > .year', context.container);
-      year.removeEventListener('click', yearHandler, false);
+      year.removeEventListener('click', yearViewHandler, false);
       
-      yearHandler = bindYear(context);
-      year.addEventListener('click', yearHandler, false);
-      
-      bindDates(context);
-    }
-    
-    function bindDates(context) {
-      var dates = helpers.queryAll(
-        '.dates > table > tbody > tr > .selectable', context.container);
-      helpers.toArray(dates).forEach(function(date) {
-        date.removeEventListener('click', dateHandler, false);
-        date.removeEventListener('mouseenter', dateMouseEnterHandler, false);
-        date.removeEventListener('mouseleave', dateMouseLeaveHandler, false);
-      });
-      
-      dateHandler = bindDate(context);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('click', dateHandler, false);
-      });
-      
-      dateMouseEnterHandler = bindDateMouseEnter(context.container);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('mouseenter', dateMouseEnterHandler, false);
-      });
-      
-      dateMouseLeaveHandler = bindDateMouseLeave(context.container);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('mouseleave', dateMouseLeaveHandler, false);
-      });
-    }
-    
-    function triggerReflow(context) {
-      var reflow = helpers.query('.reflow', context.container);
-      if (!helpers.isEmpty(reflow)) {
-        return;
-      }
-      
-      setTimeout(function initiateReflow() {
-        reflow = document.createElement('div');
-        reflow.classList.add('reflow');
-        context.container.appendChild(reflow);
-      }, 100);
+      yearViewHandler = bindYearView(context);
+      year.addEventListener('click', yearViewHandler, false);
     }
     
     function bindPrevious(context) {
@@ -296,17 +281,21 @@ limitations under the License.
       }
     }
     
-    function bindMonth(context) {
+    function bindMonthView(context) {
       return function(event) {
         var previous = helpers.query('.tool-bar > .previous', context.container),
           next = helpers.query('.tool-bar > .next', context.container),
           month = helpers.query('.tool-bar > .month', context.container),
           year = helpers.query('.tool-bar > .year', context.container),
           dates = helpers.query('.body > .dates', context.container),
-          months = helpers.query('.body > .months', context.container);
+          months = helpers.query('.body > .months', context.container),
+          cancel = helpers.query('.actions > .cancel', context.container),
+          proceed = helpers.query('.actions > .proceed', context.container);
         
         previous.setAttribute('disabled', '');
         next.setAttribute('disabled', '');
+        cancel.setAttribute('disabled', '');
+        proceed.setAttribute('disabled', '');
         month.classList.toggle('hide');
         year.classList.toggle('hide');
         dates.classList.toggle('hide');
@@ -339,20 +328,37 @@ limitations under the License.
     }
     
     function bindMonths(context) {
-      var months = helpers.queryAll(
-        '.months > table > tbody > tr > .selectable', context.container);
+      var table = helpers.query('.months', context.container);
+        months = helpers.queryAll('.selectable', table);
+      
       helpers.toArray(months).forEach(function(month) {
-        month.removeEventListener('click', monthCellHandler, false);
+        month.removeEventListener('click', monthHandler, false);
+        month.removeEventListener('mouseenter', monthMouseEnterHandler, false);
+        month.removeEventListener('mouseleave', monthMouseLeaveHandler, false);
       });
       
-      monthCellHandler = bindMonthCell(context);
+      monthHandler = bindMonth(context);
       helpers.toArray(months).forEach(function(month) {
-        month.addEventListener('click', monthCellHandler, false);
+        month.addEventListener('click', monthHandler, false);
       });
+      
+      monthMouseEnterHandler = bindMonthMouseEnter(context.container);
+      helpers.toArray(months).forEach(function(month) {
+        month.addEventListener('mouseenter', monthMouseEnterHandler, false);
+      });
+      
+      monthMouseLeaveHandler = bindMonthMouseLeave(context.container);
+      helpers.toArray(months).forEach(function(month) {
+        month.addEventListener('mouseleave', monthMouseLeaveHandler, false);
+      });
+      
+      table.focus();
     }
     
-    function bindMonthCell(context) {
+    function bindMonth(context) {
       return function(event) {
+        event = event || window.event;
+        
         var month = event.currentTarget.dataset.value;
         context.current.setMonth(month);
         
@@ -361,10 +367,14 @@ limitations under the License.
           month = helpers.query('.tool-bar > .month', context.container),
           year = helpers.query('.tool-bar > .year', context.container),
           dates = helpers.query('.body > .dates', context.container),
-          months = helpers.query('.body > .months', context.container);
-
+          months = helpers.query('.body > .months', context.container),
+          cancel = helpers.query('.actions > .cancel', context.container),
+          proceed = helpers.query('.actions > .proceed', context.container);
+        
         previous.removeAttribute('disabled');
         next.removeAttribute('disabled');
+        cancel.removeAttribute('disabled');
+        proceed.removeAttribute('disabled');
         month.classList.toggle('hide');
         year.classList.toggle('hide');
         months.classList.toggle('hide');
@@ -376,13 +386,46 @@ limitations under the License.
       };
     }
     
-    function bindYear(context) {
+    function bindMonthMouseEnter(container) {
+      return function(event) {
+        event = event || window.event;
+        
+        var table = helpers.query('.months', container),
+          months = helpers.queryAll('.selectable', table);
+        
+        helpers.toArray(months).forEach(function(month) {
+          month.classList.remove('highlight');
+        });
+        
+        event.currentTarget.classList.add('highlight');
+        table.focus();
+      };
+    }
+    
+    function bindMonthMouseLeave(container) {
+      return function(event) {
+        var table = helpers.query('.months', container),
+          months = helpers.queryAll('.selectable', table);
+        
+        helpers.toArray(months).forEach(function(month) {
+          month.classList.remove('highlight');
+        });
+        
+        table.focus();
+      };
+    }
+    
+    function bindYearView(context) {
       return function(event) {
         var month = helpers.query('.tool-bar > .month', context.container),
           year = helpers.query('.tool-bar > .year', context.container),
           dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container);
+          years = helpers.query('.body > .years', context.container),
+          cancel = helpers.query('.actions > .cancel', context.container),
+          proceed = helpers.query('.actions > .proceed', context.container);
         
+        cancel.setAttribute('disabled', '');
+        proceed.setAttribute('disabled', '');
         month.classList.toggle('hide');
         year.classList.toggle('hide');
         dates.classList.toggle('hide');
@@ -424,19 +467,34 @@ limitations under the License.
     }
     
     function bindYears(context) {
-      var years = helpers.queryAll(
-        '.years > table > tbody > tr > .selectable', context.container);
+      var table = helpers.query('.years', context.container),
+        years = helpers.queryAll('.selectable', context.container);
+      
       helpers.toArray(years).forEach(function(year) {
-        year.removeEventListener('click', yearCellHandler, false);
+        year.removeEventListener('click', yearHandler, false);
+        year.removeEventListener('mouseenter', yearMouseEnterHandler, false);
+        year.removeEventListener('mouseleave', yearMouseLeaveHandler, false);
       });
       
-      yearCellHandler = bindYearCell(context);
+      yearHandler = bindYear(context);
       helpers.toArray(years).forEach(function(year) {
-        year.addEventListener('click', yearCellHandler, false);
+        year.addEventListener('click', yearHandler, false);
       });
+      
+      yearMouseEnterHandler = bindYearMouseEnter(context.container);
+      helpers.toArray(years).forEach(function(year) {
+        year.addEventListener('mouseenter', yearMouseEnterHandler, false);
+      });
+      
+      yearMouseLeaveHandler = bindYearMouseLeave(context.container);
+      helpers.toArray(years).forEach(function(year) {
+        year.addEventListener('mouseleave', yearMouseLeaveHandler, false);
+      });
+      
+      table.focus();
     }
     
-    function bindYearCell(context) {
+    function bindYear(context) {
       return function(event) {
         var year = event.currentTarget.dataset.value;
         context.current.setYear(year);
@@ -444,8 +502,12 @@ limitations under the License.
         var month = helpers.query('.tool-bar > .month', context.container),
           year = helpers.query('.tool-bar > .year', context.container),
           dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container);
-
+          years = helpers.query('.body > .years', context.container),
+          cancel = helpers.query('.actions > .cancel', context.container),
+          proceed = helpers.query('.actions > .proceed', context.container);
+        
+        cancel.removeAttribute('disabled');
+        proceed.removeAttribute('disabled');
         month.classList.toggle('hide');
         year.classList.toggle('hide');
         years.classList.toggle('hide');
@@ -457,42 +519,153 @@ limitations under the License.
       };
     }
     
+    function bindYearMouseEnter(container) {
+      return function(event) {
+        event = event || window.event;
+        
+        var table = helpers.query('.years', container),
+          years = helpers.queryAll('.selectable', table);
+        
+        helpers.toArray(years).forEach(function(year) {
+          year.classList.remove('highlight');
+        });
+        
+        event.currentTarget.classList.add('highlight');
+        table.focus();
+      };
+    }
+    
+    function bindYearMouseLeave(container) {
+      return function(event) {
+        var table = helpers.query('.years', container),
+          years = helpers.queryAll('.selectable', table);
+        
+        helpers.toArray(years).forEach(function(year) {
+          year.classList.remove('highlight');
+        });
+        
+        table.focus();
+      };
+    }
+    
+    function bindDates(context) {
+      var table = helpers.query('.dates', context.container);
+        dates = helpers.queryAll('.selectable', table);
+      
+      helpers.toArray(dates).forEach(function(date) {
+        date.removeEventListener('click', dateHandler, false);
+        date.removeEventListener('mouseenter', dateMouseEnterHandler, false);
+        date.removeEventListener('mouseleave', dateMouseLeaveHandler, false);
+      });
+      
+      dateHandler = bindDate(context);
+      helpers.toArray(dates).forEach(function(date) {
+        date.addEventListener('click', dateHandler, false);
+      });
+      
+      dateMouseEnterHandler = bindDateMouseEnter(context.container);
+      helpers.toArray(dates).forEach(function(date) {
+        date.addEventListener('mouseenter', dateMouseEnterHandler, false);
+      });
+      
+      dateMouseLeaveHandler = bindDateMouseLeave(context.container);
+      helpers.toArray(dates).forEach(function(date) {
+        date.addEventListener('mouseleave', dateMouseLeaveHandler, false);
+      });
+      
+      table.focus();
+    }
+    
     function bindDate(context) {
       return function(event) {
+        event = event || window.event;
+        
         var date = event.currentTarget.dataset.value;
         context.current.setDate(date);
-        context.selected = new Date(context.current.valueOf());
-        context.container.classList.toggle('open');
+        
+        var selected = helpers.query(
+          '.dates > table > tbody > tr > .selected', context.container);
+        if (!helpers.isEmpty(selected)) {
+          selected.classList.remove('selected');
+        }
+        event.currentTarget.classList.add('selected');
       };
     }
     
     function bindDateMouseEnter(container) {
       return function(event) {
-        var dates = helpers.queryAll(
-          '.dates > table > tbody > tr > .selectable', container);
+        event = event || window.event;
+        
+        var table = helpers.query('.dates', container),
+          dates = helpers.queryAll('.selectable', table);
+        
         helpers.toArray(dates).forEach(function(date) {
           date.classList.remove('highlight');
         });
         
         event.currentTarget.classList.add('highlight');
+        table.focus();
       };
     }
     
     function bindDateMouseLeave(container) {
       return function(event) {
-        var dates = helpers.queryAll(
-          '.dates > table > tbody > tr > .selectable', container);
+        var table = helpers.query('.dates', container),
+          dates = helpers.queryAll('.selectable', table);
+        
         helpers.toArray(dates).forEach(function(date) {
           date.classList.remove('highlight');
         });
+        
+        table.focus();
       };
+    }
+    
+    function bindActions(context) {
+      var cancel = helpers.query('.actions > .cancel', context.container);
+      cancel.removeEventListener('click', cancelHandler, false);
+      
+      cancelHandler = bindCancel(context);
+      cancel.addEventListener('click', cancelHandler, false);
+      
+      var proceed = helpers.query('.actions > .proceed', context.container);
+      proceed.removeEventListener('click', proceedHandler, false);
+      
+      proceedHandler = bindProceed(context);
+      proceed.addEventListener('click', proceedHandler, false);
+    }
+    
+    function bindCancel(context) {
+      return function(event) {
+        context.container.classList.toggle('open');
+      };
+    }
+    
+    function bindProceed(context) {
+      return function(event) {
+        context.selected = new Date(context.current.valueOf());
+        context.container.classList.toggle('open');
+      }
+    }
+    
+    function triggerReflow(context) {
+      var reflow = helpers.query('.reflow', context.container);
+      if (!helpers.isEmpty(reflow)) {
+        return;
+      }
+      
+      setTimeout(function initiateReflow() {
+        reflow = document.createElement('div');
+        reflow.classList.add('reflow');
+        context.container.appendChild(reflow);
+      }, 100);
     }
     
     function bindDocKeydown(container) {
       return function(event) {
-		var target = event.target;
         event = event || window.event;
         
+		var target = event.target;
 		while (!target.classList.contains('datepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
@@ -509,79 +682,358 @@ limitations under the License.
           if (!dates.classList.contains('hide')) {
             updateDatesKeydown(container, event.keyCode);
           }
+          else if (!months.classList.contains('hide')) {
+            updateMonthKeydown(container, event.keyCode);
+          }
+          else if (!years.classList.contains('hide')) {
+            updateYearKeydown(container, event.keyCode);
+          }
         }
       };
     }
     
     function updateDatesKeydown(container, keyCode) {
+      var table = helpers.query('.dates', container);
       switch (keyCode) {
         case 13:
-          var date = helpers.query(
-            '.dates > table > tbody > tr > .highlight', container);
-          if (!helpers.isEmpty(date)) {
+          var cell = helpers.query('.highlight', table);
+          if (!helpers.isEmpty(cell)) {
             var event = new CustomEvent('click', {});
-            date.dispatchEvent(event);
+            cell.dispatchEvent(event);
           }
+          break;
+        
+        case 37:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('.selected', table);
+          }
+          
+          if (helpers.isEmpty(cell)) {
+            for (var i = 31; ; i--) {
+              cell = helpers.query('td[data-value="' + i + '"]', table);
+              if (!helpers.isEmpty(cell)) {
+                break;
+              }
+            }
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            if (cell.dataset.value === '1') {
+              for (var i = 31; ; i--) {
+                cell = helpers.query('td[data-value="' + i + '"]', table);
+                if (!helpers.isEmpty(cell)) {
+                  break;
+                }
+              }
+            }
+            else {
+              var date = +cell.dataset.value - 1;
+              cell = helpers.query('td[data-value="' + date + '"]', table);
+            }
+          }
+          cell.classList.add('highlight');
           break;
         
         case 38:
-          var date = helpers.query(
-            '.dates > table > tbody > tr > .highlight', container);
-          if (helpers.isEmpty(date)) {
-            date = helpers.query(
-              '.dates > table > tbody > tr > .selected', container);
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('.selected', table);
           }
           
-          if (helpers.isEmpty(date)) {
-            date = helpers.query(
-              '.dates > table > tbody > tr:last-child '
-                + '> .selectable:last-child', container);
+          if (helpers.isEmpty(cell)) {
+            for (var i = 31; ; i--) {
+              cell = helpers.query('td[data-value="' + i + '"]', table);
+              if (!helpers.isEmpty(cell)) {
+                break;
+              }
+            }
           }
           else {
-            date.classList.remove('highlight');
-            date = date.previousElementSibling
-              || helpers.query(
-                '.dates > table > tbody > tr:last-child '
-                  + '> .selectable:last-child', container);
+            cell.classList.remove('highlight');            
+            
+            var date = +cell.dataset.value;
+            if (date > 7) {
+              date = date - 7;
+              cell = helpers.query('td[data-value="' + date + '"]', table);
+            }
+            else {
+              while (true) {
+                date = date + 7;
+                cell = helpers.query('td[data-value="' + date + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  date = date - 7;
+                  cell = helpers.query('td[data-value="' + date + '"]', table);
+                  break;
+                }
+              }
+            }
           }
-          date.classList.add('highlight');
+          cell.classList.add('highlight');
+          break;
+        
+        case 39:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('.selected', table);
+          }
+          
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="1"]', table);
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var date = +cell.dataset.value + 1;
+            cell = helpers.query('td[data-value="' + date + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              cell = helpers.query('td[data-value="1"]', table);
+            }
+          }
+          cell.classList.add('highlight');
           break;
         
         case 40:
-          var date = helpers.query(
-            '.dates > table > tbody > tr > .highlight', container);
-          if (helpers.isEmpty(date)) {
-            date = helpers.query(
-              '.dates > table > tbody > tr > .selected', container);
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('.selected', table);
           }
           
-          if (helpers.isEmpty(date)) {
-            date = helpers.query(
-              '.dates > table > tbody > tr:first-child '
-                + '> .selectable:first-child', container);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="1"]', table);
           }
           else {
-            date.classList.remove('highlight');            
+            cell.classList.remove('highlight');            
             
-            var cells = helpers.queryAll(
-              'td', date.parentNode.nextElementSibling);
-            helpers.toArray(cells).forEach(function(cell, index) {
-              if (index === date.cellIndex) {
-                date = cell.clasList.contains('selectable') ? 'cell' : null;
+            var date = +cell.dataset.value + 7;
+            cell = helpers.query('td[data-value="' + date + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              while (true) {
+                date = date - 7;
+                cell = helpers.query('td[data-value="' + date + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  date = date + 7;
+                  cell = helpers.query('td[data-value="' + date + '"]', table);
+                  break;
+                }
               }
-            });
-            
-            date = date || helpers.query(
-              '.dates > table > tbody > tr:first-child '
-                + '> .selectable:first-child', container);
+            }
           }
-          date.classList.add('highlight');
+          cell.classList.add('highlight');
+          break;
+      }
+    }
+    
+    function updateMonthKeydown(container, keyCode) {
+      var table = helpers.query('.months', container);
+      switch (keyCode) {
+        case 13:
+          var cell = helpers.query('.highlight', table);
+          if (!helpers.isEmpty(cell)) {
+            var event = new CustomEvent('click', {});
+            cell.dispatchEvent(event);
+          }
+          break;
+        
+        case 37:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="11"]', table);
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            if (cell.dataset.value === '0') {
+              cell = helpers.query('td[data-value="11"]', table);
+            }
+            else {
+              var month = +cell.dataset.value - 1;
+              cell = helpers.query('td[data-value="' + month + '"]', table);
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 38:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="11"]', table);
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var month = +cell.dataset.value;
+            if (month >= 3) {
+              month = month - 3;
+              cell = helpers.query('td[data-value="' + month + '"]', table);
+            }
+            else {
+              while (true) {
+                month = month + 3;
+                cell = helpers.query('td[data-value="' + month + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  month = month - 3;
+                  cell = helpers.query('td[data-value="' + month + '"]', table);
+                  break;
+                }
+              }
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 39:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="0"]', table);
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var month = +cell.dataset.value + 1;
+            cell = helpers.query('td[data-value="' + month + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              cell = helpers.query('td[data-value="0"]', table);
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 40:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            cell = helpers.query('td[data-value="0"]', table);
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var month = +cell.dataset.value + 3;
+            cell = helpers.query('td[data-value="' + month + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              while (true) {
+                month = month - 3;
+                cell = helpers.query('td[data-value="' + month + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  month = month + 3;
+                  cell = helpers.query('td[data-value="' + month + '"]', table);
+                  break;
+                }
+              }
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+      }
+    }
+    
+    function updateYearKeydown(container, keyCode) {
+      var table = helpers.query('.years', container);
+      switch (keyCode) {
+        case 13:
+          var cell = helpers.query('.highlight', table);
+          if (!helpers.isEmpty(cell)) {
+            var event = new CustomEvent('click', {});
+            cell.dispatchEvent(event);
+          }
+          break;
+        
+        case 37:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            var cells = helpers.queryAll('tbody > tr:last-child > td', table);
+            cell = cells[cells.length - 1];
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var year = +cell.dataset.value - 1;
+            cell = helpers.query('td[data-value="' + year + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              cells = helpers.queryAll('tbody > tr:last-child > td', table);
+              cell = cells[cells.length - 1];
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 38:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            var cells = helpers.queryAll('tbody > tr:last-child > td', table);
+            cell = cells[cells.length - 1];
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var year = +cell.dataset.value - 3;
+            cell = helpers.query('td[data-value="' + year + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              while (true) {
+                year = year + 3;
+                cell = helpers.query('td[data-value="' + year + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  year = year - 3;
+                  cell = helpers.query('td[data-value="' + year + '"]', table);
+                  break;
+                }
+              }
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 39:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            var cells = helpers.queryAll('tbody > tr:first-child > td', table);
+            cell = cells[0];
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var year = +cell.dataset.value + 1;
+            cell = helpers.query('td[data-value="' + year + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              cells = helpers.queryAll('tbody > tr:first-child > td', table);
+              cell = cells[0];
+            }
+          }
+          cell.classList.add('highlight');
+          break;
+        
+        case 40:
+          var cell = helpers.query('.highlight', table);
+          if (helpers.isEmpty(cell)) {
+            var cells = helpers.queryAll('tbody > tr:first-child > td', table);
+            cell = cells[0];
+          }
+          else {
+            cell.classList.remove('highlight');            
+            
+            var year = +cell.dataset.value + 3;
+            cell = helpers.query('td[data-value="' + year + '"]', table);
+            if (helpers.isEmpty(cell)) {
+              while (true) {
+                year = year - 3;
+                cell = helpers.query('td[data-value="' + year + '"]', table);
+                if (helpers.isEmpty(cell)) {
+                  year = year + 3;
+                  cell = helpers.query('td[data-value="' + year + '"]', table);
+                  break;
+                }
+              }
+            }
+          }
+          cell.classList.add('highlight');
           break;
       }
     }
     
     function bindDocClick(datepicker) {
       return function(event) {
+        event = event || window.event;
+        
 		var target = event.target;
 		while (!target.classList.contains('datepicker')) {
 		  if (target.nodeName === "BODY") {

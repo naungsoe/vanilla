@@ -35,6 +35,7 @@ limitations under the License.
       scrollHandler = function() {},
       resizeHandler = function() {},
 	  sortHandler = function() {},
+      docKeydownHandler = function() {},
       changePageHandler = function() {},
       selectHandler = function() {};
     
@@ -117,6 +118,11 @@ limitations under the License.
       scrollHandler = bindTableScroll(context.container);
       helpers.query(".scrollable", context.container)
         .addEventListener('scroll', scrollHandler, false);
+      
+      document.removeEventListener('keydown', docKeydownHandler, false);
+      
+      docKeydownHandler = bindDocKeydown(context.container);
+      document.addEventListener('keydown', docKeydownHandler, false);
 
       window.removeEventListener('resize', resizeHandler, false);
       
@@ -143,7 +149,8 @@ limitations under the License.
       });
       html = html + '</colgroup>';
       
-      html = html + '<thead><tr><th><div class="checkbox" data-value="' + item.id + '">'
+      html = html + '<thead><tr><th><div class="checkbox" data-value="'
+        + item.id + '" tabindex="0">'
         + '<i class="checked fa fa-check-square-o"></i>'
 		+ '<i class="unchecked fa fa-square-o"></i></div></th>';
       
@@ -182,7 +189,8 @@ limitations under the License.
       else {
         context.items.forEach(function(item) {
           html = html + '<tr><td>';
-          html = html + '<div class="checkbox" data-value="' + item.id + '">'
+          html = html + '<div class="checkbox" data-value="'
+            + item.id + '" tabindex="0">'
             + '<i class="checked fa fa-check-square-o"></i>'
 		    + '<i class="unchecked fa fa-square-o"></i></div></td>';
           
@@ -248,6 +256,30 @@ limitations under the License.
       };
     }
     
+    function bindDocKeydown(container) {
+      return function(event) {
+        event = event || window.event;
+        
+		var target = event.target;
+		while (!target.classList.contains('table')) {
+		  if (target.nodeName === "BODY") {
+		    break;
+		  }
+		  target = target.parentNode;
+		}
+		
+        if (target === container) {
+          switch (event.keyCode) {
+            case 32:
+              var checkbox = helpers.query('.checkbox:focus', container);
+              var event = new CustomEvent('click', {});
+              checkbox.dispatchEvent(event);
+              break;
+          }
+        }
+      };
+    }
+    
     function bindWindowResize(container) {
       return function(event) {
         var scrollable = helpers.query('.scrollable', container);
@@ -282,6 +314,8 @@ limitations under the License.
     
 	function bindTitle(context, callback) {
       return function(event) {
+        event = event || window.event;
+        
 	    var target = event.currentTarget;
         context.columns.forEach(function(column) {
           if (column.id === target.dataset.value) {
@@ -324,6 +358,8 @@ limitations under the License.
     
     function bindCheck(context) {
       return function(event) {
+        event = event || window.event;
+        
         var id = event.currentTarget.dataset.value,
           selected = context.items.filter(function(item) {
             return (item.id === id);

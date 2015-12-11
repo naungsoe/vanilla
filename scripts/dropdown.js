@@ -147,9 +147,9 @@ limitations under the License.
     
     function bindDocKeydown(container) {
       return function(event) {
-		var target = event.target;
         event = event || window.event;
         
+		var target = event.target;
 		while (!target.classList.contains('dropdown')) {
 		  if (target.nodeName === "BODY") {
 		    break;
@@ -187,7 +187,7 @@ limitations under the License.
               item.classList.add('highlight');
               
               var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop - item.offsetHeight;
+              menu.scrollTop = item.offsetTop;
               break;
             
             case 40:
@@ -207,7 +207,7 @@ limitations under the License.
               item.classList.add('highlight');
               
               var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop - item.offsetHeight;
+              menu.scrollTop = item.offsetTop;
               break;
           }
         }
@@ -216,6 +216,8 @@ limitations under the License.
     
     function bindDocClick(container) {
       return function(event) {
+        event = event || window.event;
+        
 		var target = event.target;
 		while (!target.classList.contains('dropdown')) {
 		  if (target.nodeName === "BODY") {
@@ -250,26 +252,31 @@ limitations under the License.
     
     function bindItem(context) {
       return function(event) {
-        var items = helpers.queryAll('.menu > .item', context.container);
-        helpers.toArray(items).forEach(function(item) {
-          item.classList.remove('selected');
-        });
+        event = event || window.event;
+        
+        var container = context.container,
+          highlight = helpers.query('.menu > .highlight', container);
+        if (!helpers.isEmpty(highlight)) {
+          highlight.classList.remove('highlight');
+        }
         
         event.currentTarget.classList.add('selected');
         context.selected = event.currentTarget.dataset.value;
-        context.container.classList.toggle('open');
+        container.classList.toggle('open');
         
         var event = new CustomEvent('change', {});
-        context.container.dispatchEvent(event);
+        container.dispatchEvent(event);
       };
     }
     
     function bindMouseEnter(container) {
       return function(event) {
-        var items = helpers.queryAll('.menu > .item', container);
-        helpers.toArray(items).forEach(function(item) {
-          item.classList.remove('highlight');
-        });
+        event = event || window.event;
+        
+        var highlight = helpers.query('.menu > .highlight', container);
+        if (!helpers.isEmpty(highlight)) {
+          highlight.classList.remove('highlight');
+        }
         
         event.currentTarget.classList.add('highlight');
       };
@@ -277,10 +284,10 @@ limitations under the License.
     
     function bindMouseLeave(container) {
       return function(event) {
-        var items = helpers.queryAll('.menu > .item', container);
-        helpers.toArray(items).forEach(function(item) {
-          item.classList.remove('highlight');
-        });
+        var highlight = helpers.query('.menu > .highlight', container);
+        if (!helpers.isEmpty(highlight)) {
+          highlight.classList.remove('highlight');
+        }
       };
     }
     

@@ -72,6 +72,8 @@ limitations under the License.
     
     function bindItem(context) {
       return function(event) {
+        event = event || window.event;
+        
         var id = event.currentTarget.dataset.value,
           selected = context.items.filter(function(item) {
             return (item.id === id);

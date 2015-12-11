@@ -61,6 +61,7 @@ limitations under the License.
     
     function bindLink(navigation) {
       return function(event) {
+        event = event || window.event;
 		event.preventDefault();
 		var url = event.currentTarget.getAttribute("href");
 		helpers.redirect(url);
@@ -84,6 +85,8 @@ limitations under the License.
 	
 	function bindSelect(context, callback, data) {
       return function(event) {
+        event = event || window.event;
+        
         var menuItems = helpers.queryAll('.menu > li', this.container);
         helpers.toArray(menuItems).forEach(function(menuItem) {
           menuItem.classList.remove('selected');

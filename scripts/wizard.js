@@ -60,6 +60,7 @@ limitations under the License.
     
     function bindStep(context) {
       return function(event) {
+        event = event || window.event;
         context.previous = context.selected;
         context.selected = event.currentTarget.dataset.value;
         

@@ -84,6 +84,7 @@ limitations under the License.
       var timeout = null;
       return function(event) {
         event = event || window.event;
+        
         if (!helpers.isEmpty(timeout)) {
           clearTimeout(timeout);
         }
@@ -114,9 +115,9 @@ limitations under the License.
     
     function bindDocKeydown(container) {
       return function(event) {
-		var target = event.target;
         event = event || window.event;
         
+		var target = event.target;
 		while (!target.classList.contains('search-box')) {
 		  if (target.nodeName === "BODY") {
 		    break;
@@ -169,6 +170,8 @@ limitations under the License.
     
     function bindDocClick(container) {
       return function(event) {
+        event = event || window.event;
+        
 		var target = event.target;
 		while (!target.classList.contains('search-box')) {
 		  if (target.nodeName === "BODY") {
@@ -288,6 +291,7 @@ limitations under the License.
     
     function bindItem(context) {
       return function(event) {
+        event = event || window.event;
         if (!helpers.isNull(event.currentTarget.getAttribute('disabled'))) {
           return;
         }
@@ -303,6 +307,8 @@ limitations under the License.
     
     function bindMouseEnter(container) {
       return function(event) {
+        event = event || window.event;
+        
         var items = helpers.queryAll('.result > .item', container);
         helpers.toArray(items).forEach(function(item) {
           item.classList.remove('highlight');
