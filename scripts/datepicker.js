@@ -583,8 +583,19 @@ limitations under the License.
         var date = event.currentTarget.dataset.value;
         context.current.setDate(date);
         
-        var selected = helpers.query(
-          '.dates > table > tbody > tr > .selected', context.container);
+        var days = context.resource.days,
+          months = context.resource.months,
+          header = helpers.query('.header', context.container),
+          year = helpers.query('.year', header),
+          date = helpers.query('.date', header),
+          table = helpers.query('.dates', context.container),
+          selected = helpers.query('.selected', table);
+        
+        year.textContent = context.current.getFullYear();
+        date.textContent = days[context.current.getDay()].name
+          + ', ' + months[context.current.getMonth()].name
+          + ' ' + context.current.getDate();
+        
         if (!helpers.isEmpty(selected)) {
           selected.classList.remove('selected');
         }
