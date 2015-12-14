@@ -15,7 +15,7 @@ limitations under the License.
 ***************************************************************************/
 
 (function() {
-  'user strict';
+  'use strict';
   
   window.UI = window.UI || {};
   window.UI.Navigation = function(selector) {

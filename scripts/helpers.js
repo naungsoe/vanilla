@@ -15,7 +15,7 @@ limitations under the License.
 ***************************************************************************/
 
 (function() {
-  'user strict';
+  'use strict';
   
   var hasOwnProperty = Object.prototype.hasOwnProperty,
     toString = Object.prototype.toString;

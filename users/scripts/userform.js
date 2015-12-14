@@ -1,5 +1,5 @@
 (function() {
-  'user strict';
+  'use strict';
   
   window.UI = window.UI || {};
   window.UI.UserForm = function(selector) {
