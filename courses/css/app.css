@@ -34,9 +34,9 @@
 
 .form-course-setup > .fieldset > .field > .control > input[type='text'],
 .form-course-setup > .fieldset > .field > .control > textarea {
-  width: 280px;
+  width: 270px;
 }
 
 .form-course-setup > .fieldset > .field > .control > .dropdown > .toggle > .text {
-  width: 260px;
+  width: 250px;
 }

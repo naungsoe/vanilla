@@ -46,7 +46,7 @@ limitations under the License.
       
     function bindData(context, data, resource) {
       context.resource = resource || {};
-      context.format = data.format || 'dd/MM/yyyy';
+      context.format = data.format || 'DD/MM/YYYY';
       context.selected = data.selected || new Date();
       context.current = new Date(context.selected.valueOf());
       context.today = data.today || new Date();
@@ -1120,9 +1120,9 @@ limitations under the License.
       
       get dateString() {
         var date = this.format;
-        date = date.replace('dd', this.selected.getDate());
+        date = date.replace('DD', this.selected.getDate());
         date = date.replace('MM', this.selected.getMonth());
-        date = date.replace('yyyy', this.selected.getFullYear());
+        date = date.replace('YYYY', this.selected.getFullYear());
         return date;
       },
       

@@ -428,14 +428,14 @@ table {
   border: 0;
   left: 0;
   top: 0;
-  width: 282px;
-  max-width: 282px;
+  width: 270px;
+  max-width: 270px;
 }
 
 .datepicker > .calendar > .header {
   background-color: #1976d2;
   border: 1px solid #1976d2;
-  padding: 8px 16px;
+  padding: 8px 24px;
 }
 
 .datepicker > .calendar > .header > .year,
@@ -461,22 +461,21 @@ table {
 }
 
 .datepicker > .calendar > .body > .tool-bar {
+  padding: 8px 0;
   min-height: 36px;
   position: relative;
   text-align: center;
 }
 
-.datepicker > .calendar > .body > .tool-bar > .previous,
 .datepicker > .calendar > .body > .tool-bar > .month,
-.datepicker > .calendar > .body > .tool-bar > .year,
-.datepicker > .calendar > .body > .tool-bar > .next {
+.datepicker > .calendar > .body > .tool-bar > .year {
   margin: 0;
 }
 
 .datepicker > .calendar > .body > .tool-bar > .previous,
 .datepicker > .calendar > .body > .tool-bar > .next {  
   position: absolute;
-  top: 0;
+  top: 8px;
 }
 
 .datepicker > .calendar > .body > .tool-bar > .previous {
@@ -493,6 +492,12 @@ table {
   text-transform: none;
 }
 
+.datepicker > .calendar > .body > .dates,
+.datepicker > .calendar > .body > .months,
+.datepicker > .calendar > .body > .years {
+  margin: 0 8px;
+}
+
 .datepicker > .calendar > .body > .dates > table > thead > tr > th,
 .datepicker > .calendar > .body > .dates > table > tbody > tr > td,
 .datepicker > .calendar > .body > .months > table > tbody > tr > td,
@@ -500,10 +505,10 @@ table {
   color: rgba(0,0,0,.87);
   cursor: default;
   font-size: 14px;
+  height: 36px;
   line-height: 18px;
-  padding: 10px 8px;
   text-align: center;
-  width: 24px;
+  width: 36px;
 }
 
 .datepicker > .calendar > .body > .dates > table > thead > tr > th {

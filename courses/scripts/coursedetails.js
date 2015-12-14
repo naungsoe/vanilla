@@ -11,7 +11,8 @@
       code = {},
       subject = {},
       grade = {},
-      start = {},
+      startDate = {},
+      startTime = {},
       summary = {};
     
     function bindData(context, data, resource) {
@@ -28,7 +29,8 @@
       code = helpers.query('#code', container);
       subject = UI.Dropdown('#subject', container);
       grade = UI.Dropdown('#grade', container);
-      start = UI.DatePicker('#start', container);      
+      startDate = UI.DatePicker('#startDate', container);
+      startTime = UI.TimePicker('#startTime', container);
       summary = helpers.query('#summary', container);
       
       name.value = context.course.name;
@@ -38,15 +40,19 @@
         selected: context.course.subject };
       subject.bind(subjectData)
         .change(changeSubject, context);
-
+      
       var gradeData = { items: context.resource.grades,
         selected: context.course.grade };
       grade.bind(gradeData)
         .change(changeGrade, context);
       
-      var startData = {};
-      start.bind(startData, context.resource)
-        .change(changeStart, context);
+      var startDateData = {};
+      startDate.bind(startDateData, context.resource)
+        .change(changeStartDate, context);
+      
+      var startTimeData = {};
+      startTime.bind(startTimeData, context.resource)
+        .change(changeStartTime, context);
       
       summary.value = context.course.summary;
     }
@@ -59,7 +65,11 @@
       context.grade = this.selected;
     }
     
-    function changeStart(context) {
+    function changeStartDate(context) {
+      
+    }
+    
+    function changeStartTime(context) {
       
     }
     
