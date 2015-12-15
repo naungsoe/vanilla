@@ -38,13 +38,7 @@ limitations under the License.
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.format = data.format || 'hh:mm pp';
-      context.selected = data.selected || '00:00 AM';
-      
-      var pattern = /\(d{2})\:\(d{2}) (am|pm)/i;
-      if (context.selected.test(pattern)) {
-        var matches = pattern.match(context.selected);
-        //context.hour = matches;
-      }
+      context.selected = data.selected || '02:00 AM';
     }
     
     function bindDatePicker(context) {
@@ -66,48 +60,40 @@ limitations under the License.
     
     function bindToggle(context) {
       return function(event) {
-        if (context.current.valueOf() !== context.selected.valueOf()) {
-          context.current = new Date(context.selected.valueOf());
+        var current = context.hour + ':' + context.minute
+          + ' ' + context.period;
+        
+        if (current !== context.selected) {
+          updateTime(context);
         }
         
-        var calendar = helpers.query('.calendar', context.container);
-        calendar.innerHTML = getCalendarHTML(context);
-                
+        var picker = helpers.query('.picker', context.container);
+        picker.innerHTML = getTimePickerHTML(context);
+        
         context.container.classList.toggle('open');
-        bindCalendar(context);
+        updateHourClock(context);
+        bindHourClock(context);
         triggerReflow(context);
       };
     }
     
-    function getCalendarHTML(context) {
-      var months = context.resource.months,
-        days = context.resource.days,
-        selected = context.selected,
-        current = context.current,
-        today = context.today;
-      
+    function getTimePickerHTML(context) {
       var html = '<div class="header">'
-        + '<div class="year">' + selected.getFullYear() + '</div>'
-        + '<div class="date">' + days[selected.getDay()].name + ', '
-        + months[selected.getMonth()].name + ' '
-        + selected.getDate() + '</div>'
+        + '<button type="button" class="hour selected" flat>'
+        + context.hour + '</button>'
+        + '<div class="colon">:</div>'
+        + '<button type="button" class="minute" flat>'
+        + context.minute + '</button>'
+        + '<div class="period">'
+        + '<button type="button" class="am" flat>AM</button>'
+        + '<button type="button" class="pm" flat>PM</div></div>'
         + '</div>';
       
-      html = html + '<div class="body"><nav class="tool-bar">'
-        + '<button type="button" class="previous" flat-icon>'
-        + '<i class="fa fa-angle-left"></i></button>'
-        + '<button type="button" class="month" flat>'
-        + months[current.getMonth()].name + '</button>'
-        + '<button type="button" class="year" flat>'
-        + current.getFullYear() + '</button>'
-        + '<button type="button" class="next" flat-icon>'
-        + '<i class="fa fa-angle-right"></i></button></nav>';
+      html = html + '<div class="body">';
+      html = html + '<div class="hours" tabindex="0">'
+        + getHourClockHTML(context) + '</div>';
       
-      html = html + '<div class="dates" tabindex="0">'
-        + getDatesHTML(context) + '</div>';
-
-      html = html + '<div class="months hide" tabindex="0"></div>';
-      html = html + '<div class="years hide" tabindex="0"></div>';
+      html = html + '<div class="minutes hide" tabindex="0"></div>';
       
       html = html + '<nav class="actions">'
         + '<button type="button" class="cancel" flat>'
@@ -120,525 +106,153 @@ limitations under the License.
       return html;
     }
     
-    function getDatesHTML(context) {
-      var months = context.resource.months,
-        days = context.resource.days,
-        dates = context.resource.dates,
-        selected = context.selected,
-        current = context.current,
-        today = new Date();
+    function getHourClockHTML(context) {
+      var hours = context.resource.hours;
       
-      var html = '<table><thead><tr>';
-      days.forEach(function(day) {
-        html = html + '<th>' + day.name.substring(0, 1) + '</th>';
-      });
-      html = html + '</tr></thead>';
+      var html = '<svg class="clock" viewBox="0 0 100 100">'
+        + '<circle class="face" cx="50" cy="50" r="50"/>'
+        + '<circle class="face-center" cx="50" cy="50" r="1.5"/>'
       
-      html = html + '<tbody>';
-      var start = new Date(current.valueOf()),
-        end = new Date(current.valueOf());
+      html = html + '<g class="ticks">'
+        + '<circle class="tick" cx="50.00" cy="10.00" '
+        + 'r="7.14" data-value="12"/>'
+        + '<circle class="tick" cx="70.00" cy="15.36" '
+        + 'r="7.14" data-value="1"/>'
+        + '<circle class="tick" cx="84.64" cy="30.00" '
+        + 'r="7.14" data-value="2"/>'
+        + '<circle class="tick" cx="90.00" cy="50.00" '
+        + 'r="7.14" data-value="3"/>'
+        + '<circle class="tick" cx="84.64" cy="70.00" '
+        + 'r="7.14" data-value="4"/>'
+        + '<circle class="tick" cx="70.00" cy="84.64" '
+        + 'r="7.14" data-value="5"/>'
+        + '<circle class="tick" cx="50.00" cy="90.00" '
+        + 'r="7.14" data-value="6"/>'
+        + '<circle class="tick" cx="30.00" cy="84.64" '
+        + 'r="7.14" data-value="7"/>'
+        + '<circle class="tick" cx="15.36" cy="70.00" '
+        + 'r="7.14" data-value="8"/>'
+        + '<circle class="tick" cx="10.00" cy="50.00" '
+        + 'r="7.14" data-value="9"/>'
+        + '<circle class="tick" cx="15.36" cy="30.00" '
+        + 'r="7.14" data-value="10"/>'
+        + '<circle class="tick" cx="30.00" cy="15.36" '
+        + 'r="7.14" data-value="11"/>'
+        + '</g>';
       
-      start.setDate(1);
-      while (start.getDay() !== 0) {
-        start.setDate(start.getDate() - 1);
-      }
-      
-      end.setDate(1);
-      end.setMonth(end.getMonth() + 1);
-      if (end.getDay() !== 0) {
-        while (end.getDay() !== 6) {
-          end.setDate(end.getDate() + 1);
-        }
-      }
-      
-      while (start <= end) {
-        if (start.getDay() === 0) {
-          if (start.valueOf() === end.valueOf()) {
+      html = html + '<g class="numbers">';
+      hours.forEach(function(hour) {
+        switch (hour.id) {
+          case "12":
+            html = html + '<text class="number" x="46.40" y="12.40" '
+              + 'data-value="12">' + hour.name + '</text>';
             break;
-          }
-          html = html + '<tr>';
+          
+          case "1":
+            html = html + '<text class="number" x="68.40" y="17.40" '
+              + 'data-value="1">' + hour.name + '</text>';
+            break;
+          
+          case "2":
+            html = html + '<text class="number" x="83.00" y="32.00" '
+              + 'data-value="2">' + hour.name + '</text>';
+            break;
+          
+          case "3":
+            html = html + '<text class="number" x="88.40" y="52.40" '
+              + 'data-value="3">' + hour.name + '</text>';
+            break;
+          
+          case "4":
+            html = html + '<text class="number" x="83.00" y="72.40" '
+              + 'data-value="4">' + hour.name + '</text>';
+            break;
+          
+          case "5":
+            html = html + '<text class="number" x="68.40" y="87.00" '
+              + 'data-value="5">' + hour.name + '</text>';
+            break;
+          
+          case "6":
+            html = html + '<text class="number" x="48.40" y="92.40" '
+              + 'data-value="6">' + hour.name + '</text>';
+            break;
+          
+          case "7":
+            html = html + '<text class="number" x="28.40" y="87.40" '
+              + 'data-value="7">' + hour.name + '</text>';
+            break;
+          
+          case "8":
+            html = html + '<text class="number" x="13.40" y="72.40" '
+              + 'data-value="8">' + hour.name + '</text>';
+            break;
+          
+          case "9":
+            html = html + '<text class="number" x="8.40" y="52.40" '
+              + 'data-value="9">' + hour.name + '</text>';
+            break;
+          
+          case "10":
+            html = html + '<text class="number" x="12.00" y="32.00" '
+              + 'data-value="10">' + hour.name + '</text>';
+            break;
+          
+          case "11":
+            html = html + '<text class="number" x="26.40" y="17.40" '
+              + 'data-value="11">' + hour.name + '</text>';
+            break;
         }
-        
-        if (start.getMonth() === current.getMonth()) {
-          var cssClass = (start.valueOf() === context.selected.valueOf())
-            ? areDatesSame(start, context.selected) 
-              ? 'selectable selected today' : 'selectable selected'
-            : areDatesSame(today, start) 
-              ? 'selectable today' : 'selectable';
-          html = html + '<td data-value="' + start.getDate() + '" '
-            + 'class="' + cssClass + '">'
-            + dates[start.getDate() - 1].name + '</td>';
-        }
-        else {
-          html = html + '<td>&nbsp;</td>';
-        }
-        
-        if (start.getDay === 6) {
-          html = html + '</tr>';
-        }
-        start.setDate(start.getDate() + 1);
-      }
-      html = html + '</tbody></table>';
+      });
+      html = html + '</g>';
+      
+      html = html + '<g class="hands">'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="50.00" y2="16.00" data-value="12"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="66.40" y2="20.00" data-value="1"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="79.40" y2="33.00" data-value="2"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="84.00" y2="50.00" data-value="3"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="79.40" y2="67.00" data-value="4"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="66.40" y2="80.00" data-value="5"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="50.00" y2="84.00" data-value="6"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="32.40" y2="80.00" data-value="7"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="20.40" y2="67.00" data-value="8"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="16.00" y2="50.00" data-value="9"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="20.40" y2="33.00" data-value="10"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="32.40" y2="20.00" data-value="11"/>'
+        + '</g>';
+      
+      html = html + '</svg>';
       return html;
     }
     
-    function areDatesSame(date1, date2) {
-      return ((date1.getDate() === date2.getDate())
-        && (date1.getMonth() === date2.getMonth())
-        && (date1.getFullYear() === date2.getFullYear()))
+    function updateHourClock(context) {
+      var hours = helpers.query('.hours', context.container),
+        tick = helpers.query('.tick[data-value="'
+          + parseInt(context.hour, 10) + '"]', hours),
+        number = helpers.query('.number[data-value="'
+          + parseInt(context.hour, 10) + '"]', hours),
+        hand = helpers.query('.hand[data-value="'
+          + parseInt(context.hour, 10) + '"]', hours);
+      
+      tick.classList.add('selected');
+      number.classList.add('selected');
+      hand.classList.add('selected');
     }
     
-    function bindCalendar(context) {
-      bindToolbar(context);
-      bindDates(context);
-      bindActions(context);
-    }
-    
-    function bindToolbar(context) {
-      var previous = helpers.query('.tool-bar > .previous', context.container);
-      previous.removeEventListener('click', previousHandler, false);
+    function bindHourClock(context) {
       
-      previousHandler = bindPrevious(context);
-      previous.addEventListener('click', previousHandler, false);
-      
-      var next = helpers.query('.tool-bar > .next', context.container);
-      next.removeEventListener('click', nextHandler, false);
-      
-      nextHandler = bindNext(context);
-      next.addEventListener('click', nextHandler, false);
-      
-      var month = helpers.query('.tool-bar > .month', context.container);
-      month.removeEventListener('click', monthViewHandler, false);
-      
-      monthViewHandler = bindMonthView(context);
-      month.addEventListener('click', monthViewHandler, false);
-
-      var year = helpers.query('.tool-bar > .year', context.container);
-      year.removeEventListener('click', yearViewHandler, false);
-      
-      yearViewHandler = bindYearView(context);
-      year.addEventListener('click', yearViewHandler, false);
-    }
-    
-    function bindPrevious(context) {
-      return function(event) {
-        var dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container);
-        
-        if (!years.classList.contains('hide')) {
-          context.current.setYear(context.current.getFullYear() - 15);
-          setTimeout(function() {
-            years.innerHTML = getYearsHTML(context);
-            bindYears(context);
-          }, 100);
-        }
-        else if (!dates.classList.contains('hide')) {
-          context.current.setMonth(context.current.getMonth() - 1);
-          setTimeout(function() {
-            var dates = helpers.query('.dates', context.container);
-            dates.innerHTML = getDatesHTML(context);
-            updateMonthYear(context);
-            bindDates(context);
-          }, 100);
-        }
-      }
-    }
-    
-    function updateMonthYear(context) {
-      var months = context.resource.months,
-        month = helpers.query('.tool-bar > .month', context.container),
-        year = helpers.query('.tool-bar > .year', context.container);
-      
-      month.textContent = months[context.current.getMonth()].name;
-      year.textContent = context.current.getFullYear();
-    }
-    
-    function bindNext(context) {
-      return function(event) {
-        var dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container);
-        
-        if (!years.classList.contains('hide')) {
-          context.current.setYear(context.current.getFullYear() + 15);
-          setTimeout(function() {
-            years.innerHTML = getYearsHTML(context);
-            bindYears(context);
-          }, 100);
-        }
-        else if (!dates.classList.contains('hide')) {
-          context.current.setMonth(context.current.getMonth() + 1);
-          setTimeout(function() {
-            dates.innerHTML = getDatesHTML(context);
-            updateMonthYear(context);
-            bindDates(context);
-          }, 100);
-        }
-      }
-    }
-    
-    function bindMonthView(context) {
-      return function(event) {
-        var previous = helpers.query('.tool-bar > .previous', context.container),
-          next = helpers.query('.tool-bar > .next', context.container),
-          month = helpers.query('.tool-bar > .month', context.container),
-          year = helpers.query('.tool-bar > .year', context.container),
-          dates = helpers.query('.body > .dates', context.container),
-          months = helpers.query('.body > .months', context.container),
-          cancel = helpers.query('.actions > .cancel', context.container),
-          proceed = helpers.query('.actions > .proceed', context.container);
-        
-        previous.setAttribute('disabled', '');
-        next.setAttribute('disabled', '');
-        cancel.setAttribute('disabled', '');
-        proceed.setAttribute('disabled', '');
-        month.classList.toggle('hide');
-        year.classList.toggle('hide');
-        dates.classList.toggle('hide');
-        
-        months.innerHTML = getMonthsHTML(context);
-        months.classList.toggle('hide');
-        bindMonths(context);
-      }
-    }
-    
-    function getMonthsHTML(context) {
-      var months = context.resource.months;
-      var html = '<table><tbody>';
-      months.forEach(function(month, index) {
-        if ((index == 0) || (index == 3)
-            || (index == 6)  || (index == 9)) {
-          html = html + '<tr>';
-        }
-        
-        html = html + '<td data-value="' + month.id + '" '
-          + 'class="selectable">' + month.name + '</td>';
-        
-        if ((index == 2) || (index == 5)
-            || (index == 8)  || (index == 11)) {
-          html = html + '</tr>';
-        }
-      });
-      html = html + '</tbody></table>';
-      return html;
-    }
-    
-    function bindMonths(context) {
-      var table = helpers.query('.months', context.container);
-        months = helpers.queryAll('.selectable', table);
-      
-      helpers.toArray(months).forEach(function(month) {
-        month.removeEventListener('click', monthHandler, false);
-        month.removeEventListener('mouseenter', monthMouseEnterHandler, false);
-        month.removeEventListener('mouseleave', monthMouseLeaveHandler, false);
-      });
-      
-      monthHandler = bindMonth(context);
-      helpers.toArray(months).forEach(function(month) {
-        month.addEventListener('click', monthHandler, false);
-      });
-      
-      monthMouseEnterHandler = bindMonthMouseEnter(context.container);
-      helpers.toArray(months).forEach(function(month) {
-        month.addEventListener('mouseenter', monthMouseEnterHandler, false);
-      });
-      
-      monthMouseLeaveHandler = bindMonthMouseLeave(context.container);
-      helpers.toArray(months).forEach(function(month) {
-        month.addEventListener('mouseleave', monthMouseLeaveHandler, false);
-      });
-      
-      table.focus();
-    }
-    
-    function bindMonth(context) {
-      return function(event) {
-        event = event || window.event;
-        
-        var month = event.currentTarget.dataset.value;
-        context.current.setMonth(month);
-        
-        var previous = helpers.query('.tool-bar > .previous', context.container),
-          next = helpers.query('.tool-bar > .next', context.container),
-          month = helpers.query('.tool-bar > .month', context.container),
-          year = helpers.query('.tool-bar > .year', context.container),
-          dates = helpers.query('.body > .dates', context.container),
-          months = helpers.query('.body > .months', context.container),
-          cancel = helpers.query('.actions > .cancel', context.container),
-          proceed = helpers.query('.actions > .proceed', context.container);
-        
-        previous.removeAttribute('disabled');
-        next.removeAttribute('disabled');
-        cancel.removeAttribute('disabled');
-        proceed.removeAttribute('disabled');
-        month.classList.toggle('hide');
-        year.classList.toggle('hide');
-        months.classList.toggle('hide');
-        
-        dates.innerHTML = getDatesHTML(context);
-        dates.classList.toggle('hide');
-        updateMonthYear(context);
-        bindDates(context);
-      };
-    }
-    
-    function bindMonthMouseEnter(container) {
-      return function(event) {
-        event = event || window.event;
-        
-        var table = helpers.query('.months', container),
-          months = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(months).forEach(function(month) {
-          month.classList.remove('highlight');
-        });
-        
-        event.currentTarget.classList.add('highlight');
-        table.focus();
-      };
-    }
-    
-    function bindMonthMouseLeave(container) {
-      return function(event) {
-        var table = helpers.query('.months', container),
-          months = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(months).forEach(function(month) {
-          month.classList.remove('highlight');
-        });
-        
-        table.focus();
-      };
-    }
-    
-    function bindYearView(context) {
-      return function(event) {
-        var month = helpers.query('.tool-bar > .month', context.container),
-          year = helpers.query('.tool-bar > .year', context.container),
-          dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container),
-          cancel = helpers.query('.actions > .cancel', context.container),
-          proceed = helpers.query('.actions > .proceed', context.container);
-        
-        cancel.setAttribute('disabled', '');
-        proceed.setAttribute('disabled', '');
-        month.classList.toggle('hide');
-        year.classList.toggle('hide');
-        dates.classList.toggle('hide');
-        
-        years.innerHTML = getYearsHTML(context);
-        years.classList.toggle('hide');
-        bindYears(context);
-      }
-    }
-    
-    function getYearsHTML(context) {
-      var start = new Date(context.current.valueOf()),
-        end = new Date(context.current.valueOf());;
-      
-      while (start.getFullYear() > (context.current.getFullYear() - 7)) {
-        start.setYear(start.getFullYear() - 1);
-      }
-      
-      while (end.getFullYear() <= (context.current.getFullYear() + 7)) {
-        end.setYear(end.getFullYear() + 1);
-      }
-      
-      var html = '<table><tbody>';
-      for (var i = 0; start.getFullYear() < end.getFullYear(); i++) {
-        if ((i == 0) || (i == 3) || (i == 6)  || (i == 9)) {
-          html = html + '<tr>';
-        }
-        
-        html = html + '<td data-value="' + start.getFullYear() + '" '
-          + 'class="selectable">' + start.getFullYear() + '</td>';
-        
-        if ((i == 2) || (i == 5) || (i == 8)  || (i == 11)) {
-          html = html + '</tr>';
-        }
-        start.setYear(start.getFullYear() + 1);
-      }
-      html = html + '</tbody></table>';
-      return html;
-    }
-    
-    function bindYears(context) {
-      var table = helpers.query('.years', context.container),
-        years = helpers.queryAll('.selectable', context.container);
-      
-      helpers.toArray(years).forEach(function(year) {
-        year.removeEventListener('click', yearHandler, false);
-        year.removeEventListener('mouseenter', yearMouseEnterHandler, false);
-        year.removeEventListener('mouseleave', yearMouseLeaveHandler, false);
-      });
-      
-      yearHandler = bindYear(context);
-      helpers.toArray(years).forEach(function(year) {
-        year.addEventListener('click', yearHandler, false);
-      });
-      
-      yearMouseEnterHandler = bindYearMouseEnter(context.container);
-      helpers.toArray(years).forEach(function(year) {
-        year.addEventListener('mouseenter', yearMouseEnterHandler, false);
-      });
-      
-      yearMouseLeaveHandler = bindYearMouseLeave(context.container);
-      helpers.toArray(years).forEach(function(year) {
-        year.addEventListener('mouseleave', yearMouseLeaveHandler, false);
-      });
-      
-      table.focus();
-    }
-    
-    function bindYear(context) {
-      return function(event) {
-        var year = event.currentTarget.dataset.value;
-        context.current.setYear(year);
-        
-        var month = helpers.query('.tool-bar > .month', context.container),
-          year = helpers.query('.tool-bar > .year', context.container),
-          dates = helpers.query('.body > .dates', context.container),
-          years = helpers.query('.body > .years', context.container),
-          cancel = helpers.query('.actions > .cancel', context.container),
-          proceed = helpers.query('.actions > .proceed', context.container);
-        
-        cancel.removeAttribute('disabled');
-        proceed.removeAttribute('disabled');
-        month.classList.toggle('hide');
-        year.classList.toggle('hide');
-        years.classList.toggle('hide');
-        
-        dates.innerHTML = getDatesHTML(context);
-        dates.classList.toggle('hide');
-        updateMonthYear(context);
-        bindDates(context);
-      };
-    }
-    
-    function bindYearMouseEnter(container) {
-      return function(event) {
-        event = event || window.event;
-        
-        var table = helpers.query('.years', container),
-          years = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(years).forEach(function(year) {
-          year.classList.remove('highlight');
-        });
-        
-        event.currentTarget.classList.add('highlight');
-        table.focus();
-      };
-    }
-    
-    function bindYearMouseLeave(container) {
-      return function(event) {
-        var table = helpers.query('.years', container),
-          years = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(years).forEach(function(year) {
-          year.classList.remove('highlight');
-        });
-        
-        table.focus();
-      };
-    }
-    
-    function bindDates(context) {
-      var table = helpers.query('.dates', context.container);
-        dates = helpers.queryAll('.selectable', table);
-      
-      helpers.toArray(dates).forEach(function(date) {
-        date.removeEventListener('click', dateHandler, false);
-        date.removeEventListener('mouseenter', dateMouseEnterHandler, false);
-        date.removeEventListener('mouseleave', dateMouseLeaveHandler, false);
-      });
-      
-      dateHandler = bindDate(context);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('click', dateHandler, false);
-      });
-      
-      dateMouseEnterHandler = bindDateMouseEnter(context.container);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('mouseenter', dateMouseEnterHandler, false);
-      });
-      
-      dateMouseLeaveHandler = bindDateMouseLeave(context.container);
-      helpers.toArray(dates).forEach(function(date) {
-        date.addEventListener('mouseleave', dateMouseLeaveHandler, false);
-      });
-      
-      table.focus();
-    }
-    
-    function bindDate(context) {
-      return function(event) {
-        event = event || window.event;
-        
-        var date = event.currentTarget.dataset.value;
-        context.current.setDate(date);
-        
-        var days = context.resource.days,
-          months = context.resource.months,
-          header = helpers.query('.header', context.container),
-          year = helpers.query('.year', header),
-          date = helpers.query('.date', header),
-          table = helpers.query('.dates', context.container),
-          selected = helpers.query('.selected', table);
-        
-        year.textContent = context.current.getFullYear();
-        date.textContent = days[context.current.getDay()].name
-          + ', ' + months[context.current.getMonth()].name
-          + ' ' + context.current.getDate();
-        
-        if (!helpers.isEmpty(selected)) {
-          selected.classList.remove('selected');
-        }
-        event.currentTarget.classList.add('selected');
-      };
-    }
-    
-    function bindDateMouseEnter(container) {
-      return function(event) {
-        event = event || window.event;
-        
-        var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(dates).forEach(function(date) {
-          date.classList.remove('highlight');
-        });
-        
-        event.currentTarget.classList.add('highlight');
-        table.focus();
-      };
-    }
-    
-    function bindDateMouseLeave(container) {
-      return function(event) {
-        var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.selectable', table);
-        
-        helpers.toArray(dates).forEach(function(date) {
-          date.classList.remove('highlight');
-        });
-        
-        table.focus();
-      };
-    }
-    
-    function bindActions(context) {
-      var cancel = helpers.query('.actions > .cancel', context.container);
-      cancel.removeEventListener('click', cancelHandler, false);
-      
-      cancelHandler = bindCancel(context);
-      cancel.addEventListener('click', cancelHandler, false);
-      
-      var proceed = helpers.query('.actions > .proceed', context.container);
-      proceed.removeEventListener('click', proceedHandler, false);
-      
-      proceedHandler = bindProceed(context);
-      proceed.addEventListener('click', proceedHandler, false);
     }
     
     function bindCancel(context) {
@@ -672,7 +286,7 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('datepicker')) {
+		while (!target.classList.contains('timepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
@@ -681,18 +295,11 @@ limitations under the License.
 		
         if ((target === container)
 		    && (container.classList.contains('open'))) {
-          var dates = helpers.query('.body > .dates', container),
-            months = helpers.query('.body > .months', container),
-            years = helpers.query('.body > .years', container);
+          var hours = helpers.query('.body > .hours', container),
+            minutes = helpers.query('.body > .minutes', container);
           
-          if (!dates.classList.contains('hide')) {
+          if (!hours.classList.contains('hide')) {
             updateDatesKeydown(container, event.keyCode);
-          }
-          else if (!months.classList.contains('hide')) {
-            updateMonthKeydown(container, event.keyCode);
-          }
-          else if (!years.classList.contains('hide')) {
-            updateYearKeydown(container, event.keyCode);
           }
         }
       };
@@ -829,233 +436,38 @@ limitations under the License.
           cell.classList.add('highlight');
           break;
       }
-    }
+    }   
     
-    function updateMonthKeydown(container, keyCode) {
-      var table = helpers.query('.months', container);
-      switch (keyCode) {
-        case 13:
-          var cell = helpers.query('.highlight', table);
-          if (!helpers.isEmpty(cell)) {
-            var event = new CustomEvent('click', {});
-            cell.dispatchEvent(event);
-          }
-          break;
-        
-        case 37:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="11"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            if (cell.dataset.value === '0') {
-              cell = helpers.query('td[data-value="11"]', table);
-            }
-            else {
-              var month = +cell.dataset.value - 1;
-              cell = helpers.query('td[data-value="' + month + '"]', table);
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 38:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="11"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var month = +cell.dataset.value;
-            if (month >= 3) {
-              month = month - 3;
-              cell = helpers.query('td[data-value="' + month + '"]', table);
-            }
-            else {
-              while (true) {
-                month = month + 3;
-                cell = helpers.query('td[data-value="' + month + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  month = month - 3;
-                  cell = helpers.query('td[data-value="' + month + '"]', table);
-                  break;
-                }
-              }
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 39:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="0"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var month = +cell.dataset.value + 1;
-            cell = helpers.query('td[data-value="' + month + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              cell = helpers.query('td[data-value="0"]', table);
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 40:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="0"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var month = +cell.dataset.value + 3;
-            cell = helpers.query('td[data-value="' + month + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              while (true) {
-                month = month - 3;
-                cell = helpers.query('td[data-value="' + month + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  month = month + 3;
-                  cell = helpers.query('td[data-value="' + month + '"]', table);
-                  break;
-                }
-              }
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-      }
-    }
-    
-    function updateYearKeydown(container, keyCode) {
-      var table = helpers.query('.years', container);
-      switch (keyCode) {
-        case 13:
-          var cell = helpers.query('.highlight', table);
-          if (!helpers.isEmpty(cell)) {
-            var event = new CustomEvent('click', {});
-            cell.dispatchEvent(event);
-          }
-          break;
-        
-        case 37:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            var cells = helpers.queryAll('tbody > tr:last-child > td', table);
-            cell = cells[cells.length - 1];
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var year = +cell.dataset.value - 1;
-            cell = helpers.query('td[data-value="' + year + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              cells = helpers.queryAll('tbody > tr:last-child > td', table);
-              cell = cells[cells.length - 1];
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 38:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            var cells = helpers.queryAll('tbody > tr:last-child > td', table);
-            cell = cells[cells.length - 1];
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var year = +cell.dataset.value - 3;
-            cell = helpers.query('td[data-value="' + year + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              while (true) {
-                year = year + 3;
-                cell = helpers.query('td[data-value="' + year + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  year = year - 3;
-                  cell = helpers.query('td[data-value="' + year + '"]', table);
-                  break;
-                }
-              }
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 39:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            var cells = helpers.queryAll('tbody > tr:first-child > td', table);
-            cell = cells[0];
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var year = +cell.dataset.value + 1;
-            cell = helpers.query('td[data-value="' + year + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              cells = helpers.queryAll('tbody > tr:first-child > td', table);
-              cell = cells[0];
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 40:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            var cells = helpers.queryAll('tbody > tr:first-child > td', table);
-            cell = cells[0];
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var year = +cell.dataset.value + 3;
-            cell = helpers.query('td[data-value="' + year + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              while (true) {
-                year = year - 3;
-                cell = helpers.query('td[data-value="' + year + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  year = year + 3;
-                  cell = helpers.query('td[data-value="' + year + '"]', table);
-                  break;
-                }
-              }
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-      }
-    }
-    
-    function bindDocClick(datepicker) {
+    function bindDocClick(container) {
       return function(event) {
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('datepicker')) {
+		while (!target.classList.contains('timepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
 		  target = target.parentNode;
 		}
 		
-        if ((target !== datepicker)
-		    && (datepicker.classList.contains('open'))) {
-		  datepicker.classList.toggle('open');
+        if ((target !== container)
+		    && (container.classList.contains('open'))) {
+		  container.classList.toggle('open');
         }
       };
     }
     
     function updateTime(context) {
+      var pattern = /^(\d{2})\:(\d{2})\s(AM|PM)$/;
+      if (pattern.test(context.selected)) {
+        var matches = context.selected.match(pattern);
+        if (!helpers.isEmpty(matches)) {
+          context.hour = matches[1];
+          context.minute = matches[2];
+          context.period = matches[3];
+        }
+      }
+      
       var time = helpers.query('.toggle > .time', context.container);
       time.textContent = context.timeString;
     }

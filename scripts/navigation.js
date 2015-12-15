@@ -34,12 +34,12 @@ limitations under the License.
 	     context.container.innerHTML = getLinksHTML(context);
 	  }
       
-      var links = helpers.queryAll('.link', this.container);
+      var links = helpers.queryAll('.link', context.container);
 	  helpers.toArray(links).forEach(function(link) {
 	    link.removeEventListener('click', linkHandler, false);  
 	  });
 	  
-	  linkHandler = bindLink(this.container);
+	  linkHandler = bindLink(context.container);
 	  helpers.toArray(links).forEach(function(link) {
 	    link.addEventListener('click', linkHandler, false);
       });

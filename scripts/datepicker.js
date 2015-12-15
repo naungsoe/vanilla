@@ -549,7 +549,7 @@ limitations under the License.
     }
     
     function bindDates(context) {
-      var table = helpers.query('.dates', context.container);
+      var table = helpers.query('.dates', context.container),
         dates = helpers.queryAll('.selectable', table);
       
       helpers.toArray(dates).forEach(function(date) {

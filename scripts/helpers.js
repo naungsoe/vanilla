@@ -121,7 +121,7 @@ limitations under the License.
         keyValues = url.split(/[\?&]+/),
 		keyValue = [];
       
-      for (i = 0; i < keyValues.length; i++) {
+      for (var i = 0; i < keyValues.length; i++) {
         keyValue = keyValues[i].split("=");
         if (keyValue[0] == key) {
           return keyValue[1];

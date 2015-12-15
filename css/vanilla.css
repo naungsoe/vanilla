@@ -299,7 +299,7 @@ table {
 .dropdown > .toggle > i,
 .datepicker > .toggle > .date,
 .datepicker > .toggle > i,
-.timepicker > .toggle > .date,
+.timepicker > .toggle > .time,
 .timepicker > .toggle > i,
 .popover > .toggle > .text,
 .popover > .toggle > i {
@@ -309,7 +309,7 @@ table {
 
 .dropdown > .toggle > .text,
 .datepicker > .toggle > .date,
-.timepicker > .toggle > .date,
+.timepicker > .toggle > .time,
 .popover > .toggle > .text {
   font-size: 14px;
   line-height: 20px;
@@ -325,7 +325,7 @@ table {
 
 .dropdown > .menu,
 .datepicker > .calendar,
-.timepicker > .calendar,
+.timepicker > .picker,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -405,26 +405,29 @@ table {
 
 .dropdown[select] > .toggle > .text,
 .datepicker > .toggle > .date,
-.timepicker > .toggle > .date {
+.timepicker > .toggle > .time {
   color: rgba(0,0,0,.87);
 }
 
 .dropdown[select] > .menu,
-.datepicker > .menu,
-.timepicker > .menu {
+.datepicker > .calendar,
+.timepicker > .picker {
   left: 0;
   right: 0;
 }
 
-.datepicker > .toggle {
+.datepicker > .toggle,
+.timepicker > .toggle {
   text-transform: none;
 }
 
-.datepicker > .toggle > .date {
+.datepicker > .toggle > .date,
+.timepicker > .toggle > .time {
   min-width: 100px;
 }
 
-.datepicker > .calendar {
+.datepicker > .calendar,
+.timepicker > .picker {
   border: 0;
   left: 0;
   top: 0;
@@ -432,7 +435,8 @@ table {
   max-width: 270px;
 }
 
-.datepicker > .calendar > .header {
+.datepicker > .calendar > .header,
+.timepicker > .picker > .header {
   background-color: #1976d2;
   border: 1px solid #1976d2;
   padding: 8px 24px;
@@ -450,12 +454,13 @@ table {
 }
 
 .datepicker > .calendar > .header > .date {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 27px;
+  line-height: 27px;
   margin-bottom: 8px;
 }
 
-.datepicker > .calendar > .body {
+.datepicker > .calendar > .body,
+.timepicker > .picker > .body {
   border: 1px solid #ddd;
   border-top: 0;
 }
@@ -494,7 +499,9 @@ table {
 
 .datepicker > .calendar > .body > .dates,
 .datepicker > .calendar > .body > .months,
-.datepicker > .calendar > .body > .years {
+.datepicker > .calendar > .body > .years,
+.timepicker > .picker > .body > .hours,
+.timepicker > .picker > .body > .minutes {
   margin: 0 8px;
 }
 
@@ -534,23 +541,85 @@ table {
   color: #fff;
 }
 
-.datepicker > .calendar > .body > .actions {
+.datepicker > .calendar > .body > .actions,
+.timepicker > .picker > .body > .actions {
   margin: 8px 0;
   text-align: right;
 }
 
-.timepicker > .toggle {
-  text-transform: none;
+.timepicker {
+  margin-left: 24px;
 }
 
-.timepicker > .toggle > .time {
-  min-width: 100px;
-}
-
-.timepicker > .time {
+.timepicker > .picker {
   border: 0;
-  left: 0;
+  left: auto;
+  right: 0;
   top: 0;
+  width: 270px;
+  max-width: 270px;
+}
+
+.timepicker > .picker > .header {
+  padding-left: 64px;
+}
+
+.timepicker > .picker > .header > .hour,
+.timepicker > .picker > .header > .colon,
+.timepicker > .picker > .header > .minute,
+.timepicker > .picker > .header > .period {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.timepicker > .picker > .header > .hour,
+.timepicker > .picker > .header > .colon,
+.timepicker > .picker > .header > .minute {
+  color: #bbdefb;
+  font-size: 56px;
+  line-height: 63px;
+  margin: 0;
+  padding: 0;
+}
+
+.timepicker > .picker > .header > .period {
+  margin-left: 8px;
+}
+
+.timepicker > .picker > .header > .period > .am,
+.timepicker > .picker > .header > .period > .pm {
+  color: #bbdefb;
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 23px;
+  margin: 0;
+  padding: 0;
+}
+
+.timepicker > .picker > .header > .hour:hover,
+.timepicker > .picker > .header > .minute:hover,
+.timepicker > .picker > .header > .period > .am:hover,
+.timepicker > .picker > .header > .period > .pm:hover,
+.timepicker > .picker > .header > .hour:focus,
+.timepicker > .picker > .header > .minute:focus,
+.timepicker > .picker > .header > .period > .am:focus,
+.timepicker > .picker > .header > .period > .pm:focus {
+  background: transparent;
+}
+
+.timepicker > .picker > .header > .selected,
+.timepicker > .picker > .header > .period > .selected,
+.timepicker > .picker > .header > .hour:active,
+.timepicker > .picker > .header > .minute:active,
+.timepicker > .picker > .header > .period > .am:active,
+.timepicker > .picker > .header > .period > .pm:active {
+  color: #fff;
+}
+
+.timepicker > .picker > .body > .hours,
+.timepicker > .picker > .body > .minutes {
+  padding: 24px 0 0 0;
 }
 
 .popover > .content {
@@ -581,7 +650,7 @@ table {
 
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
-.timepicker.open > .time,
+.timepicker.open > .picker,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
 .popover.open > .content {
@@ -591,7 +660,7 @@ table {
 
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
-.timepicker.open > .time,
+.timepicker.open > .picker,
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
@@ -599,7 +668,8 @@ table {
   max-width: 380px;
 }
 
-.datepicker.open > .calendar {
+.datepicker.open > .calendar,
+.timepicker.open > .picker {
   max-height: 480px;
 }
 
@@ -1490,4 +1560,42 @@ table {
 
 .popover-profile > .content > .nav > .link:hover {
   background-color: #eee;
+}
+
+.clock {
+  fill: #fff;
+  height: 252px;
+  width: 252px;
+}
+
+.clock > .face,
+.clock > .ticks > .tick  {
+  fill: #f5f5f5;
+}
+
+.clock > .face-center {
+  fill: #1976d2;
+}
+
+.clock > .ticks > .selected {
+  fill: #1976d2;
+}
+
+.clock > .numbers > .number {
+  fill: rgba(0,0,0,.54);
+  font-size: 6px;
+}
+
+.clock > .numbers > .selected {
+  fill: #fff;
+}
+
+.clock > .hands > .hand {
+  stroke-width: 1px;
+  stroke: #1976d2;
+  visibility: hidden;
+}
+
+.clock > .hands > .selected {
+  visibility: visible;
 }
