@@ -79,7 +79,9 @@ limitations under the License.
         calendar.innerHTML = getCalendarHTML(context);
                 
         context.container.classList.toggle('open');
-        bindCalendar(context);
+        bindToolbar(context);
+        bindDates(context);
+        bindActions(context);
         triggerReflow(context);
       };
     }
@@ -191,12 +193,6 @@ limitations under the License.
       return ((date1.getDate() === date2.getDate())
         && (date1.getMonth() === date2.getMonth())
         && (date1.getFullYear() === date2.getFullYear()))
-    }
-    
-    function bindCalendar(context) {
-      bindToolbar(context);
-      bindDates(context);
-      bindActions(context);
     }
     
     function bindToolbar(context) {
@@ -391,7 +387,7 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.months', container),
-          months = helpers.queryAll('.selectable', table);
+          months = helpers.queryAll('.highlight', table);
         
         helpers.toArray(months).forEach(function(month) {
           month.classList.remove('highlight');
@@ -405,7 +401,7 @@ limitations under the License.
     function bindMonthMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.months', container),
-          months = helpers.queryAll('.selectable', table);
+          months = helpers.queryAll('.highlight', table);
         
         helpers.toArray(months).forEach(function(month) {
           month.classList.remove('highlight');
@@ -524,7 +520,7 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.years', container),
-          years = helpers.queryAll('.selectable', table);
+          years = helpers.queryAll('.highlight', table);
         
         helpers.toArray(years).forEach(function(year) {
           year.classList.remove('highlight');
@@ -538,7 +534,7 @@ limitations under the License.
     function bindYearMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.years', container),
-          years = helpers.queryAll('.selectable', table);
+          years = helpers.queryAll('.highlight', table);
         
         helpers.toArray(years).forEach(function(year) {
           year.classList.remove('highlight');
@@ -608,7 +604,7 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.selectable', table);
+          dates = helpers.queryAll('.highlight', table);
         
         helpers.toArray(dates).forEach(function(date) {
           date.classList.remove('highlight');
@@ -622,7 +618,7 @@ limitations under the License.
     function bindDateMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.selectable', table);
+          dates = helpers.queryAll('.highlight', table);
         
         helpers.toArray(dates).forEach(function(date) {
           date.classList.remove('highlight');

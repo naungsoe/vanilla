@@ -26,9 +26,15 @@ limitations under the License.
       format = 'hh:mm pp',
       resource = {},
       toggleHandler = function() {},
-      hourHandler = function() {},
-      minuteHandler = function() {},
+      hourViewHandler = function() {},
+      minuteViewHandler = function() {},
       periodHandler = function() {},
+      hourHandler = function() {},
+      hourMouseEnterHandler = function() {},
+      hourMouseLeaveHandler = function() {},
+      minuteHandler = function() {},
+      minuteMouseEnterHandler = function() {},
+      minuteMouseLeaveHandler = function() {},
       cancelHandler = function() {},
       proceedHandler = function() {},
       docKeydownHandler = function() {},
@@ -38,7 +44,7 @@ limitations under the License.
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.format = data.format || 'hh:mm pp';
-      context.selected = data.selected || '02:00 AM';
+      context.selected = data.selected || '00:00 AM';
     }
     
     function bindDatePicker(context) {
@@ -72,7 +78,9 @@ limitations under the License.
         
         context.container.classList.toggle('open');
         updateHourClock(context);
+        bindHeader(context);
         bindHourClock(context);
+        bindActions(context);
         triggerReflow(context);
       };
     }
@@ -85,8 +93,12 @@ limitations under the License.
         + '<button type="button" class="minute" flat>'
         + context.minute + '</button>'
         + '<div class="period">'
-        + '<button type="button" class="am" flat>AM</button>'
-        + '<button type="button" class="pm" flat>PM</div></div>'
+        + '<button type="button" class="'
+        + ((context.period === "AM") ? 'am selected' : 'am')
+        + '" flat>AM</button>'
+        + '<button type="button" class="'
+        + ((context.period === "PM") ? 'pm selected' : 'pm')
+        + '" flat>PM</div></div>'
         + '</div>';
       
       html = html + '<div class="body">';
@@ -210,7 +222,7 @@ limitations under the License.
         + '<line class="hand" x1="50.00" y1="50.00" '
         + 'x2="50.00" y2="16.00" data-value="12"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
-        + 'x2="66.40" y2="20.00" data-value="1"/>'
+        + 'x2="66.40" y2="21.00" data-value="1"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
         + 'x2="79.40" y2="33.00" data-value="2"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
@@ -218,11 +230,11 @@ limitations under the License.
         + '<line class="hand" x1="50.00" y1="50.00" '
         + 'x2="79.40" y2="67.00" data-value="4"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
-        + 'x2="66.40" y2="80.00" data-value="5"/>'
+        + 'x2="66.40" y2="79.00" data-value="5"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
         + 'x2="50.00" y2="84.00" data-value="6"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
-        + 'x2="32.40" y2="80.00" data-value="7"/>'
+        + 'x2="33.00" y2="80.00" data-value="7"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
         + 'x2="20.40" y2="67.00" data-value="8"/>'
         + '<line class="hand" x1="50.00" y1="50.00" '
@@ -238,21 +250,515 @@ limitations under the License.
     }
     
     function updateHourClock(context) {
-      var hours = helpers.query('.hours', context.container),
+      var clock = helpers.query('.hours', context.container),
         tick = helpers.query('.tick[data-value="'
-          + parseInt(context.hour, 10) + '"]', hours),
+          + parseInt(context.hour, 10) + '"]', clock),
         number = helpers.query('.number[data-value="'
-          + parseInt(context.hour, 10) + '"]', hours),
+          + parseInt(context.hour, 10) + '"]', clock),
         hand = helpers.query('.hand[data-value="'
-          + parseInt(context.hour, 10) + '"]', hours);
+          + parseInt(context.hour, 10) + '"]', clock);
       
-      tick.classList.add('selected');
-      number.classList.add('selected');
-      hand.classList.add('selected');
+      if (!helpers.isEmpty(tick)
+          && !helpers.isEmpty(number)
+          && !helpers.isEmpty(hand)) {
+        tick.classList.add('selected');
+        number.classList.add('selected');
+        hand.classList.add('selected');
+      }
+    }
+    
+    function bindHeader(context) {
+      var hour = helpers.query('.header > .hour', context.container),
+        minute = helpers.query('.header > .minute', context.container),
+        am = helpers.query('.header > .period > .am', context.container),
+        pm = helpers.query('.header > .period > .pm', context.container);
+      
+      hour.removeEventListener('click', hourViewHandler, false);
+      
+      hourViewHandler = bindHourView(context);
+      hour.addEventListener('click', hourViewHandler, false);
+      
+      minute.removeEventListener('click', minuteViewHandler, false);
+      
+      minuteViewHandler = bindMinuteView(context);
+      minute.addEventListener('click', minuteViewHandler, false);
+      
+      am.removeEventListener('click', periodHandler, false);
+      pm.removeEventListener('click', periodHandler, false);
+      
+      periodHandler = bindPeriod(context);
+      am.addEventListener('click', periodHandler, false);
+      pm.addEventListener('click', periodHandler, false);
+    }
+    
+    function bindHourView(context) {
+      return function(event) {
+        var hour = helpers.query('.header > .hour', context.container),
+          minute = helpers.query('.header > .minute', context.container),
+          hours = helpers.query('.body > .hours', context.container),
+          minutes = helpers.query('.body > .minutes', context.container);
+        
+        hour.classList.toggle('selected');
+        minute.classList.toggle('selected');
+        minutes.classList.toggle('hide');
+        
+        hours.innerHTML = getHourClockHTML(context);
+        hours.classList.toggle('hide');
+        updateHourClock(context);
+        bindHourClock(context);
+      }
+    }
+    
+    function bindMinuteView(context) {
+      return function(event) {
+        var hour = helpers.query('.header > .hour', context.container),
+          minute = helpers.query('.header > .minute', context.container),
+          minutes = helpers.query('.body > .minutes', context.container),
+          hours = helpers.query('.body > .hours', context.container);
+        
+        hour.classList.toggle('selected');
+        minute.classList.toggle('selected');
+        hours.classList.toggle('hide');
+        
+        minutes.innerHTML = getMinuteClockHTML(context);
+        minutes.classList.toggle('hide');
+        updateMinuteClock(context);
+        bindMinuteClock(context);
+      }
+    }
+    
+    function updateMinuteClock(context) {
+      var clock = helpers.query('.minutes', context.container),
+        tick = helpers.query('.tick[data-value="'
+          + parseInt(context.minute, 10) + '"]', clock),
+        number = helpers.query('.number[data-value="'
+          + parseInt(context.minute, 10) + '"]', clock),
+        hand = helpers.query('.hand[data-value="'
+          + parseInt(context.minute, 10) + '"]', clock);
+      
+      if (!helpers.isEmpty(tick)
+          && !helpers.isEmpty(number)
+          && !helpers.isEmpty(hand)) {
+        tick.classList.add('selected');
+        number.classList.add('selected');
+        hand.classList.add('selected');
+      }
     }
     
     function bindHourClock(context) {
+      var clock = helpers.query('.hours', context.container),
+        ticks = helpers.queryAll('.ticks > .tick', clock),
+        numbers = helpers.queryAll('.numbers > .number', clock);
       
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.removeEventListener('click', hourHandler, false);
+        tick.removeEventListener('mouseenter', hourMouseEnterHandler, false);
+        tick.removeEventListener('mouseleave', hourMouseLeaveHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.removeEventListener('click', hourHandler, false);
+        number.removeEventListener('mouseenter', hourMouseEnterHandler, false);
+      });
+      
+      hourHandler = bindHour(context);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('click', hourHandler, false);
+      });
+      
+      hourMouseEnterHandler = bindHourMouseEnter(context.container);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('mouseenter', hourMouseEnterHandler, false);
+      });
+      
+      hourMouseLeaveHandler = bindHourMouseLeave(context.container);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('mouseleave', hourMouseLeaveHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.addEventListener('click', hourHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.addEventListener('mouseenter', hourMouseEnterHandler, false);
+      });
+      
+      clock.focus();
+    }
+    
+    function bindHour(context) {
+      return function(event) {
+        event = event || window.event;
+        
+        var value = event.currentTarget.getAttribute('data-value'),
+          hour = helpers.query('.header > .hour', context.container),
+          clock = helpers.query('.hours', context.container),
+          ticks = helpers.queryAll('.ticks > .selected', clock),
+          numbers = helpers.queryAll('.numbers > .selected', clock),
+          hands = helpers.queryAll('.hands > .selected', clock),
+          tick = helpers.query('.tick[data-value="' + value + '"]', clock),
+          number = helpers.query('.number[data-value="' + value + '"]', clock),
+          hand = helpers.query('.hand[data-value="' + value + '"]', clock);
+        
+        if (event.currentTarget.classList.contains('selected')) {
+          context.hour = '00';
+          hour.textContent = context.hour;
+          
+          helpers.toArray(ticks).forEach(function(tick) {
+            tick.classList.remove('selected');
+          });
+          
+          helpers.toArray(numbers).forEach(function(number) {
+            number.classList.remove('selected');
+          });
+          
+          helpers.toArray(hands).forEach(function(hand) {
+            hand.classList.remove('selected');
+          });
+        }
+        else {
+          context.hour = (value.length === 1) ? '0' + value : value;
+          hour.textContent = context.hour;
+          
+          helpers.toArray(ticks).forEach(function(tick) {
+            tick.classList.remove('selected');
+          });
+          
+          helpers.toArray(numbers).forEach(function(number) {
+            number.classList.remove('selected');
+          });
+          
+          helpers.toArray(hands).forEach(function(hand) {
+            hand.classList.remove('selected');
+          });
+          
+          tick.classList.add('selected');
+          number.classList.add('selected');
+          hand.classList.add('selected');
+        }
+      };
+    }
+    
+    function bindHourMouseEnter(container) {
+      return function(event) {
+        event = event || window.event;
+        
+        var clock = helpers.query('.hours', container),
+          ticks = helpers.queryAll('.ticks > .highlight', clock);
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('highlight');
+        });
+        
+        if (event.currentTarget.classList.contains('tick')) {
+          event.currentTarget.classList.add('highlight');
+        }
+        else {
+          var hour = event.currentTarget.getAttribute('data-value'),
+            tick = helpers.query('.tick[data-value="' + hour + '"]', clock);
+          
+          tick.classList.add('highlight');
+        }
+        
+        clock.focus();
+      };
+    }
+    
+    function bindHourMouseLeave(container) {
+      return function(event) {
+        var clock = helpers.query('.hours', container),
+          ticks = helpers.queryAll('.ticks > .highlight', clock);
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('highlight');
+        });
+        
+        clock.focus();
+      };
+    }
+    
+    function getMinuteClockHTML(context) {
+      var minutes = context.resource.minutes;
+      
+      var html = '<svg class="clock" viewBox="0 0 100 100">'
+        + '<circle class="face" cx="50" cy="50" r="50"/>'
+        + '<circle class="face-center" cx="50" cy="50" r="1.5"/>'
+      
+      html = html + '<g class="ticks">'
+        + '<circle class="tick" cx="50.00" cy="10.00" '
+        + 'r="7.14" data-value="0"/>'
+        + '<circle class="tick" cx="70.00" cy="15.36" '
+        + 'r="7.14" data-value="5"/>'
+        + '<circle class="tick" cx="84.64" cy="30.00" '
+        + 'r="7.14" data-value="10"/>'
+        + '<circle class="tick" cx="90.00" cy="50.00" '
+        + 'r="7.14" data-value="15"/>'
+        + '<circle class="tick" cx="84.64" cy="70.00" '
+        + 'r="7.14" data-value="20"/>'
+        + '<circle class="tick" cx="70.00" cy="84.64" '
+        + 'r="7.14" data-value="25"/>'
+        + '<circle class="tick" cx="50.00" cy="90.00" '
+        + 'r="7.14" data-value="30"/>'
+        + '<circle class="tick" cx="30.00" cy="84.64" '
+        + 'r="7.14" data-value="35"/>'
+        + '<circle class="tick" cx="15.36" cy="70.00" '
+        + 'r="7.14" data-value="40"/>'
+        + '<circle class="tick" cx="10.00" cy="50.00" '
+        + 'r="7.14" data-value="45"/>'
+        + '<circle class="tick" cx="15.36" cy="30.00" '
+        + 'r="7.14" data-value="50"/>'
+        + '<circle class="tick" cx="30.00" cy="15.36" '
+        + 'r="7.14" data-value="55"/>'
+        + '</g>';
+      
+      html = html + '<g class="numbers">';
+      minutes.forEach(function(minute) {
+        switch (minute.id) {
+          case "0":
+            html = html + '<text class="number" x="46.40" y="12.40" '
+              + 'data-value="0">' + minute.name + '</text>';
+            break;
+          
+          case "5":
+            html = html + '<text class="number" x="66.80" y="17.40" '
+              + 'data-value="5">' + minute.name + '</text>';
+            break;
+          
+          case "10":
+            html = html + '<text class="number" x="81.40" y="32.00" '
+              + 'data-value="10">' + minute.name + '</text>';
+            break;
+          
+          case "15":
+            html = html + '<text class="number" x="86.80" y="52.40" '
+              + 'data-value="15">' + minute.name + '</text>';
+            break;
+          
+          case "20":
+            html = html + '<text class="number" x="81.40" y="72.40" '
+              + 'data-value="20">' + minute.name + '</text>';
+            break;
+          
+          case "25":
+            html = html + '<text class="number" x="66.80" y="87.00" '
+              + 'data-value="25">' + minute.name + '</text>';
+            break;
+          
+          case "30":
+            html = html + '<text class="number" x="46.80" y="92.40" '
+              + 'data-value="30">' + minute.name + '</text>';
+            break;
+          
+          case "35":
+            html = html + '<text class="number" x="26.80" y="87.40" '
+              + 'data-value="35">' + minute.name + '</text>';
+            break;
+          
+          case "40":
+            html = html + '<text class="number" x="11.80" y="72.40" '
+              + 'data-value="40">' + minute.name + '</text>';
+            break;
+          
+          case "45":
+            html = html + '<text class="number" x="6.80" y="52.40" '
+              + 'data-value="45">' + minute.name + '</text>';
+            break;
+          
+          case "50":
+            html = html + '<text class="number" x="12.00" y="32.00" '
+              + 'data-value="50">' + minute.name + '</text>';
+            break;
+          
+          case "55":
+            html = html + '<text class="number" x="26.40" y="17.40" '
+              + 'data-value="55">' + minute.name + '</text>';
+            break;
+        }
+      });
+      html = html + '</g>';
+      
+      html = html + '<g class="hands">'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="50.00" y2="16.00" data-value="0"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="66.40" y2="21.00" data-value="5"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="79.40" y2="33.00" data-value="10"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="84.00" y2="50.00" data-value="15"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="79.40" y2="67.00" data-value="20"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="66.40" y2="79.00" data-value="25"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="50.00" y2="84.00" data-value="30"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="33.00" y2="80.00" data-value="35"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="20.40" y2="67.00" data-value="40"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="16.00" y2="50.00" data-value="45"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="20.40" y2="33.00" data-value="50"/>'
+        + '<line class="hand" x1="50.00" y1="50.00" '
+        + 'x2="32.40" y2="20.00" data-value="55"/>'
+        + '</g>';
+      
+      html = html + '</svg>';
+      return html;
+    }
+    
+    function bindMinuteClock(context) {
+      var clock = helpers.query('.minutes', context.container),
+        ticks = helpers.queryAll('.ticks > .tick', clock),
+        numbers = helpers.queryAll('.numbers > .number', clock);
+      
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.removeEventListener('click', minuteHandler, false);
+        tick.removeEventListener('mouseenter', minuteMouseEnterHandler, false);
+        tick.removeEventListener('mouseleave', minuteMouseLeaveHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.removeEventListener('click', minuteHandler, false);
+        number.removeEventListener('mouseenter', minuteMouseEnterHandler, false);
+      });
+      
+      minuteHandler = bindMinute(context);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('click', minuteHandler, false);
+      });
+      
+      minuteMouseEnterHandler = bindMinuteMouseEnter(context.container);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('mouseenter', minuteMouseEnterHandler, false);
+      });
+      
+      minuteMouseLeaveHandler = bindMinuteMouseLeave(context.container);
+      helpers.toArray(ticks).forEach(function(tick) {
+        tick.addEventListener('mouseleave', minuteMouseLeaveHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.addEventListener('click', minuteHandler, false);
+      });
+      
+      helpers.toArray(numbers).forEach(function(number) {
+        number.addEventListener('mouseenter', minuteMouseEnterHandler, false);
+      });
+      
+      clock.focus();
+    }
+    
+    function bindMinute(context) {
+      return function(event) {
+        event = event || window.event;
+        
+        var value = event.currentTarget.getAttribute('data-value'),
+          minute = helpers.query('.header > .minute', context.container),
+          clock = helpers.query('.minutes', context.container),
+          ticks = helpers.queryAll('.ticks > .selected', clock),
+          numbers = helpers.queryAll('.numbers > .selected', clock),
+          hands = helpers.queryAll('.hands > .selected', clock),
+          tick = helpers.query('.tick[data-value="' + value + '"]', clock),
+          number = helpers.query('.number[data-value="' + value + '"]', clock),
+          hand = helpers.query('.hand[data-value="' + value + '"]', clock);
+        
+        context.minute = (value.length === 1) ? '0' + value : value;
+        minute.textContent = context.minute;
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('selected');
+        });
+        
+        helpers.toArray(numbers).forEach(function(number) {
+          number.classList.remove('selected');
+        });
+        
+        helpers.toArray(hands).forEach(function(hand) {
+          hand.classList.remove('selected');
+        });
+        
+        tick.classList.add('selected');
+        number.classList.add('selected');
+        hand.classList.add('selected');
+      };
+    }
+    
+    function bindMinuteMouseEnter(container) {
+      return function(event) {
+        event = event || window.event;
+        
+        var clock = helpers.query('.minutes', container),
+          ticks = helpers.queryAll('.ticks > .highlight', clock);
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('highlight');
+        });
+        
+        if (event.currentTarget.classList.contains('tick')) {
+          event.currentTarget.classList.add('highlight');
+        }
+        else {
+          var minute = event.currentTarget.getAttribute('data-value'),
+            tick = helpers.query('.tick[data-value="' + minute + '"]', clock);
+          
+          tick.classList.add('highlight');
+        }
+        
+        clock.focus();
+      };
+    }
+    
+    function bindMinuteMouseLeave(container) {
+      return function(event) {
+        var clock = helpers.query('.minutes', container),
+          ticks = helpers.queryAll('.ticks > .highlight', clock);
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('highlight');
+        });
+        
+        clock.focus();
+      };
+    }
+    
+    function bindPeriod(context) {
+      return function(event) {
+        event = event || window.event;
+        
+        if (event.currentTarget.classList.contains('selected')) {
+          return;
+        }
+        
+        var hours = helpers.query('.body > .hours', context.container),
+          minutes = helpers.query('.body > .minutes', context.container),
+          am = helpers.query('.header > .period > .am', context.container),
+          pm = helpers.query('.header > .period > .pm', context.container);
+        
+        context.period = event.currentTarget.classList.contains('am')
+          ? 'AM' : 'PM';
+        
+        am.classList.toggle('selected');        
+        pm.classList.toggle('selected');
+        
+        
+      }
+    }
+    
+    function bindActions(context) {
+      var cancel = helpers.query('.actions > .cancel', context.container);
+      cancel.removeEventListener('click', cancelHandler, false);
+      
+      cancelHandler = bindCancel(context);
+      cancel.addEventListener('click', cancelHandler, false);
+      
+      var proceed = helpers.query('.actions > .proceed', context.container);
+      proceed.removeEventListener('click', proceedHandler, false);
+      
+      proceedHandler = bindProceed(context);
+      proceed.addEventListener('click', proceedHandler, false);
     }
     
     function bindCancel(context) {
@@ -263,7 +769,7 @@ limitations under the License.
     
     function bindProceed(context) {
       return function(event) {
-        context.selected = new Date(context.current.valueOf());
+        context.selected = context.timeString;
         context.container.classList.toggle('open');
       }
     }
