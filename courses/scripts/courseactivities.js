@@ -2,7 +2,7 @@
   'use strict';
   
   window.UI = window.UI || {};
-  window.UI.CourseResources = function(selector) {
+  window.UI.CourseActivities = function(selector) {
     var user = { name: { first: '', last: '' },
         email: '', password: '', confirmPassword: '',
         alternateEmail: '' },

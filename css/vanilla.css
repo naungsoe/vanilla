@@ -683,6 +683,40 @@ table {
   padding-bottom: 7px;
 }
 
+.richtext {
+  border: 1px solid #bdbdbd;
+}
+
+.richtext > .tool-bar,
+.richtext > .editor,
+.richtext > .textarea {
+  display: block;
+  width: 100%;
+}
+
+.richtext > .tool-bar,
+.richtext > .tool-bar > .primary {
+  border-bottom: 1px solid #bdbdbd;  
+}
+
+.richtext > .tool-bar > .primary > button,
+.richtext > .tool-bar > .secondary > button {
+  color: rgba(0,0,0,.87);
+  margin: 0;
+}
+
+.richtext > .tool-bar > .primary > .dropdown > .toggle,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle {
+  border: 0;
+  padding: 10px 16px;
+}
+
+.richtext > .editor {
+  min-height: 80px;
+  padding: 8px;
+  word-wrap: break-word; 
+}
+
 .search-box {
   background-color: #fff;
   left: 235px;

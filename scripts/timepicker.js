@@ -393,7 +393,7 @@ limitations under the License.
         
         var value = event.currentTarget.getAttribute('data-value'),
           hour = helpers.query('.header > .hour', context.container),
-          clock = helpers.query('.hours', context.container),
+          clock = helpers.query('.body > .hours', context.container),
           ticks = helpers.queryAll('.ticks > .selected', clock),
           numbers = helpers.queryAll('.numbers > .selected', clock),
           hands = helpers.queryAll('.hands > .selected', clock),
@@ -444,7 +444,7 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
-        var clock = helpers.query('.hours', container),
+        var clock = helpers.query('.body > .hours', container),
           ticks = helpers.queryAll('.ticks > .highlight', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
@@ -467,7 +467,7 @@ limitations under the License.
     
     function bindHourMouseLeave(container) {
       return function(event) {
-        var clock = helpers.query('.hours', container),
+        var clock = helpers.query('.body > .hours', container),
           ticks = helpers.queryAll('.ticks > .highlight', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
@@ -610,7 +610,7 @@ limitations under the License.
     }
     
     function bindMinuteClock(context) {
-      var clock = helpers.query('.minutes', context.container),
+      var clock = helpers.query('.body > .minutes', context.container),
         ticks = helpers.queryAll('.ticks > .tick', clock),
         numbers = helpers.queryAll('.numbers > .number', clock);
       
@@ -657,7 +657,7 @@ limitations under the License.
         
         var value = event.currentTarget.getAttribute('data-value'),
           minute = helpers.query('.header > .minute', context.container),
-          clock = helpers.query('.minutes', context.container),
+          clock = helpers.query('.body > .minutes', context.container),
           ticks = helpers.queryAll('.ticks > .selected', clock),
           numbers = helpers.queryAll('.numbers > .selected', clock),
           hands = helpers.queryAll('.hands > .selected', clock),
@@ -690,7 +690,7 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
-        var clock = helpers.query('.minutes', container),
+        var clock = helpers.query('.body > .minutes', container),
           ticks = helpers.queryAll('.ticks > .highlight', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
@@ -713,7 +713,7 @@ limitations under the License.
     
     function bindMinuteMouseLeave(container) {
       return function(event) {
-        var clock = helpers.query('.minutes', container),
+        var clock = helpers.query('.body > .minutes', container),
           ticks = helpers.queryAll('.ticks > .highlight', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
@@ -805,144 +805,97 @@ limitations under the License.
             minutes = helpers.query('.body > .minutes', container);
           
           if (!hours.classList.contains('hide')) {
-            updateDatesKeydown(container, event.keyCode);
+            updateHoursKeydown(container, event.keyCode);
+          }
+          else if (!minutes.classList.contains('hide')) {
+            updateMinutesKeydown(container, event.keyCode);
           }
         }
       };
     }
     
-    function updateDatesKeydown(container, keyCode) {
-      var table = helpers.query('.dates', container);
+    function updateHoursKeydown(container, keyCode) {
+      var clock = helpers.query('.body > .hours', container);
       switch (keyCode) {
         case 13:
-          var cell = helpers.query('.highlight', table);
-          if (!helpers.isEmpty(cell)) {
+          var tick = helpers.query('.highlight', clock);
+          if (!helpers.isEmpty(tick)) {
             var event = new CustomEvent('click', {});
-            cell.dispatchEvent(event);
+            tick.dispatchEvent(event);
           }
           break;
         
         case 37:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('.selected', table);
-          }
-          
-          if (helpers.isEmpty(cell)) {
-            for (var i = 31; ; i--) {
-              cell = helpers.query('td[data-value="' + i + '"]', table);
-              if (!helpers.isEmpty(cell)) {
-                break;
-              }
-            }
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            if (cell.dataset.value === '1') {
-              for (var i = 31; ; i--) {
-                cell = helpers.query('td[data-value="' + i + '"]', table);
-                if (!helpers.isEmpty(cell)) {
-                  break;
-                }
-              }
-            }
-            else {
-              var date = +cell.dataset.value - 1;
-              cell = helpers.query('td[data-value="' + date + '"]', table);
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
         case 38:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('.selected', table);
+        case 39:
+        case 40:
+          var tick = helpers.query('.tick.highlight', clock);
+          if (helpers.isEmpty(tick)) {
+            tick = helpers.query('.tick.selected', clock);
           }
           
-          if (helpers.isEmpty(cell)) {
-            for (var i = 31; ; i--) {
-              cell = helpers.query('td[data-value="' + i + '"]', table);
-              if (!helpers.isEmpty(cell)) {
-                break;
-              }
-            }
+          if (helpers.isEmpty(tick)) {
+            tick = helpers.query('.tick[data-value="12"]', clock);
           }
           else {
-            cell.classList.remove('highlight');            
-            
-            var date = +cell.dataset.value;
-            if (date > 7) {
-              date = date - 7;
-              cell = helpers.query('td[data-value="' + date + '"]', table);
+            var value = tick.getAttribute('data-value');
+            if (value === '12') {
+              tick = helpers.query('.tick[data-value="1"]', clock);
             }
             else {
-              while (true) {
-                date = date + 7;
-                cell = helpers.query('td[data-value="' + date + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  date = date - 7;
-                  cell = helpers.query('td[data-value="' + date + '"]', table);
-                  break;
-                }
-              }
+              tick = helpers.query('.tick[data-value="'
+                + (++value) + '"]', clock);
             }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 39:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('.selected', table);
           }
           
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="1"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var date = +cell.dataset.value + 1;
-            cell = helpers.query('td[data-value="' + date + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              cell = helpers.query('td[data-value="1"]', table);
-            }
-          }
-          cell.classList.add('highlight');
-          break;
-        
-        case 40:
-          var cell = helpers.query('.highlight', table);
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('.selected', table);
-          }
-          
-          if (helpers.isEmpty(cell)) {
-            cell = helpers.query('td[data-value="1"]', table);
-          }
-          else {
-            cell.classList.remove('highlight');            
-            
-            var date = +cell.dataset.value + 7;
-            cell = helpers.query('td[data-value="' + date + '"]', table);
-            if (helpers.isEmpty(cell)) {
-              while (true) {
-                date = date - 7;
-                cell = helpers.query('td[data-value="' + date + '"]', table);
-                if (helpers.isEmpty(cell)) {
-                  date = date + 7;
-                  cell = helpers.query('td[data-value="' + date + '"]', table);
-                  break;
-                }
-              }
-            }
-          }
-          cell.classList.add('highlight');
+          var event = new CustomEvent('mouseenter', {});
+          tick.dispatchEvent(event);
           break;
       }
-    }   
+    }
+    
+    function updateMinutesKeydown(container, keyCode) {
+      var clock = helpers.query('.body > .minutes', container);
+      switch (keyCode) {
+        case 13:
+          var tick = helpers.query('.highlight', clock);
+          if (!helpers.isEmpty(tick)) {
+            var event = new CustomEvent('click', {});
+            tick.dispatchEvent(event);
+          }
+          break;
+        
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+          var tick = helpers.query('.tick.highlight', clock);
+          if (helpers.isEmpty(tick)) {
+            tick = helpers.query('.tick.selected', clock);
+          }
+          
+          if (helpers.isEmpty(tick)) {
+            tick = helpers.query('.tick[data-value="0"]', clock);
+          }
+          else {
+            var value = tick.getAttribute('data-value');
+            if (value === '0') {
+              tick = helpers.query('.tick[data-value="5"]', clock);
+            }
+            if (value === '55') {
+              tick = helpers.query('.tick[data-value="0"]', clock);
+            }
+            else {
+              tick = helpers.query('.tick[data-value="'
+                + (+value + 5) + '"]', clock);
+            }
+          }
+          
+          var event = new CustomEvent('mouseenter', {});
+          tick.dispatchEvent(event);
+          break;
+      }
+    }
     
     function bindDocClick(container) {
       return function(event) {

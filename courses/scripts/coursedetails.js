@@ -31,7 +31,7 @@
       grade = UI.Dropdown('#grade', container);
       startDate = UI.DatePicker('#startDate', container);
       startTime = UI.TimePicker('#startTime', container);
-      summary = helpers.query('#summary', container);
+      summary = UI.RichText('#summary', container);
       
       name.value = context.course.name;
       code.value = context.course.code;
@@ -54,7 +54,9 @@
       startTime.bind(startTimeData, context.resource)
         .change(changeStartTime, context);
       
-      summary.value = context.course.summary;
+      var summaryData = {};
+      summary.bind(summaryData, context.resource)
+        .change(changeSummary, context);
     }
     
     function changeSubject(context) {
@@ -70,6 +72,10 @@
     }
     
     function changeStartTime(context) {
+      
+    }
+    
+    function changeSummary(context) {
       
     }
     

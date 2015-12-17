@@ -16,7 +16,7 @@
     userProfile = {},
     courseWizard = {},
     courseDetails = {},
-    courseResources = {};
+    courseActivities = {};
   
   function initApplicatin(response) {
     pageResource = response;
@@ -26,7 +26,7 @@
     userProfile = UI.Popover('#userProfile');
     courseWizard = UI.Wizard('#courseWizard');
     courseDetails = UI.CourseDetails('#courseDetails');
-    courseResources = UI.CourseResources('#courseResources');
+    courseActivities = UI.CourseActivities('#courseActivities');
     loadNotifications();
 	bindPageNavigation();
     bindUserProfile();
@@ -90,14 +90,14 @@
         var detailsData = {};
         courseDetails.bind(detailsData);
         courseDetails.toggle();
-        courseResources.toggle();
+        courseActivities.toggle();
         break;
       
       case "resources":
         var courseData = {};
-        courseResources.bind(courseData);
+        courseActivities.bind(courseData);
         courseDetails.toggle();
-        courseResources.toggle();
+        courseActivities.toggle();
         break;
     }
   }

@@ -20,21 +20,72 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.RichText = function(selector) {
     var content = '',
+      focusHandler = function() {},
       boldHandler = function() {},
       italicHandler = function() {},
-      underlineHandler = function() {};
-      
+      underlineHandler = function() {},
+      changeHandler = function() {};
+    
     function bindData(context, data) {
       context.content = data.content || '';
     }
     
     function bindRichText(context) {
+      var toolbar = helpers.query('.tool-bar', context.container),
+        editor = helpers.query('.editor', context.container),
+        textarea = helpers.query('.textarea', context.container);
       
+      editor.contentEditable  = 'true';
+      textarea.classList.add('hide');
+      
+      toolbar.innerHTML = getToolbarHTML(context);
+      bindToolbar(context);
     }
-	
-    function bindExecuteCommand(context) {
+    
+    function getToolbarHTML(context) {
+      var html = '<div class="primary">'
+        + '<button type="button" class="bold" flat>'
+        + '<i class="fa fa-bold"></i></button>'
+        + '<button type="button" class="italic" flat>'
+        + '<i class="fa fa-italic"></i></button>'
+        + '<button type="button" class="underline" flat>'
+        + '<i class="fa fa-underline"></i></button>'
+        + '</div>';
+      
+      html = html + '<div class="secondary">'
+        + '<div class="dropdown font-family" select>'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text">Sans Serif</span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition menu selectable"></ul></div>'
+        + '</div>';
+      
+      return html;
+    }
+    
+    function bindToolbar(context) {
+      var bold = helpers.query('.tool-bar > .bold', context.container);
+      bold.removeEventListener('click', boldHandler, false);
+      
+      boldHandler = execCommand('bold', '');
+      bold.addEventListener('click', boldHandler, false);
+      
+      var italic = helpers.query('.tool-bar > .italic', context.container);
+      italic.removeEventListener('click', italicHandler, false);
+      
+      italicHandler = execCommand('italic', '');
+      italic.addEventListener('click', italicHandler, false);
+      
+      var underline = helpers.query('.tool-bar > .underline', context.container);
+      underline.removeEventListener('click', underlineHandler, false);
+      
+      underlineHandler = execCommand('underline', '');
+      underline.addEventListener('click', underlineHandler, false);
+    }
+    
+    function execCommand(command, value) {
       return function(event) {
-        
+        document.execCommand(command, false, value);
       };
     }
     

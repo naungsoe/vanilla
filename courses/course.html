@@ -84,7 +84,7 @@
             <div class="control">
               <div id="subject" class="dropdown" select>
                 <button type="button" class="toggle" flat-icon><span class="text">Subject</span><i class="fa fa-caret-down"></i></button>
-                <ul class="transition  menu selectable"></ul>
+                <ul class="transition menu selectable"></ul>
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@
             <div class="control">
               <div id="grade" class="dropdown" select>
                 <button type="button" class="toggle" flat-icon><span class="text">Grade</span><i class="fa fa-caret-down"></i></button>
-                <ul class="transition  menu selectable"></ul>
+                <ul class="transition menu selectable"></ul>
               </div>
             </div>
           </div>
@@ -113,14 +113,18 @@
           <div class="field">
             <label for="summary" class="label">Summary</label>
             <div class="control">
-              <textarea id="summary"></textarea>
+              <div id="summary" class="richtext">
+                <div class="tool-bar"></div>
+                <div class="editor"></div>
+                <textarea class="textarea"></textarea>
+              </div>
             </div>
           </div>
           <input id="courseId" type="hidden" value="" />
         </fieldset>
       </form>
     </div>
-    <div id="courseResources" class="content hide">
+    <div id="courseActivities" class="content hide">
       <div class="resources">
         <div class="resource">
           Resource 1
@@ -146,6 +150,7 @@
   <script src="../scripts/dropdown.js"></script>
   <script src="../scripts/datepicker.js"></script>
   <script src="../scripts/timepicker.js"></script>
+  <script src="../scripts/richtext.js"></script>
   <script src="../scripts/popover.js"></script>
   <script src="../scripts/table.js"></script>
   <script src="../scripts/pagination.js"></script>
@@ -156,7 +161,7 @@
   <script src="../scripts/pagenavigation.js"></script>
   <script src="scripts/course.js"></script>
   <script src="scripts/coursedetails.js"></script>
-  <script src="scripts/courseresources.js"></script>
+  <script src="scripts/courseactivities.js"></script>
   <script>
     var user = { rights: ['create', 'edit', 'delete']};
     

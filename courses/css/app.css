@@ -40,3 +40,7 @@
 .form-course-setup > .fieldset > .field > .control > .dropdown > .toggle > .text {
   width: 250px;
 }
+
+.form-course-setup > .fieldset > .field > .control > .richtext {
+  width: 265px;
+}
