@@ -44,18 +44,74 @@ limitations under the License.
     
     function getToolbarHTML(context) {
       var html = '<div class="primary">'
+        + '<div class="dropdown font-family">'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text fixed">Sans Serif</span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition menu left selectable">'
+        + '<li data-value="Arial" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Arial</span</li>'
+        + '<li data-value="Arial Black" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Arial Black</span></li>'
+        + '<li data-value="Courier New" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Courier New</span></li>'
+        + '<li data-value="Sans Serif" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Sans Serif</span></li>'
+        + '<li data-value="Tahoma" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Tahoma</span></li>'
+        + '<li data-value="Times New Roman" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Times New Roman</span></li>'
+        + '</ul></div>'
+        + '<div class="dropdown font-size">'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text fixed">Normal</span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition menu left selectable">'
+        + '<li data-value="small" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Small</span></li>'
+        + '<li data-value="medium" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Normal</span></li>'
+        + '<li data-value="Large" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Large</span></li>'
+        + '<li data-value="xx-large" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text">Giant</span></li>'
+        + '</ul></div>'
+        + '<button type="button" class="link" flat>'
+        + '<i class="fa fa-link"></i></button>'
+        + '<button type="button" class="format" flat>'
+        + '<i class="fa fa-eraser"></i></button>'
+        + '</div>';
+      
+      html = html + '<div class="secondary">'
         + '<button type="button" class="bold" flat>'
         + '<i class="fa fa-bold"></i></button>'
         + '<button type="button" class="italic" flat>'
         + '<i class="fa fa-italic"></i></button>'
         + '<button type="button" class="underline" flat>'
         + '<i class="fa fa-underline"></i></button>'
-        + '</div>';
-      
-      html = html + '<div class="secondary">'
-        + '<div class="dropdown font-family" select>'
+        + '<div class="dropdown color" select>'
         + '<button type="button" class="toggle" flat-icon>'
-        + '<span class="text">Sans Serif</span>'
+        + '<span class="text"><i class="fa fa-font"></i></span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition menu selectable"></ul></div>'
+        + '<div class="dropdown align" select>'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text"><i class="fa fa-align-left"></i></span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition menu selectable"></ul></div>'
+        + '<div class="dropdown bullet" select>'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text"><i class="fa fa-list"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
         + '<ul class="transition menu selectable"></ul></div>'
         + '</div>';
@@ -64,23 +120,41 @@ limitations under the License.
     }
     
     function bindToolbar(context) {
-      var bold = helpers.query('.tool-bar > .bold', context.container);
+      var toolbar = helpers.query('.tool-bar', context.container);
+      
+      var fontFamily = UI.Dropdown(helpers.query('.font-family', toolbar));
+      fontFamily.bind({ selected: 'Sans Serif' })
+        .change(changeFontFamily, context.container);
+      
+      var fontSize = UI.Dropdown(helpers.query('.font-size', toolbar));
+      fontSize.bind({ selected: 'medium' })
+        .change(changeFontSize, context.container);
+      
+      var bold = helpers.query('.bold', toolbar)
       bold.removeEventListener('click', boldHandler, false);
       
       boldHandler = execCommand('bold', '');
       bold.addEventListener('click', boldHandler, false);
       
-      var italic = helpers.query('.tool-bar > .italic', context.container);
+      var italic = helpers.query('.italic', toolbar);
       italic.removeEventListener('click', italicHandler, false);
       
       italicHandler = execCommand('italic', '');
       italic.addEventListener('click', italicHandler, false);
       
-      var underline = helpers.query('.tool-bar > .underline', context.container);
+      var underline = helpers.query('.underline', toolbar);
       underline.removeEventListener('click', underlineHandler, false);
       
       underlineHandler = execCommand('underline', '');
       underline.addEventListener('click', underlineHandler, false);
+    }
+    
+    function changeFontFamily() {
+      document.execCommand('fontName', false, this.selected);
+    }
+    
+    function changeFontSize(container) {
+      document.execCommand('fontSize', false, this.selected);
     }
     
     function execCommand(command, value) {

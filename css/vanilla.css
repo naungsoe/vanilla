@@ -393,6 +393,11 @@ table {
   bottom: 0;
 }
 
+.dropdown > .menu.left {
+  left: 8px;
+  right: auto;
+}
+
 .dropdown[select] > .toggle,
 .datepicker > .toggle,
 .timepicker > .toggle {
@@ -691,28 +696,94 @@ table {
 .richtext > .editor,
 .richtext > .textarea {
   display: block;
-  width: 100%;
 }
 
-.richtext > .tool-bar,
+.richtext > .tool-bar {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #bdbdbd;
+}
+
 .richtext > .tool-bar > .primary {
-  border-bottom: 1px solid #bdbdbd;  
+  border-bottom: 1px solid #bdbdbd;
+}
+
+.richtext > .tool-bar > .primary > button,
+.richtext > .tool-bar > .secondary > button,
+.richtext > .tool-bar > .primary > .dropdown,
+.richtext > .tool-bar > .secondary > .dropdown {
+  vertical-align: middle;
+}
+
+.richtext > .tool-bar > .primary > button,
+.richtext > .tool-bar > .secondary > button,
+.richtext > .tool-bar > .primary > .dropdown > .toggle,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle {
+  border-radius: 0;
+}
+
+.richtext > .tool-bar > .primary > button:hover,
+.richtext > .tool-bar > .secondary > button:hover,
+.richtext > .tool-bar > .primary > .dropdown > .toggle:hover,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle:hover {
+  background-color: #e0e0e0;
+}
+
+.richtext > .tool-bar > .primary > button:active,
+.richtext > .tool-bar > .secondary > button:active,
+.richtext > .tool-bar > .primary > .dropdown > .toggle:active,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle:active {
+  background-color: #bdbdbd;
 }
 
 .richtext > .tool-bar > .primary > button,
 .richtext > .tool-bar > .secondary > button {
-  color: rgba(0,0,0,.87);
+  color: rgba(0,0,0,.54);
   margin: 0;
+  padding: 10px 12px;
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle {
   border: 0;
-  padding: 10px 16px;
+  margin: 0;
+  padding: 8px 8px 8px 12px;
+}
+
+.richtext > .tool-bar > .primary > .dropdown > .toggle > .text,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle > .text {
+  color: rgba(0,0,0,.54);
+}
+
+.richtext > .tool-bar > .primary > .dropdown > .toggle > i,
+.richtext > .tool-bar > .secondary > .dropdown > .toggle > i {
+  font-size: 12px;
+}
+
+.richtext > .tool-bar > .primary > .dropdown > .menu,
+.richtext > .tool-bar > .secondary > .dropdown > .menu {
+  left: 0;
+}
+
+.richtext > .tool-bar > .primary > .font-family > .toggle > .text {
+  width: 60px;
+  max-width: 60px;
+}
+
+.richtext > .tool-bar > .primary > .font-family > .menu  > .item {
+  min-width: 140px;
+}
+
+.richtext > .tool-bar > .primary > .font-size > .toggle > .text {
+  width: 45px;
+  max-width: 45px;
+}
+
+.richtext > .tool-bar > .primary > .font-size > .menu  > .item {
+  min-width: 70px;
 }
 
 .richtext > .editor {
-  min-height: 80px;
+  min-height: 160px;
   padding: 8px;
   word-wrap: break-word; 
 }

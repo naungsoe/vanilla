@@ -658,7 +658,7 @@ limitations under the License.
     function triggerReflow(context) {
       var reflow = helpers.query('.reflow', context.container);
       if (!helpers.isEmpty(reflow)) {
-        return;
+        reflow.parentNode.removeChild(reflow);
       }
       
       setTimeout(function initiateReflow() {

@@ -79,19 +79,29 @@ limitations under the License.
     }
     
 	function getMenuHTML(context) {
-	  var html = '';
-      context.items.forEach(function(item) {
-        html = html + '<li data-value="' + item.id + '" '
-          + 'class="item fixed">' + item.name + '</li>';
-      });
+	  var menu = helpers.query('.menu', context.container),
+        html = '';
+      
+      if (menu.classList.contains('selectable')) {
+          context.items.forEach(function(item) {
+          html = html + '<li data-value="' + item.id + '" '
+            + 'class="item fixed"><i class="fa fa-check"></i>'
+            + '<span class="text">' + item.name + '</span></li>';
+        });
+      }
+      else {
+        context.items.forEach(function(item) {
+          html = html + '<li data-value="' + item.id + '" '
+            + 'class="item fixed">' + item.name + '</li>';
+        });
+      }
 	  return html;
 	}
 	
     function bindToggle(container) {
       return function(event) {
         var menu = helpers.query(".menu", container);
-        if (menu.classList.contains("selectable")
-            && !menu.classList.contains("up")) {
+        if (!helpers.isNull(container.getAttribute("select"))) {
           var maxViewableItems = 7,
             items = helpers.queryAll(".item", menu),
             selected = helpers.query(".selected", menu),
@@ -135,7 +145,7 @@ limitations under the License.
     function triggerReflow(container) {
       var reflow = helpers.query('.reflow', container);
       if (!helpers.isEmpty(reflow)) {
-        return;
+        reflow.parentNode.removeChild(reflow);
       }
       
       setTimeout(function initiateReflow() {

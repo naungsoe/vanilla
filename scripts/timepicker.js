@@ -250,13 +250,14 @@ limitations under the License.
     }
     
     function updateHourClock(context) {
-      var clock = helpers.query('.hours', context.container),
+      var hour = parseInt(context.hour, 10),
+        clock = helpers.query('.hours', context.container),
         tick = helpers.query('.tick[data-value="'
-          + parseInt(context.hour, 10) + '"]', clock),
+          + ((hour > 12) ? (hour - 12) : hour) + '"]', clock),
         number = helpers.query('.number[data-value="'
-          + parseInt(context.hour, 10) + '"]', clock),
+          + ((hour > 12) ? (hour - 12) : hour) + '"]', clock),
         hand = helpers.query('.hand[data-value="'
-          + parseInt(context.hour, 10) + '"]', clock);
+          + ((hour > 12) ? (hour - 12) : hour) + '"]', clock);
       
       if (!helpers.isEmpty(tick)
           && !helpers.isEmpty(number)
@@ -418,8 +419,17 @@ limitations under the License.
           });
         }
         else {
-          context.hour = (value.length === 1) ? '0' + value : value;
-          hour.textContent = context.hour;
+          switch (context.period) {
+            case 'AM':
+              context.hour = (value.length === 1) ? '0' + value : value;
+              hour.textContent = context.hour;
+              break;
+            
+            case 'PM':
+              context.hour = (+value + 12).toString();
+              hour.textContent = context.hour;
+              break;
+          }
           
           helpers.toArray(ticks).forEach(function(tick) {
             tick.classList.remove('selected');
@@ -737,13 +747,28 @@ limitations under the License.
           am = helpers.query('.header > .period > .am', context.container),
           pm = helpers.query('.header > .period > .pm', context.container);
         
-        context.period = event.currentTarget.classList.contains('am')
-          ? 'AM' : 'PM';
+        if (event.currentTarget.classList.contains('am')) {
+          context.period = 'AM';
+          
+          if (parseInt(context.hour, 10) > 12) {
+            var hour = helpers.query('.header > .hour', context.container);
+            context.hour = (parseInt(context.hour, 10) - 12).toString();
+            hour.textContent = (context.hour.length === 1)
+              ? '0' + context.hour : context.hour;
+          }
+        }
+        else {
+          context.period = 'PM';
+          
+          if (parseInt(context.hour, 10) <= 12) {
+            var hour = helpers.query('.header > .hour', context.container);
+            context.hour =  (parseInt(context.hour, 10) + 12).toString();
+            hour.textContent = context.hour;
+          }
+        }
         
         am.classList.toggle('selected');        
         pm.classList.toggle('selected');
-        
-        
       }
     }
     
@@ -777,7 +802,7 @@ limitations under the License.
     function triggerReflow(context) {
       var reflow = helpers.query('.reflow', context.container);
       if (!helpers.isEmpty(reflow)) {
-        return;
+        reflow.parentNode.removeChild(reflow);
       }
       
       setTimeout(function initiateReflow() {
