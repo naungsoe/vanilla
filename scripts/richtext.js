@@ -20,10 +20,13 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.RichText = function(selector) {
     var content = '',
-      focusHandler = function() {},
+      range = {},
+      unformatHandler = function() {},
       boldHandler = function() {},
       italicHandler = function() {},
       underlineHandler = function() {},
+      focusHandler = function() {},
+      blurHandler = function() {},
       changeHandler = function() {};
     
     function bindData(context, data) {
@@ -40,6 +43,7 @@ limitations under the License.
       
       toolbar.innerHTML = getToolbarHTML(context);
       bindToolbar(context);
+      bindEditor(context);
     }
     
     function getToolbarHTML(context) {
@@ -73,22 +77,22 @@ limitations under the License.
         + '<span class="text fixed">Normal</span>'
         + '<i class="fa fa-caret-down"></i></button>'
         + '<ul class="transition menu left selectable">'
-        + '<li data-value="small" class="item fixed">'
+        + '<li data-value="2" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text">Small</span></li>'
-        + '<li data-value="medium" class="item fixed">'
+        + '<li data-value="3" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text">Normal</span></li>'
-        + '<li data-value="Large" class="item fixed">'
+        + '<li data-value="4" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text">Large</span></li>'
-        + '<li data-value="xx-large" class="item fixed">'
+        + '<li data-value="6" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text">Giant</span></li>'
         + '</ul></div>'
         + '<button type="button" class="link" flat>'
         + '<i class="fa fa-link"></i></button>'
-        + '<button type="button" class="format" flat>'
+        + '<button type="button" class="unformat" flat>'
         + '<i class="fa fa-eraser"></i></button>'
         + '</div>';
       
@@ -99,21 +103,36 @@ limitations under the License.
         + '<i class="fa fa-italic"></i></button>'
         + '<button type="button" class="underline" flat>'
         + '<i class="fa fa-underline"></i></button>'
-        + '<div class="dropdown color" select>'
+        + '<div class="dropdown color">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-font"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
         + '<ul class="transition menu selectable"></ul></div>'
-        + '<div class="dropdown align" select>'
+        + '<div class="dropdown text-align">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-align-left"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu selectable"></ul></div>'
-        + '<div class="dropdown bullet" select>'
+        + '<ul class="transition menu selectable">'
+        + '<li data-value="justifyLeft" class="item fixed">'
+        + '<i class="fa fa-check"></i><span class="text">'
+        + '<i class="fa fa-align-left"></i></span></li>'
+        + '<li data-value="justifyCenter" class="item fixed">'
+        + '<i class="fa fa-check"></i><span class="text">'
+        + '<i class="fa fa-align-center"></i></span></li>'
+        + '<li data-value="justifyRight" class="item fixed">'
+        + '<i class="fa fa-check"></i><span class="text">'
+        + '<i class="fa fa-align-right"></i></span></li>'
+        + '<li data-value="justifyFull" class="item fixed">'
+        + '<i class="fa fa-check"></i><span class="text">'
+        + '<i class="fa fa-align-justify"></i></span></li>'
+        + '</ul></div>'
+        + '<div class="dropdown bullet">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-list"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
         + '<ul class="transition menu selectable"></ul></div>'
+        //+ '<button type="button" class="more" flat>'
+        //+ '<i class="fa fa-ellipsis-h"></i></button>'
         + '</div>';
       
       return html;
@@ -124,11 +143,17 @@ limitations under the License.
       
       var fontFamily = UI.Dropdown(helpers.query('.font-family', toolbar));
       fontFamily.bind({ selected: 'Sans Serif' })
-        .change(changeFontFamily, context.container);
+        .change(changeFontFamily, context);
       
       var fontSize = UI.Dropdown(helpers.query('.font-size', toolbar));
-      fontSize.bind({ selected: 'medium' })
-        .change(changeFontSize, context.container);
+      fontSize.bind({ selected: '3' })
+        .change(changeFontSize, context);
+      
+      var unformat = helpers.query('.unformat', toolbar)
+      unformat.removeEventListener('click', unformatHandler, false);
+      
+      unformatHandler = execCommand('removeFormat', '');
+      unformat.addEventListener('click', unformatHandler, false);
       
       var bold = helpers.query('.bold', toolbar)
       bold.removeEventListener('click', boldHandler, false);
@@ -147,19 +172,54 @@ limitations under the License.
       
       underlineHandler = execCommand('underline', '');
       underline.addEventListener('click', underlineHandler, false);
+      
+      var textAlign = UI.Dropdown(helpers.query('.text-align', toolbar));
+      textAlign.bind({ selected: 'justifyLeft' })
+        .change(changeTextAlign, context);
     }
     
-    function changeFontFamily() {
+    function changeFontFamily(context) {
+      context.restoreRange();
       document.execCommand('fontName', false, this.selected);
     }
     
-    function changeFontSize(container) {
+    function changeFontSize(context) {
+      context.restoreRange();
       document.execCommand('fontSize', false, this.selected);
+    }
+    
+    function changeTextAlign(context) {
+      context.restoreRange();
+      document.execCommand(this.selected, false, '');
     }
     
     function execCommand(command, value) {
       return function(event) {
         document.execCommand(command, false, value);
+      };
+    }
+    
+    function bindEditor(context) {
+      var editor = helpers.query('.editor', context.container);
+      editor.removeEventListener('focus', focusHandler, false);
+      editor.removeEventListener('blur', blurHandler, false);
+      
+      focusHandler = bindFocus(context);
+      editor.addEventListener('focus', focusHandler, false);
+      
+      blurHandler = bindBlur(context);
+      editor.addEventListener('blur', blurHandler, false);
+    }
+    
+    function bindFocus(context) {
+      return function(event) {
+        context.saveRange();
+      };
+    }
+    
+    function bindBlur(context) {
+      return function(event) {
+        context.saveRange();
       };
     }
     
@@ -186,6 +246,20 @@ limitations under the License.
       bind: function(data) {
         bindData(this, data);
         return this;
+      },
+      
+      saveRange: function() {
+        if (window.getSelection().rangeCount) {
+          range = window.getSelection().getRangeAt(0);
+        }
+      },
+      
+      restoreRange: function() {
+        if (!helpers.isEmpty(range)) {
+          var selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
       },
       
       change: function(callback, data) {

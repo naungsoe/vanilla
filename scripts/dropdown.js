@@ -251,7 +251,18 @@ limitations under the License.
       var text = helpers.query('.toggle > .text', context.container);
       var item = helpers.query(
         '.item[data-value="' + context.selected + '"]', context.container);
-      text.textContent = item.textContent;
+      var itemText = helpers.query('.text', item);
+      if (!helpers.isEmpty(itemText)) {
+        if (helpers.isEmpty(itemText.textContent)) {
+          text.innerHTML = itemText.innerHTML;
+        }
+        else {
+          text.textContent = itemText.textContent;
+        }
+      }
+      else {
+        text.textContent = item.textContent;
+      }
 	  
       var items = helpers.queryAll('.menu > .item', context.container);
       helpers.toArray(items).forEach(function(item) {

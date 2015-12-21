@@ -36,6 +36,22 @@ body {
   font-size: 14px;
 }
 
+font[size='2'] {
+  font-size: 10px;
+}
+
+font[size='3'] {
+  font-size: 14px;
+}
+
+font[size='4'] {
+  font-size: 20px;
+}
+
+font[size='6'] {
+  font-size: 34px;
+}
+
 a {
   color: #1976d2;
   outline: none;
@@ -284,6 +300,7 @@ table {
 .timepicker,
 .popover {
   display: inline-block;
+  max-height: 36px;
   position: relative;
 }
 
@@ -711,7 +728,7 @@ table {
 .richtext > .tool-bar > .secondary > button,
 .richtext > .tool-bar > .primary > .dropdown,
 .richtext > .tool-bar > .secondary > .dropdown {
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .richtext > .tool-bar > .primary > button,
@@ -746,7 +763,7 @@ table {
 .richtext > .tool-bar > .secondary > .dropdown > .toggle {
   border: 0;
   margin: 0;
-  padding: 8px 8px 8px 12px;
+  padding: 8px 4px 8px 8px;
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle > .text,
@@ -761,12 +778,19 @@ table {
 
 .richtext > .tool-bar > .primary > .dropdown > .menu,
 .richtext > .tool-bar > .secondary > .dropdown > .menu {
+  left: auto;
+  right: 0;
+}
+
+.richtext > .tool-bar > .primary > .dropdown > .menu.left,
+.richtext > .tool-bar > .secondary > .dropdown > .menu.left {
   left: 0;
+  right: auto;
 }
 
 .richtext > .tool-bar > .primary > .font-family > .toggle > .text {
-  width: 60px;
-  max-width: 60px;
+  width: 70px;
+  max-width: 70px;
 }
 
 .richtext > .tool-bar > .primary > .font-family > .menu  > .item {
@@ -782,10 +806,17 @@ table {
   min-width: 70px;
 }
 
+.richtext > .tool-bar > .secondary > .text-align > .menu  > .item {
+  min-width: 40px;
+}
+
 .richtext > .editor {
+  max-height: 160px;
   min-height: 160px;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 8px;
-  word-wrap: break-word; 
+  word-wrap: break-word;
 }
 
 .search-box {
