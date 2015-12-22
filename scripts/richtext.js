@@ -25,6 +25,13 @@ limitations under the License.
       boldHandler = function() {},
       italicHandler = function() {},
       underlineHandler = function() {},
+      strikethroughHandler = function() {},
+      subscriptHandler = function() {},
+      superscriptHandler = function() {},
+      outdentHandler = function() {},
+      indentHandler = function() {},
+      orderedListHandler = function() {},
+      unorderedListHandler = function() {},
       focusHandler = function() {},
       blurHandler = function() {},
       changeHandler = function() {};
@@ -48,71 +55,40 @@ limitations under the License.
     
     function getToolbarHTML(context) {
       var html = '<div class="primary">'
-        + '<div class="dropdown font-family">'
-        + '<button type="button" class="toggle" flat-icon>'
-        + '<span class="text fixed">Sans Serif</span>'
-        + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu left selectable">'
-        + '<li data-value="Arial" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Arial</span</li>'
-        + '<li data-value="Arial Black" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Arial Black</span></li>'
-        + '<li data-value="Courier New" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Courier New</span></li>'
-        + '<li data-value="Sans Serif" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Sans Serif</span></li>'
-        + '<li data-value="Tahoma" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Tahoma</span></li>'
-        + '<li data-value="Times New Roman" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Times New Roman</span></li>'
-        + '</ul></div>'
-        + '<div class="dropdown font-size">'
-        + '<button type="button" class="toggle" flat-icon>'
-        + '<span class="text fixed">Normal</span>'
-        + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu left selectable">'
-        + '<li data-value="2" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Small</span></li>'
-        + '<li data-value="3" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Normal</span></li>'
-        + '<li data-value="4" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Large</span></li>'
-        + '<li data-value="6" class="item fixed">'
-        + '<i class="fa fa-check"></i>'
-        + '<span class="text">Giant</span></li>'
-        + '</ul></div>'
-        + '<button type="button" class="link" flat>'
-        + '<i class="fa fa-link"></i></button>'
-        + '<button type="button" class="unformat" flat>'
-        + '<i class="fa fa-eraser"></i></button>'
-        + '</div>';
-      
-      html = html + '<div class="secondary">'
         + '<button type="button" class="bold" flat>'
         + '<i class="fa fa-bold"></i></button>'
         + '<button type="button" class="italic" flat>'
         + '<i class="fa fa-italic"></i></button>'
         + '<button type="button" class="underline" flat>'
         + '<i class="fa fa-underline"></i></button>'
-        + '<div class="dropdown color">'
+        + '<button type="button" class="strikethrough" flat>'
+        + '<i class="fa fa-strikethrough"></i></button>'
+        + '<div class="separator"></div>'
+        + '<button type="button" class="subscript" flat>'
+        + '<i class="fa fa-subscript"></i></button>'
+        + '<button type="button" class="superscript" flat>'
+        + '<i class="fa fa-superscript"></i></button>'
+        + '<div class="separator"></div>'
+        + '<button type="button" class="unformat" flat>'
+        + '<i class="fa fa-eraser"></i></button>'
+        + '</div>'
+      
+      html = html + '<div class="primary">'
+        + '<div class="colorpicker text-color">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-font"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu selectable"></ul></div>'
+        + '<ul class="transition-portrait picker"></ul></div>'
+        + '<div class="colorpicker bg-color">'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text"><i class="fa fa-font"></i></span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition-portrait picker"></ul></div>'
         + '<div class="dropdown text-align">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-align-left"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu selectable">'
+        + '<ul class="transition-portrait menu selectable">'
         + '<li data-value="justifyLeft" class="item fixed">'
         + '<i class="fa fa-check"></i><span class="text">'
         + '<i class="fa fa-align-left"></i></span></li>'
@@ -126,13 +102,94 @@ limitations under the License.
         + '<i class="fa fa-check"></i><span class="text">'
         + '<i class="fa fa-align-justify"></i></span></li>'
         + '</ul></div>'
-        + '<div class="dropdown bullet">'
+        + '<div class="separator"></div>'
+        + '<button type="button" class="undo" flat>'
+        + '<i class="fa fa-rotate-left"></i></button>'
+        + '<button type="button" class="redo" flat>'
+        + '<i class="fa fa-rotate-right"></i></button>'
+        + '<button type="button" class="more" flat>'
+        + '<i class="fa fa-chevron-down expand"></i>'
+        + '<i class="fa fa-chevron-up collapse"></i></button>'
+        + '</div>';
+      
+      html = html + '<div class="secondary">'
+        + '<div class="dropdown font-family">'
         + '<button type="button" class="toggle" flat-icon>'
-        + '<span class="text"><i class="fa fa-list"></i></span>'
+        + '<span class="text fixed">Sans Serif</span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition menu selectable"></ul></div>'
-        //+ '<button type="button" class="more" flat>'
-        //+ '<i class="fa fa-ellipsis-h"></i></button>'
+        + '<ul class="transition-portrait menu left selectable">'
+        + '<li data-value="Arial" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Arial;">'
+        + 'Arial</span</li>'
+        + '<li data-value="Arial Black" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Arial Black;">'
+        + 'Arial Black</span></li>'
+        + '<li data-value="Courier New" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Courier New;">'
+        + 'Courier New</span></li>'
+        + '<li data-value="Sans-Serif" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Sans-Serif;">'
+        + 'Sans Serif</span></li>'
+        + '<li data-value="Serif" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Serif;">'
+        + 'Serif</span></li>'
+        + '<li data-value="Tahoma" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Tahoma;">'
+        + 'Tahoma</span></li>'
+        + '<li data-value="Times New Roman" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text" style="font-family: Times New Roman;">'
+        + 'Times New Roman</span></li>'
+        + '</ul></div>'
+        + '<div class="dropdown font-size">'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text fixed">Normal</span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<ul class="transition-portrait menu left selectable">'
+        + '<li data-value="2" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text"><font size="2">'
+        + 'Small</font></span></li>'
+        + '<li data-value="3" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text"><font size="3">'
+        + 'Normal</font></span></li>'
+        + '<li data-value="4" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text"><font size="4">'
+        + 'Large</font></span></li>'
+        + '<li data-value="6" class="item fixed">'
+        + '<i class="fa fa-check"></i>'
+        + '<span class="text"><font size="6">'
+        + 'Giant</font></span></li>'
+        + '</ul></div>'
+        + '<div class="separator"></div>'
+        + '<button type="button" class="outdent" flat>'
+        + '<i class="fa fa-outdent"></i></button>'
+        + '<button type="button" class="indent" flat>'
+        + '<i class="fa fa-indent"></i></button>'
+        + '</div>';
+      
+      html = html + '<div class="secondary">'
+        + '<button type="button" class="ordered-list" flat>'
+        + '<i class="fa fa-list-ol"></i></button>'
+        + '<button type="button" class="unordered-list" flat>'
+        + '<i class="fa fa-list-ul"></i></button>'
+        + '<div class="separator"></div>'
+        + '<button type="button" class="link" flat>'
+        + '<i class="fa fa-link"></i></button>'
+        + '<button type="button" class="image" flat>'
+        + '<i class="fa fa-file-image-o"></i></button>'
+        + '<button type="button" class="media" flat>'
+        + '<i class="fa fa-film"></i></button>'
+        + '<button type="button" class="table" flat>'
+        + '<i class="fa fa-table"></i></button>'
         + '</div>';
       
       return html;
@@ -140,15 +197,6 @@ limitations under the License.
     
     function bindToolbar(context) {
       var toolbar = helpers.query('.tool-bar', context.container);
-      
-      var fontFamily = UI.Dropdown(helpers.query('.font-family', toolbar));
-      fontFamily.bind({ selected: 'Sans Serif' })
-        .change(changeFontFamily, context);
-      
-      var fontSize = UI.Dropdown(helpers.query('.font-size', toolbar));
-      fontSize.bind({ selected: '3' })
-        .change(changeFontSize, context);
-      
       var unformat = helpers.query('.unformat', toolbar)
       unformat.removeEventListener('click', unformatHandler, false);
       
@@ -173,9 +221,79 @@ limitations under the License.
       underlineHandler = execCommand('underline', '');
       underline.addEventListener('click', underlineHandler, false);
       
+      var strikethrough = helpers.query('.strikethrough', toolbar);
+      strikethrough.removeEventListener('click', strikethroughHandler, false);
+      
+      strikethroughHandler = execCommand('strikethrough', '');
+      strikethrough.addEventListener('click', strikethroughHandler, false);
+      
+      var subscript = helpers.query('.subscript', toolbar);
+      subscript.removeEventListener('click', subscriptHandler, false);
+      
+      subscriptHandler = execCommand('subscript', '');
+      subscript.addEventListener('click', subscriptHandler, false);
+      
+      var superscript = helpers.query('.superscript', toolbar);
+      superscript.removeEventListener('click', superscriptHandler, false);
+      
+      superscriptHandler = execCommand('superscript', '');
+      superscript.addEventListener('click', superscriptHandler, false);
+      
+      var textColor = UI.ColorPicker(helpers.query('.text-color', toolbar));
+      textColor.bind({ selected: '' })
+        .change(changeTextColor, context);
+      
       var textAlign = UI.Dropdown(helpers.query('.text-align', toolbar));
       textAlign.bind({ selected: 'justifyLeft' })
         .change(changeTextAlign, context);
+      
+      var fontFamily = UI.Dropdown(helpers.query('.font-family', toolbar));
+      fontFamily.bind({ selected: 'Sans-Serif' })
+        .change(changeFontFamily, context);
+      
+      var fontSize = UI.Dropdown(helpers.query('.font-size', toolbar));
+      fontSize.bind({ selected: '3' })
+        .change(changeFontSize, context);
+      
+      var outdent = helpers.query('.outdent', toolbar);
+      outdent.removeEventListener('click', outdentHandler, false);
+      
+      outdentHandler = execCommand('outdent', '');
+      outdent.addEventListener('click', outdentHandler, false);
+      
+      var indent = helpers.query('.indent', toolbar);
+      indent.removeEventListener('click', indentHandler, false);
+      
+      indentHandler = execCommand('indent', '');
+      indent.addEventListener('click', indentHandler, false);
+      
+      var orderedList = helpers.query('.ordered-list', toolbar);
+      orderedList.removeEventListener('click', orderedListHandler, false);
+      
+      orderedListHandler = execCommand('insertOrderedList', '');
+      orderedList.addEventListener('click', orderedListHandler, false);
+      
+      var unorderedList = helpers.query('.unordered-list', toolbar);
+      unorderedList.removeEventListener('click', unorderedListHandler, false);
+      
+      unorderedListHandler = execCommand('insertUnorderedList', '');
+      unorderedList.addEventListener('click', unorderedListHandler, false);
+    }
+    
+    function execCommand(command, value) {
+      return function(event) {
+        document.execCommand(command, false, value);
+      };
+    }
+    
+    function changeTextColor(context) {
+      context.restoreRange();
+      document.execCommand('color', false, this.selected);
+    }
+    
+    function changeTextAlign(context) {
+      context.restoreRange();
+      document.execCommand(this.selected, false, '');
     }
     
     function changeFontFamily(context) {
@@ -186,17 +304,6 @@ limitations under the License.
     function changeFontSize(context) {
       context.restoreRange();
       document.execCommand('fontSize', false, this.selected);
-    }
-    
-    function changeTextAlign(context) {
-      context.restoreRange();
-      document.execCommand(this.selected, false, '');
-    }
-    
-    function execCommand(command, value) {
-      return function(event) {
-        document.execCommand(command, false, value);
-      };
     }
     
     function bindEditor(context) {

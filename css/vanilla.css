@@ -172,6 +172,10 @@ button[flat][disabled]:hover {
   background: transparent;
 }
 
+button[flat] > i {
+  line-height: 16px;
+}
+
 button[flat-icon] {
   color: rgba(0,0,0,.54);
   padding: 8px;
@@ -298,6 +302,7 @@ table {
 .dropdown,
 .datepicker,
 .timepicker,
+.colorpicker,
 .popover {
   display: inline-block;
   max-height: 36px;
@@ -307,6 +312,7 @@ table {
 .dropdown > .toggle,
 .datepicker > .toggle,
 .timepicker > .toggle,
+.colorpicker > .toggle,
 .popover > .toggle {
   text-decoration: none;
   text-transform: capitalize;
@@ -318,6 +324,8 @@ table {
 .datepicker > .toggle > i,
 .timepicker > .toggle > .time,
 .timepicker > .toggle > i,
+.colorpicker > .toggle > .text,
+.colorpicker > .toggle > i,
 .popover > .toggle > .text,
 .popover > .toggle > i {
   display: table-cell;
@@ -327,6 +335,7 @@ table {
 .dropdown > .toggle > .text,
 .datepicker > .toggle > .date,
 .timepicker > .toggle > .time,
+.colorpicker > .toggle > .text,
 .popover > .toggle > .text {
   font-size: 14px;
   line-height: 20px;
@@ -336,6 +345,7 @@ table {
 .dropdown > .toggle > i,
 .datepicker > .toggle > i,
 .timepicker > .toggle > i,
+.colorpicker > .toggle > i,
 .popover > .toggle > i {
   font-size: 16px;
 }
@@ -343,6 +353,7 @@ table {
 .dropdown > .menu,
 .datepicker > .calendar,
 .timepicker > .picker,
+.colorpicker > .picker,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -417,7 +428,8 @@ table {
 
 .dropdown[select] > .toggle,
 .datepicker > .toggle,
-.timepicker > .toggle {
+.timepicker > .toggle,
+.colorpicker > .toggle {
   border-bottom: 1px solid #bdbdbd;
   border-radius: 0;
   line-height: 19px;
@@ -427,19 +439,22 @@ table {
 
 .dropdown[select] > .toggle > .text,
 .datepicker > .toggle > .date,
-.timepicker > .toggle > .time {
+.timepicker > .toggle > .time
+.colorpicker > .toggle > .text {
   color: rgba(0,0,0,.87);
 }
 
 .dropdown[select] > .menu,
 .datepicker > .calendar,
-.timepicker > .picker {
+.timepicker > .picker,
+.colorpicker > .picker {
   left: 0;
   right: 0;
 }
 
 .datepicker > .toggle,
-.timepicker > .toggle {
+.timepicker > .toggle,
+.colorpicker > .toggle {
   text-transform: none;
 }
 
@@ -449,7 +464,8 @@ table {
 }
 
 .datepicker > .calendar,
-.timepicker > .picker {
+.timepicker > .picker,
+.colorpicker > .picker {
   border: 0;
   left: 0;
   top: 0;
@@ -673,6 +689,7 @@ table {
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
+.colorpicker.open > .picker,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
 .popover.open > .content {
@@ -683,6 +700,7 @@ table {
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
+.colorpicker.open > .picker,
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
@@ -698,9 +716,11 @@ table {
 .dropdown[select] > .toggle:focus,
 .datepicker > .toggle:focus,
 .timepicker > .toggle:focus,
+.colorpicker > .toggle:focus,
 .dropdown[select] > .toggle:active,
 .datepicker > .toggle:active,
-.timepicker > .toggle:active {
+.timepicker > .toggle:active,
+.colorpicker > .toggle:active {
   border-bottom: 2px solid #1976d2;
   padding-bottom: 7px;
 }
@@ -717,38 +737,48 @@ table {
 
 .richtext > .tool-bar {
   background-color: #f5f5f5;
-  border-bottom: 1px solid #bdbdbd;
 }
 
-.richtext > .tool-bar > .primary {
+.richtext > .tool-bar > .primary,
+.richtext > .tool-bar > .secondary {
   border-bottom: 1px solid #bdbdbd;
 }
 
 .richtext > .tool-bar > .primary > button,
 .richtext > .tool-bar > .secondary > button,
 .richtext > .tool-bar > .primary > .dropdown,
-.richtext > .tool-bar > .secondary > .dropdown {
+.richtext > .tool-bar > .secondary > .dropdown,
+.richtext > .tool-bar > .primary > .colorpicker,
+.richtext > .tool-bar > .secondary > .colorpicker,
+.richtext > .tool-bar > .primary > .separator,
+.richtext > .tool-bar > .secondary > .separator {
   vertical-align: top;
 }
 
 .richtext > .tool-bar > .primary > button,
 .richtext > .tool-bar > .secondary > button,
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle,
+.richtext > .tool-bar > .primary > .dropdown > .colorpicker,
+.richtext > .tool-bar > .secondary > .dropdown > .colorpicker {
   border-radius: 0;
 }
 
 .richtext > .tool-bar > .primary > button:hover,
 .richtext > .tool-bar > .secondary > button:hover,
 .richtext > .tool-bar > .primary > .dropdown > .toggle:hover,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle:hover {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle:hover,
+.richtext > .tool-bar > .primary > .colorpicker > .toggle:hover,
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle:hover {
   background-color: #e0e0e0;
 }
 
 .richtext > .tool-bar > .primary > button:active,
 .richtext > .tool-bar > .secondary > button:active,
 .richtext > .tool-bar > .primary > .dropdown > .toggle:active,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle:active {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle:active,
+.richtext > .tool-bar > .primary > .colorpicker > .toggle:active,
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle:active {
   background-color: #bdbdbd;
 }
 
@@ -760,10 +790,12 @@ table {
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle,
+.richtext > .tool-bar > .primary > .colorpicker > .toggle,
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle {
   border: 0;
   margin: 0;
-  padding: 8px 4px 8px 8px;
+  padding: 8px 4px 8px 12px;
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle > .text,
@@ -788,33 +820,71 @@ table {
   right: auto;
 }
 
-.richtext > .tool-bar > .primary > .font-family > .toggle > .text {
-  width: 70px;
-  max-width: 70px;
+.richtext > .tool-bar > .primary > .separator,
+.richtext > .tool-bar > .secondary > .separator {
+  background-color: #bdbdbd;
+  display: inline-block;
+  height: 24px;
+  margin: 6px 1px;
+  width: 1px;
 }
 
-.richtext > .tool-bar > .primary > .font-family > .menu  > .item {
+.richtext > .tool-bar > .primary > .text-color > .toggle > .text {
+  text-decoration: underline;
+}
+
+.richtext > .tool-bar > .primary > .bg-color > .toggle {
+  padding-left: 10px;
+}
+
+.richtext > .tool-bar > .primary > .bg-color > .toggle > .text {
+  background-color: #bdbdbd;
+  padding: 0 2px;
+}
+
+.richtext > .tool-bar > .primary > .more > .expand {
+  display: block;
+}
+
+.richtext > .tool-bar > .primary > .more > .collapse {
+  display: none;
+}
+
+.richtext > .tool-bar > .primary > .more.open > .expand {
+  display: none;
+}
+
+.richtext > .tool-bar > .primary > .more.open > .collapse {
+  display: block;
+}
+
+.richtext > .tool-bar > .primary > .text-align > .menu  > .item {
+  min-width: 40px;
+}
+
+.richtext > .tool-bar > .secondary > .font-family > .toggle > .text {
+  width: 65px;
+  max-width: 65px;
+}
+
+.richtext > .tool-bar > .secondary > .font-family > .menu  > .item {
   min-width: 140px;
 }
 
-.richtext > .tool-bar > .primary > .font-size > .toggle > .text {
+.richtext > .tool-bar > .secondary > .font-size > .toggle > .text {
   width: 45px;
   max-width: 45px;
 }
 
-.richtext > .tool-bar > .primary > .font-size > .menu  > .item {
-  min-width: 70px;
-}
-
-.richtext > .tool-bar > .secondary > .text-align > .menu  > .item {
-  min-width: 40px;
+.richtext > .tool-bar > .secondary > .font-size > .menu  > .item {
+  line-height: normal;
+  min-width: 90px;
 }
 
 .richtext > .editor {
   max-height: 160px;
   min-height: 160px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
   padding: 8px;
   word-wrap: break-word;
 }

@@ -18,7 +18,7 @@ limitations under the License.
   'use strict';
   
   window.UI = window.UI || {};
-  window.UI.Dropdown = function(selector) {
+  window.UI.ColorPicker = function(selector) {
     var items = [],
 	  selected = '',
       toggleHandler = function() {},
@@ -34,7 +34,7 @@ limitations under the License.
 	  context.selected = data.selected || '';
     }
     
-    function bindDropdown(context) {
+    function bindColorPicker(context) {
 	  if (context.items.length > 0) {
 		var menu = helpers.query(".menu", context.container);
         menu.innerHTML = getMenuHTML(context);
@@ -100,43 +100,6 @@ limitations under the License.
 	
     function bindToggle(container) {
       return function(event) {
-        var menu = helpers.query(".menu", container);
-        if (!helpers.isNull(container.getAttribute("select"))) {
-          var maxViewableItems = 7,
-            items = helpers.queryAll(".item", menu),
-            selected = helpers.query(".selected", menu),
-            itemHeight = selected.offsetHeight,
-            itemPositionTop = selected.offsetTop;
-          
-          helpers.toArray(items).forEach(function(item, index, items) {
-            if (item === selected) {
-              var itemIndex = (index + 1),
-                positionTop = 0,
-                scrollTop = 0;
-              
-              if (itemIndex < maxViewableItems) {
-                positionTop = -((itemIndex - 1) * itemHeight);
-                scrollTop = 0;
-              }
-              else {
-                if ((items.length - itemIndex) < maxViewableItems) {
-                  positionTop = -((maxViewableItems - 1) * itemHeight);
-                  scrollTop = ((itemIndex - maxViewableItems) * itemHeight);
-                }
-                else {
-                  while (itemIndex > maxViewableItems) {
-                    itemIndex = itemIndex - maxViewableItems;
-                  }
-                  positionTop = -((itemIndex - 1) * itemHeight);
-                  scrollTop = (itemPositionTop - (itemIndex * itemHeight)
-                    + itemHeight);
-                }
-              }
-              menu.style.top = positionTop + 'px';
-              menu.scrollTop = scrollTop;
-            }
-          });
-        }
         container.classList.toggle('open');
         triggerReflow(container);
       };
@@ -251,8 +214,16 @@ limitations under the License.
       var text = helpers.query('.toggle > .text', context.container);
       var item = helpers.query(
         '.item[data-value="' + context.selected + '"]', context.container);
-      var iconText = helpers.query('i', text);
-      if (helpers.isEmpty(iconText)) {
+      var itemText = helpers.query('.text', item);
+      if (!helpers.isEmpty(itemText)) {
+        if (helpers.isEmpty(itemText.textContent)) {
+          text.innerHTML = itemText.innerHTML;
+        }
+        else {
+          text.textContent = itemText.textContent;
+        }
+      }
+      else {
         text.textContent = item.textContent;
       }
 	  
@@ -321,7 +292,7 @@ limitations under the License.
       
       set items(value) {
         items = value;
-		bindDropdown(this);
+		bindColorPicker(this);
         updateStatus(this);
       },
       
