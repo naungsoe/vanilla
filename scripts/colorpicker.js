@@ -30,14 +30,38 @@ limitations under the License.
       changeHandler = function() {};
       
     function bindData(context, data) {
-	  context.items = data.items || [];
+	  context.items = data.items || [
+        //red
+        '#d32f2f', '#e53935', '#ef5350',
+        '#e57373', '#ef9a9a', '#ffcdd2',
+        
+        //purple
+        '#7b1fa2', '#8e24aa', '#ab47bc',
+        '#ba68C8', '#ce93d8', '#e1bee7',
+        
+        //blue
+        '#1976d2', '#1e88e5', '#42a5f5',
+        '#64b5f6', '#90caf9', '#bbdefb',
+        
+        //green
+        '#388e3c', '#43a047', '#66bb6a',
+        '#81c784', '#a5d6a7', '#c8e6c9',
+        
+        //yellow
+        '#fbc02d', '#fdd835', '#ffee58',
+        '#fff176', '#fff59d', '#fff9c4',
+        
+        //black
+        '#252525', '#616161', '#9e9e9e',
+        '#bdbdbd', '#e0e0e0', '#ffffff'
+      ];
 	  context.selected = data.selected || '';
     }
     
     function bindColorPicker(context) {
 	  if (context.items.length > 0) {
-		var menu = helpers.query(".menu", context.container);
-        menu.innerHTML = getMenuHTML(context);
+		var plate = helpers.query(".plate", context.container);
+        plate.innerHTML = getColorPlateHTML(context);
 	  }
 	  
       var toggle = helpers.query('.toggle', context.container);
@@ -46,7 +70,7 @@ limitations under the License.
       toggleHandler = bindToggle(context.container);
       toggle.addEventListener('click', toggleHandler, false);
 
-      var items = helpers.queryAll('.menu > .item', context.container);
+      var items = helpers.queryAll('.plate > .item', context.container);
       helpers.toArray(items).forEach(function(item) {
         item.removeEventListener('click', itemHandler, false);
         item.removeEventListener('mouseenter', mouseEnterHandler, false);
@@ -78,24 +102,14 @@ limitations under the License.
       document.addEventListener('click', docClickHandler, false);
     }
     
-	function getMenuHTML(context) {
-	  var menu = helpers.query('.menu', context.container),
-        html = '';
-      
-      if (menu.classList.contains('selectable')) {
-          context.items.forEach(function(item) {
-          html = html + '<li data-value="' + item.id + '" '
-            + 'class="item fixed"><i class="fa fa-check"></i>'
-            + '<span class="text">' + item.name + '</span></li>';
-        });
-      }
-      else {
-        context.items.forEach(function(item) {
-          html = html + '<li data-value="' + item.id + '" '
-            + 'class="item fixed">' + item.name + '</li>';
-        });
-      }
-	  return html;
+	function getColorPlateHTML(context) {
+      var html = '';
+      context.items.forEach(function(item) {
+	    html = html + '<li data-value="' + item + '" class="item" '
+          + 'style="background-color: ' + item + ';">'
+          + '<i class="fa fa-check"></i></li>';
+      });
+      return html;
 	}
 	
     function bindToggle(container) {
@@ -123,7 +137,7 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('dropdown')) {
+		while (!target.classList.contains('colorpicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
@@ -134,7 +148,7 @@ limitations under the License.
 		    && (container.classList.contains('open'))) {
           switch (event.keyCode) {
             case 13:
-              var item = helpers.query('.menu > .highlight', container);
+              var item = helpers.query('.plate > .highlight', container);
               if (!helpers.isEmpty(item)) {
                 container.classList.toggle('open');
                 
@@ -144,43 +158,43 @@ limitations under the License.
               break;
             
             case 38:
-              var item = helpers.query('.menu > .highlight', container);
+              var item = helpers.query('.plate > .highlight', container);
               if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .selected', container);
+                item = helpers.query('.plate > .selected', container);
               }
               
               if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .item:last-child', container);
+                item = helpers.query('.plate > .item:last-child', container);
               }
               else {
                 item.classList.remove('highlight');
                 item = item.previousElementSibling
-                  || helpers.query('.menu > .item:last-child', container);
+                  || helpers.query('.plate > .item:last-child', container);
               }
               item.classList.add('highlight');
               
-              var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop;
+              var plate = helpers.query('.plate', container);
+              plate.scrollTop = item.offsetTop;
               break;
             
             case 40:
-              var item = helpers.query('.menu > .highlight', container);
+              var item = helpers.query('.plate > .highlight', container);
               if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .selected', container);
+                item = helpers.query('.plate > .selected', container);
               }
               
               if (helpers.isEmpty(item)) {
-                item = helpers.query('.menu > .item:first-child', container);
+                item = helpers.query('.plate > .item:first-child', container);
               }
               else {
                 item.classList.remove('highlight');
                 item = item.nextElementSibling
-                  || helpers.query('.menu > .item:first-child', container);
+                  || helpers.query('.plate > .item:first-child', container);
               }
               item.classList.add('highlight');
               
-              var menu = helpers.query('.menu', container);
-              menu.scrollTop = item.offsetTop;
+              var plate = helpers.query('.plate', container);
+              plate.scrollTop = item.offsetTop;
               break;
           }
         }
@@ -192,7 +206,7 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('dropdown')) {
+		while (!target.classList.contains('colorpicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
@@ -211,26 +225,13 @@ limitations under the License.
 	    return;
 	  }
       
-      var text = helpers.query('.toggle > .text', context.container);
-      var item = helpers.query(
-        '.item[data-value="' + context.selected + '"]', context.container);
-      var itemText = helpers.query('.text', item);
-      if (!helpers.isEmpty(itemText)) {
-        if (helpers.isEmpty(itemText.textContent)) {
-          text.innerHTML = itemText.innerHTML;
-        }
-        else {
-          text.textContent = itemText.textContent;
-        }
-      }
-      else {
-        text.textContent = item.textContent;
-      }
-	  
-      var items = helpers.queryAll('.menu > .item', context.container);
+      var items = helpers.queryAll('.plate > .highlight', context.container);
       helpers.toArray(items).forEach(function(item) {
         item.classList.remove('selected');
       });
+      
+      var item = helpers.query(
+        '.item[data-value="' + context.selected + '"]', context.container);
       item.classList.add('selected');
     }
     
@@ -239,7 +240,7 @@ limitations under the License.
         event = event || window.event;
         
         var container = context.container,
-          highlight = helpers.query('.menu > .highlight', container);
+          highlight = helpers.query('.plate > .highlight', container);
         if (!helpers.isEmpty(highlight)) {
           highlight.classList.remove('highlight');
         }
@@ -257,7 +258,7 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
-        var highlight = helpers.query('.menu > .highlight', container);
+        var highlight = helpers.query('.plate > .highlight', container);
         if (!helpers.isEmpty(highlight)) {
           highlight.classList.remove('highlight');
         }
@@ -268,7 +269,7 @@ limitations under the License.
     
     function bindMouseLeave(container) {
       return function(event) {
-        var highlight = helpers.query('.menu > .highlight', container);
+        var highlight = helpers.query('.plate > .highlight', container);
         if (!helpers.isEmpty(highlight)) {
           highlight.classList.remove('highlight');
         }

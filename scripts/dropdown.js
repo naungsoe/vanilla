@@ -248,12 +248,15 @@ limitations under the License.
 	    return;
 	  }
       
-      var text = helpers.query('.toggle > .text', context.container);
       var item = helpers.query(
-        '.item[data-value="' + context.selected + '"]', context.container);
-      var iconText = helpers.query('i', text);
-      if (helpers.isEmpty(iconText)) {
-        text.textContent = item.textContent;
+          '.item[data-value="' + context.selected + '"]', context.container),
+        text = helpers.query('.toggle > .text', context.container);
+      
+      if (!helpers.isEmpty(text)) {
+        var iconText = helpers.query('i', text);
+        if (helpers.isEmpty(iconText)) {
+          text.textContent = item.textContent;
+        }
       }
 	  
       var items = helpers.queryAll('.menu > .item', context.container);

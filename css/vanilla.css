@@ -131,13 +131,13 @@ button[raised][disabled] {
 }
 
 button[raised][primary] {
-  background-color: #ff5b0c;
+  background-color: #ff3d00;
   border: 0;
   color: #fff;
 }
 
 button[raised][primary]:active {
-  background-color: #bf6337;
+  background-color: #dd2c00;
 }
 
 button[flat],
@@ -202,15 +202,15 @@ table {
 }
 
 .transition {
-  transition: bottom .2s, left .2s, max-height .2s, max-width .2s, opacity .1s, right .2s, top .2s;
+  transition: bottom .2s, left .2s, max-height .2s, max-width .0s, opacity .1s, right .2s, top .2s;
 }
 
 .transition-portrait {
-  transition: bottom .2s, left .2s, max-height .2s, max-width .3s, opacity .1s, right .2s, top .2s;
+  transition: bottom .2s, left .2s, max-height .15s, max-width .2s, opacity .1s, right .2s, top .2s;
 }
 
 .transition-landscape {
-  transition: bottom .2s, left .2s, max-height .3s, max-width .2s, opacity .1s, right .2s, top .2s;
+  transition: bottom .2s, left .2s, max-height .2s, max-width .15s, opacity .1s, right .2s, top .2s;
 }
 
 .hide {
@@ -353,7 +353,7 @@ table {
 .dropdown > .menu,
 .datepicker > .calendar,
 .timepicker > .picker,
-.colorpicker > .picker,
+.colorpicker > .plate,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -447,7 +447,7 @@ table {
 .dropdown[select] > .menu,
 .datepicker > .calendar,
 .timepicker > .picker,
-.colorpicker > .picker {
+.colorpicker > .plate {
   left: 0;
   right: 0;
 }
@@ -465,18 +465,22 @@ table {
 
 .datepicker > .calendar,
 .timepicker > .picker,
-.colorpicker > .picker {
-  border: 0;
+.colorpicker > .plate {
   left: 0;
   top: 0;
-  width: 270px;
-  max-width: 270px;
+}
+
+.datepicker > .calendar,
+.timepicker > .picker {
+  border: 0;
 }
 
 .datepicker > .calendar > .header,
 .timepicker > .picker > .header {
   background-color: #1976d2;
   border: 1px solid #1976d2;
+  max-height: 60px;
+  overflow: hidden;
   padding: 8px 24px;
 }
 
@@ -590,12 +594,8 @@ table {
 }
 
 .timepicker > .picker {
-  border: 0;
   left: auto;
   right: 0;
-  top: 0;
-  width: 270px;
-  max-width: 270px;
 }
 
 .timepicker > .picker > .header {
@@ -657,7 +657,34 @@ table {
 
 .timepicker > .picker > .body > .hours,
 .timepicker > .picker > .body > .minutes {
+  overflow: hidden;
   padding: 24px 8px 0 8px;
+}
+
+.colorpicker > .plate > .item {
+  border: 1px solid #fff;
+  display: inline-block;
+  height: 34px;
+  width: 34px;
+}
+
+.colorpicker > .plate > .item > i {
+  color: #fff;
+  display: inline-block;
+  font-size: 14px;
+  width: 36px;
+  line-height: 36px;
+  text-align: center;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.colorpicker > .plate > .selected > i {
+  visibility: visible;
+}
+
+.colorpicker > .plate > .highlight {
+  border: 1px solid #bdbdbd;
 }
 
 .popover > .content {
@@ -689,7 +716,7 @@ table {
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
-.colorpicker.open > .picker,
+.colorpicker.open > .plate,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
 .popover.open > .content {
@@ -700,17 +727,27 @@ table {
 .dropdown.open > .menu,
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
-.colorpicker.open > .picker,
+.colorpicker.open > .plate,
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 252px;
-  max-width: 380px;
+  max-width: 268px;
 }
 
 .datepicker.open > .calendar,
 .timepicker.open > .picker {
   max-height: 480px;
+  width: 270px;
+  max-width: 270px;
+}
+
+.colorpicker.open > .plate {
+  height: 216px;
+  max-height: 216px;
+  max-width: 218px;
+  overflow-y: hidden;
+  width: 218px;
 }
 
 .dropdown[select] > .toggle:focus,
@@ -735,13 +772,10 @@ table {
   display: block;
 }
 
-.richtext > .tool-bar {
-  background-color: #f5f5f5;
-}
-
 .richtext > .tool-bar > .primary,
 .richtext > .tool-bar > .secondary {
   border-bottom: 1px solid #bdbdbd;
+  background-color: #f5f5f5;
 }
 
 .richtext > .tool-bar > .primary > button,
@@ -850,11 +884,15 @@ table {
   display: none;
 }
 
-.richtext > .tool-bar > .primary > .more.open > .expand {
+.richtext > .tool-bar > .primary > .more.expanded {
+  color: rgba(0,0,0,.87);
+}
+
+.richtext > .tool-bar > .primary > .more.expanded > .expand {
   display: none;
 }
 
-.richtext > .tool-bar > .primary > .more.open > .collapse {
+.richtext > .tool-bar > .primary > .more.expanded > .collapse {
   display: block;
 }
 
@@ -1487,13 +1525,13 @@ table {
 .app-bar  > .left > .nav > .back:focus,
 .app-bar  > .left > .nav > .name:focus {
   background-color: transparent;
-  color: #bbcefb;
+  color: #bbdefb;
 }
 
 .app-bar  > .left > .nav > .menu:active,
 .app-bar  > .left > .nav > .back:active,
 .app-bar  > .left > .nav > .name:active {
-  background-color: #bbcefb;
+  background-color: #2196f3;
   color: #fff;
 }
 
@@ -1524,6 +1562,7 @@ table {
 
 .app-bar > .right > .nav > .popover > .toggle:active {
   background-color: #bbcefb;
+  color: #fff;
 }
 
 .app-bar > .right > .nav > .popover > .toggle > .text {

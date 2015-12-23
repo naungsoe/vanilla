@@ -20,6 +20,7 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.RichText = function(selector) {
     var content = '',
+      changes = 0,
       range = {},
       unformatHandler = function() {},
       boldHandler = function() {},
@@ -28,12 +29,16 @@ limitations under the License.
       strikethroughHandler = function() {},
       subscriptHandler = function() {},
       superscriptHandler = function() {},
+      undoHandler = function() {},
+      redoHandler = function() {},
+      moreHandler = function() {},
       outdentHandler = function() {},
       indentHandler = function() {},
       orderedListHandler = function() {},
       unorderedListHandler = function() {},
-      focusHandler = function() {},
-      blurHandler = function() {},
+      editorFocusHandler = function() {},
+      editorBlurHandler = function() {},
+      editorChangeHandler = function() {},
       changeHandler = function() {};
     
     function bindData(context, data) {
@@ -78,17 +83,17 @@ limitations under the License.
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-font"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait picker"></ul></div>'
-        + '<div class="colorpicker bg-color">'
+        + '<ul class="transition plate"></ul></div>'
+        + '<div class="colorpicker back-color">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-font"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait picker"></ul></div>'
+        + '<ul class="transition plate"></ul></div>'
         + '<div class="dropdown text-align">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-align-left"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait menu selectable">'
+        + '<ul class="transition menu selectable">'
         + '<li data-value="justifyLeft" class="item fixed">'
         + '<i class="fa fa-check"></i><span class="text">'
         + '<i class="fa fa-align-left"></i></span></li>'
@@ -112,12 +117,12 @@ limitations under the License.
         + '<i class="fa fa-chevron-up collapse"></i></button>'
         + '</div>';
       
-      html = html + '<div class="secondary">'
+      html = html + '<div class="secondary hide">'
         + '<div class="dropdown font-family">'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Sans Serif</span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait menu left selectable">'
+        + '<ul class="transition menu left selectable">'
         + '<li data-value="Arial" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text" style="font-family: Arial;">'
@@ -151,7 +156,7 @@ limitations under the License.
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Normal</span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait menu left selectable">'
+        + '<ul class="transition menu left selectable">'
         + '<li data-value="2" class="item fixed">'
         + '<i class="fa fa-check"></i>'
         + '<span class="text"><font size="2">'
@@ -176,7 +181,7 @@ limitations under the License.
         + '<i class="fa fa-indent"></i></button>'
         + '</div>';
       
-      html = html + '<div class="secondary">'
+      html = html + '<div class="secondary hide">'
         + '<button type="button" class="ordered-list" flat>'
         + '<i class="fa fa-list-ol"></i></button>'
         + '<button type="button" class="unordered-list" flat>'
@@ -243,9 +248,31 @@ limitations under the License.
       textColor.bind({ selected: '' })
         .change(changeTextColor, context);
       
+      var backColor = UI.ColorPicker(helpers.query('.back-color', toolbar));
+      backColor.bind({ selected: '' })
+        .change(changeBackColor, context);
+      
       var textAlign = UI.Dropdown(helpers.query('.text-align', toolbar));
       textAlign.bind({ selected: 'justifyLeft' })
         .change(changeTextAlign, context);
+      
+      var undo = helpers.query('.undo', toolbar);
+      undo.removeEventListener('click', undoHandler, false);
+      
+      undoHandler = execCommand('undo', '');
+      undo.addEventListener('click', undoHandler, false);
+      
+      var redo = helpers.query('.redo', toolbar);
+      redo.removeEventListener('click', redoHandler, false);
+      
+      redoHandler = execCommand('redo', '');
+      redo.addEventListener('click', redoHandler, false);
+      
+      var more = helpers.query('.more', toolbar);
+      more.removeEventListener('click', moreHandler, false);
+      
+      moreHandler = bindMore(context);
+      more.addEventListener('click', moreHandler, false);
       
       var fontFamily = UI.Dropdown(helpers.query('.font-family', toolbar));
       fontFamily.bind({ selected: 'Sans-Serif' })
@@ -288,12 +315,30 @@ limitations under the License.
     
     function changeTextColor(context) {
       context.restoreRange();
-      document.execCommand('color', false, this.selected);
+      document.execCommand('foreColor', false, this.selected);
+    }
+    
+    function changeBackColor(context) {
+      context.restoreRange();
+      document.execCommand('backColor', false, this.selected);
     }
     
     function changeTextAlign(context) {
       context.restoreRange();
       document.execCommand(this.selected, false, '');
+    }
+    
+    function bindMore(context) {
+      return function(event) {
+         var toolbar = helpers.query('.tool-bar', context.container),
+           secondaries = helpers.queryAll('.secondary', toolbar),
+           more = helpers.query('.more', toolbar);
+         
+         helpers.toArray(secondaries).forEach(function(secondary) {
+           secondary.classList.toggle('hide');
+         });
+         more.classList.toggle('expanded');
+      };
     }
     
     function changeFontFamily(context) {
@@ -308,25 +353,39 @@ limitations under the License.
     
     function bindEditor(context) {
       var editor = helpers.query('.editor', context.container);
-      editor.removeEventListener('focus', focusHandler, false);
-      editor.removeEventListener('blur', blurHandler, false);
+      editor.removeEventListener('focus', editorFocusHandler, false);
+      editor.removeEventListener('blur', editorBlurHandler, false);
+      editor.removeEventListener('change', editorChangeHandler, false);
       
-      focusHandler = bindFocus(context);
-      editor.addEventListener('focus', focusHandler, false);
+      editorFocusHandler = bindEditorFocus(context);
+      editor.addEventListener('focus', editorFocusHandler, false);
       
-      blurHandler = bindBlur(context);
-      editor.addEventListener('blur', blurHandler, false);
+      editorBlurHandler = bindEditorBlur(context);
+      editor.addEventListener('blur', editorBlurHandler, false);
+      
+      editorChangeHandler = bindEditorChange(context);
+      editor.addEventListener('blur', editorChangeHandler, false);
     }
     
-    function bindFocus(context) {
+    function bindEditorFocus(context) {
       return function(event) {
         context.saveRange();
       };
     }
     
-    function bindBlur(context) {
+    function bindEditorBlur(context) {
       return function(event) {
         context.saveRange();
+      };
+    }
+    
+    function bindEditorChange(context) {
+      return function(event) {
+        var editor = helpers.query('.editor', context.container);
+        context.content = editor.innerHTML;
+        
+        var event = new CustomEvent('change', {});
+        context.container.dispatchEvent(event);
       };
     }
     
@@ -341,17 +400,21 @@ limitations under the License.
         return helpers.query(selector);
       },
 	  
+	  get changes() {
+        return changes;
+      },
+      
 	  get content() {
         return content;
       },
       
       set content(value) {
         content = value;
-		bindRichText(this);
       },
       
       bind: function(data) {
         bindData(this, data);
+		bindRichText(this);
         return this;
       },
       
