@@ -36,6 +36,7 @@ limitations under the License.
       indentHandler = function() {},
       orderedListHandler = function() {},
       unorderedListHandler = function() {},
+      linkHandler = function() {},
       editorFocusHandler = function() {},
       editorBlurHandler = function() {},
       editorChangeHandler = function() {},
@@ -305,6 +306,12 @@ limitations under the License.
       
       unorderedListHandler = execCommand('insertUnorderedList', '');
       unorderedList.addEventListener('click', unorderedListHandler, false);
+      
+      var link = helpers.query('.link', toolbar);
+      link.removeEventListener('click', linkHandler, false);
+      
+      linkHandler = bindLink(context);
+      link.addEventListener('click', linkHandler, false);
     }
     
     function execCommand(command, value) {
@@ -349,6 +356,12 @@ limitations under the License.
     function changeFontSize(context) {
       context.restoreRange();
       document.execCommand('fontSize', false, this.selected);
+    }
+    
+    function bindLink(context) {
+      return function(event) {
+        
+      };
     }
     
     function bindEditor(context) {

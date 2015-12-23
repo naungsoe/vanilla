@@ -225,7 +225,7 @@ limitations under the License.
 	    return;
 	  }
       
-      var items = helpers.queryAll('.plate > .highlight', context.container);
+      var items = helpers.queryAll('.plate > .selected', context.container);
       helpers.toArray(items).forEach(function(item) {
         item.classList.remove('selected');
       });

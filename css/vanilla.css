@@ -867,11 +867,11 @@ table {
   text-decoration: underline;
 }
 
-.richtext > .tool-bar > .primary > .bg-color > .toggle {
+.richtext > .tool-bar > .primary > .back-color > .toggle {
   padding-left: 10px;
 }
 
-.richtext > .tool-bar > .primary > .bg-color > .toggle > .text {
+.richtext > .tool-bar > .primary > .back-color > .toggle > .text {
   background-color: #bdbdbd;
   padding: 0 2px;
 }

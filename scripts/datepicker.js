@@ -324,7 +324,7 @@ limitations under the License.
     }
     
     function bindMonths(context) {
-      var table = helpers.query('.months', context.container);
+      var table = helpers.query('.months', context.container),
         months = helpers.queryAll('.selectable', table);
       
       helpers.toArray(months).forEach(function(month) {
