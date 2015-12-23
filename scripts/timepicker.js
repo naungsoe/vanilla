@@ -44,7 +44,7 @@ limitations under the License.
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.format = data.format || 'hh:mm pp';
-      context.selected = data.selected || '00:00 AM';
+      context.selected = data.selected || '12:00 AM';
     }
     
     function bindDatePicker(context) {
@@ -392,6 +392,10 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
+        if (event.currentTarget.classList.contains('selected')) {
+          return;
+        }
+        
         var value = event.currentTarget.getAttribute('data-value'),
           hour = helpers.query('.header > .hour', context.container),
           clock = helpers.query('.body > .hours', context.container),
@@ -400,53 +404,42 @@ limitations under the License.
           hands = helpers.queryAll('.hands > .selected', clock),
           tick = helpers.query('.tick[data-value="' + value + '"]', clock),
           number = helpers.query('.number[data-value="' + value + '"]', clock),
-          hand = helpers.query('.hand[data-value="' + value + '"]', clock);
+          hand = helpers.query('.hand[data-value="' + value + '"]', clock),
+          twelveHourPattern = /^hh:mm pp$/,
+          twentyFourHourPattern = /^HH:mm pp$/;
         
-        if (event.currentTarget.classList.contains('selected')) {
-          context.hour = '00';
-          hour.textContent = context.hour;
+        switch (context.period) {
+          case 'AM':
+            context.hour = (value.length === 1) ? '0' + value : value;
+            hour.textContent = context.hour;
+            break;
           
-          helpers.toArray(ticks).forEach(function(tick) {
-            tick.classList.remove('selected');
-          });
-          
-          helpers.toArray(numbers).forEach(function(number) {
-            number.classList.remove('selected');
-          });
-          
-          helpers.toArray(hands).forEach(function(hand) {
-            hand.classList.remove('selected');
-          });
-        }
-        else {
-          switch (context.period) {
-            case 'AM':
+          case 'PM':
+            if (twelveHourPattern.test(context.format)) {
               context.hour = (value.length === 1) ? '0' + value : value;
-              hour.textContent = context.hour;
-              break;
-            
-            case 'PM':
+            }
+            else {
               context.hour = (+value + 12).toString();
-              hour.textContent = context.hour;
-              break;
-          }
-          
-          helpers.toArray(ticks).forEach(function(tick) {
-            tick.classList.remove('selected');
-          });
-          
-          helpers.toArray(numbers).forEach(function(number) {
-            number.classList.remove('selected');
-          });
-          
-          helpers.toArray(hands).forEach(function(hand) {
-            hand.classList.remove('selected');
-          });
-          
-          tick.classList.add('selected');
-          number.classList.add('selected');
-          hand.classList.add('selected');
+            }
+            hour.textContent = context.hour;
+            break;
         }
+        
+        helpers.toArray(ticks).forEach(function(tick) {
+          tick.classList.remove('selected');
+        });
+        
+        helpers.toArray(numbers).forEach(function(number) {
+          number.classList.remove('selected');
+        });
+        
+        helpers.toArray(hands).forEach(function(hand) {
+          hand.classList.remove('selected');
+        });
+        
+        tick.classList.add('selected');
+        number.classList.add('selected');
+        hand.classList.add('selected');
       };
     }
     
@@ -665,6 +658,10 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
+        if (event.currentTarget.classList.contains('selected')) {
+          return;
+        }
+        
         var value = event.currentTarget.getAttribute('data-value'),
           minute = helpers.query('.header > .minute', context.container),
           clock = helpers.query('.body > .minutes', context.container),
@@ -744,28 +741,31 @@ limitations under the License.
         
         var hours = helpers.query('.body > .hours', context.container),
           minutes = helpers.query('.body > .minutes', context.container),
+          hour = helpers.query('.header > .hour', context.container),
           am = helpers.query('.header > .period > .am', context.container),
-          pm = helpers.query('.header > .period > .pm', context.container);
+          pm = helpers.query('.header > .period > .pm', context.container),
+          twelveHourPattern = /^hh:mm pp$/,
+          twentyFourHourPattern = /^HH:mm pp$/;
         
         if (event.currentTarget.classList.contains('am')) {
           context.period = 'AM';
           
           if (parseInt(context.hour, 10) > 12) {
-            var hour = helpers.query('.header > .hour', context.container);
             context.hour = (parseInt(context.hour, 10) - 12).toString();
-            hour.textContent = (context.hour.length === 1)
-              ? '0' + context.hour : context.hour;
           }
         }
         else {
           context.period = 'PM';
           
           if (parseInt(context.hour, 10) <= 12) {
-            var hour = helpers.query('.header > .hour', context.container);
-            context.hour =  (parseInt(context.hour, 10) + 12).toString();
-            hour.textContent = context.hour;
+            if (twentyFourHourPattern.test(context.format)) {
+              context.hour =  (parseInt(context.hour, 10) + 12).toString();
+            }
           }
         }
+        
+        hour.textContent = (context.hour.length === 1)
+          ? '0' + context.hour : context.hour;
         
         am.classList.toggle('selected');        
         pm.classList.toggle('selected');
@@ -942,13 +942,23 @@ limitations under the License.
     }
     
     function updateTime(context) {
-      var pattern = /^(\d{2})\:(\d{2})\s(AM|PM)$/;
+      var pattern = /^(\d{2})\:(\d{2})\s(AM|PM)$/,
+        twelveHourPattern = /^hh:mm pp$/,
+        twentyFourHourPattern = /^HH:mm pp$/;
+      
       if (pattern.test(context.selected)) {
         var matches = context.selected.match(pattern);
         if (!helpers.isEmpty(matches)) {
           context.hour = matches[1];
           context.minute = matches[2];
           context.period = matches[3];
+        }
+      }
+      
+      if (twentyFourHourPattern.test(context.format)) {
+        if (context.hour === '24') {
+          context.hour = '00';
+          context.period = 'AM';
         }
       }
       
@@ -1019,6 +1029,7 @@ limitations under the License.
       
       get timeString() {
         var time = this.format;
+        time = time.replace('HH', this.hour);
         time = time.replace('hh', this.hour);
         time = time.replace('mm', this.minute);
         time = time.replace('pp', this.period);

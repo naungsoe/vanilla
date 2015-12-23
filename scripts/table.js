@@ -218,7 +218,7 @@ limitations under the License.
         + '<button type="button" class="toggle" flat-icon><span class="text">'
         + context.resource.tenRecords + '</span>'
         + '<i class="fa fa-caret-down"></i></button>'
-        + '<ul class="transition-portrait menu up selectable">'
+        + '<ul class="transition menu up selectable">'
         + '<li data-value="10" class="item">'
         + '<i class="fa fa-check"></i><span class="text">'
         + context.resource.tableTenRecords + '</span></li>'

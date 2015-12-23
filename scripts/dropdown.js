@@ -83,11 +83,20 @@ limitations under the License.
         html = '';
       
       if (menu.classList.contains('selectable')) {
+        if (helpers.isNull(context.container.getAttribute("select"))) {
           context.items.forEach(function(item) {
-          html = html + '<li data-value="' + item.id + '" '
-            + 'class="item fixed"><i class="fa fa-check"></i>'
-            + '<span class="text">' + item.name + '</span></li>';
-        });
+            html = html + '<li data-value="' + item.id + '" '
+              + 'class="item fixed"><i class="fa fa-check"></i>'
+              + '<span class="text">' + item.name + '</span></li>';
+          });
+        }
+        else {
+          context.items.forEach(function(item) {
+            html = html + '<li data-value="' + item.id + '" '
+              + 'class="item fixed"><span class="text">'
+              + item.name + '</span></li>';
+          });
+        }
       }
       else {
         context.items.forEach(function(item) {
@@ -95,6 +104,7 @@ limitations under the License.
             + 'class="item fixed">' + item.name + '</li>';
         });
       }
+      
 	  return html;
 	}
 	
@@ -246,24 +256,21 @@ limitations under the License.
     function updateStatus(context) {
       if (context.selected === '') {
 	    return;
-	  }
-      
-      var item = helpers.query(
-          '.item[data-value="' + context.selected + '"]', context.container),
-        text = helpers.query('.toggle > .text', context.container);
-      
-      if (!helpers.isEmpty(text)) {
-        var iconText = helpers.query('i', text);
-        if (helpers.isEmpty(iconText)) {
-          text.textContent = item.textContent;
-        }
       }
-	  
-      var items = helpers.queryAll('.menu > .item', context.container);
+      
+      var items = helpers.queryAll('.menu > .selected', context.container);
       helpers.toArray(items).forEach(function(item) {
         item.classList.remove('selected');
       });
+      
+      var text = helpers.query('.toggle > .text', context.container),
+        item = helpers.query(
+          '.item[data-value="' + context.selected + '"]', context.container);
+      
       item.classList.add('selected');
+      if (!helpers.isNull(context.container.getAttribute("select"))) {
+        text.textContent = item.textContent;
+      }
     }
     
     function bindItem(context) {

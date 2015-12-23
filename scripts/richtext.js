@@ -119,7 +119,7 @@ limitations under the License.
         + '</div>';
       
       html = html + '<div class="secondary hide">'
-        + '<div class="dropdown font-family">'
+        + '<div class="dropdown font-family" select>'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Sans Serif</span>'
         + '<i class="fa fa-caret-down"></i></button>'
@@ -153,7 +153,7 @@ limitations under the License.
         + '<span class="text" style="font-family: Times New Roman;">'
         + 'Times New Roman</span></li>'
         + '</ul></div>'
-        + '<div class="dropdown font-size">'
+        + '<div class="dropdown font-size" select>'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Normal</span>'
         + '<i class="fa fa-caret-down"></i></button>'

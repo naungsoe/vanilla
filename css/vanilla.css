@@ -202,7 +202,7 @@ table {
 }
 
 .transition {
-  transition: bottom .2s, left .2s, max-height .2s, max-width .0s, opacity .1s, right .2s, top .2s;
+  transition: bottom .2s, left .2s, max-height .2s, max-width .0s, opacity .0s, right .2s, top .2s;
 }
 
 .transition-portrait {
@@ -402,14 +402,22 @@ table {
   vertical-align: middle;
 }
 
-.dropdown > .menu.selectable  > .item > i {
+.dropdown > .menu.selectable  > .item > .text {
   color: rgba(0,0,0,.54);
+}
+
+.dropdown > .menu.selectable  > .item > i {
+  color: rgba(0,0,0,.87);
   visibility: hidden;
   width: 20px;
 }
 
 .dropdown > .menu.selectable  > .selected {
   background-color: #f5f5f5;
+}
+
+.dropdown > .menu.selectable  > .selected > .text {
+  color: rgba(0,0,0,.87);
 }
 
 .dropdown > .menu.selectable  > .selected > i {
@@ -738,12 +746,11 @@ table {
 .datepicker.open > .calendar,
 .timepicker.open > .picker {
   max-height: 480px;
-  width: 270px;
   max-width: 270px;
+  width: 270px;
 }
 
 .colorpicker.open > .plate {
-  height: 216px;
   max-height: 216px;
   max-width: 218px;
   overflow-y: hidden;
