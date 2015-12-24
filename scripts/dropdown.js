@@ -268,8 +268,15 @@ limitations under the License.
           '.item[data-value="' + context.selected + '"]', context.container);
       
       item.classList.add('selected');
-      if (!helpers.isNull(context.container.getAttribute("select"))) {
-        text.textContent = item.textContent;
+      if (!helpers.isNull(context.container.getAttribute("select-menu"))
+          || !helpers.isNull(context.container.getAttribute("select"))) {
+        var itemText = helpers.query('.text', item);
+        if (helpers.isEmpty(itemText.textContent)) {
+          text.innerHTML = itemText.innerHTML;
+        }
+        else {
+          text.textContent = itemText.textContent;
+        }
       }
     }
     

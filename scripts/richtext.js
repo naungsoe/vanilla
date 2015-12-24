@@ -90,7 +90,7 @@ limitations under the License.
         + '<span class="text"><i class="fa fa-font"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
         + '<ul class="transition plate"></ul></div>'
-        + '<div class="dropdown text-align">'
+        + '<div class="dropdown text-align" select-menu>'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text"><i class="fa fa-align-left"></i></span>'
         + '<i class="fa fa-caret-down"></i></button>'
@@ -119,7 +119,7 @@ limitations under the License.
         + '</div>';
       
       html = html + '<div class="secondary hide">'
-        + '<div class="dropdown font-family" select>'
+        + '<div class="dropdown font-family" select-menu>'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Sans Serif</span>'
         + '<i class="fa fa-caret-down"></i></button>'
@@ -153,7 +153,7 @@ limitations under the License.
         + '<span class="text" style="font-family: Times New Roman;">'
         + 'Times New Roman</span></li>'
         + '</ul></div>'
-        + '<div class="dropdown font-size" select>'
+        + '<div class="dropdown font-size" select-menu>'
         + '<button type="button" class="toggle" flat-icon>'
         + '<span class="text fixed">Normal</span>'
         + '<i class="fa fa-caret-down"></i></button>'

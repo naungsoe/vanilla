@@ -214,7 +214,7 @@ limitations under the License.
       
       html = html + '<div class="right"><div class="pagination">'
         + '<div class="label">' + context.resource.tablePageLength + '</div>'
-        + '<div class="limit dropdown">'
+        + '<div class="limit dropdown" select-menu>'
         + '<button type="button" class="toggle" flat-icon><span class="text">'
         + context.resource.tenRecords + '</span>'
         + '<i class="fa fa-caret-down"></i></button>'
@@ -282,8 +282,9 @@ limitations under the License.
     
     function bindWindowResize(container) {
       return function(event) {
-        var scrollable = helpers.query('.scrollable', container);
-        var head = helpers.query('.head', container);
+        var head = helpers.query('.head', container),
+          scrollable = helpers.query('.scrollable', container);
+        
         head.style.maxWidth = scrollable.clientWidth + 'px';
       };
     }
