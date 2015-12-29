@@ -77,7 +77,8 @@ limitations under the License.
       
       switch (toString.call(value)) {
         case '[object String]':
-          return (value.match(/[^\s]+/) === null);
+          var pattern = /[^\s]+/;
+          return !pattern.test(value);
           
         case '[object Array]':
           return (value.length === 0);
@@ -98,7 +99,12 @@ limitations under the License.
     
     isEmail: function(value) {
       var pattern = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
-      return (value.match(pattern) === null);
+      return pattern.test(value);
+    },
+    
+    isURL: function(value) {
+      var pattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
+      return pattern.test(value);
     },
     
     toArray: function(value) {

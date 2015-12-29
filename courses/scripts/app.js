@@ -23,7 +23,7 @@
     coursesViewOptions = {},
     usersDeleteModal = {},
     coursesViewColumnsModal = {},
-    coursesViewColumnsCheckboxGroup = {},
+    coursesColumnsCheckboxGroup = {},
     usersDefaultFields = ['id','name','start'],
     coursesCriteria = {
       fields: 'id,name,code,subject,level,start',
@@ -343,7 +343,7 @@
   }
   
   function deleteUsersFailed(response) {
-    usersDeleteModal.container.classList.add("hide");
+    this.container.classList.add("hide");
     var message = coursesView.selected.length
       ? pageResource.singleRecordDeleteFailed
       : pageResource.multipleRecordsDeleteFailed;
@@ -351,7 +351,7 @@
   }
   
   function cancelDeleteUsers() {
-    usersDeleteModal.container.classList.add("hide");
+    this.container.classList.add("hide");
   }
   
   function changeUsersView() {
@@ -398,7 +398,7 @@
     
     var checkboxGroup = helpers.query(
       '.checkbox-group', coursesViewColumnsModal.container);
-    coursesViewColumnsCheckboxGroup = UI.CheckboxGroup(checkboxGroup);
+    coursesColumnsCheckboxGroup = UI.CheckboxGroup(checkboxGroup);
     
     var checkboxGroupData = { items: [], selected: [] };
     coursesView.columns.forEach(function(column) {
@@ -413,14 +413,14 @@
       }
     });
     
-    coursesViewColumnsCheckboxGroup.bind(checkboxGroupData);
+    coursesColumnsCheckboxGroup.bind(checkboxGroupData);
   }
   
   function changeUsersViewColumns() {
-    coursesViewColumnsModal.container.classList.add("hide");
+    this.container.classList.add("hide");
     coursesView.columns.forEach(function(column) {
       if (usersDefaultFields.indexOf(column.id) === -1) {
-        var selected = coursesViewColumnsCheckboxGroup.selected.filter(
+        var selected = coursesColumnsCheckboxGroup.selected.filter(
           function(item) {
             return (item.id === column.id);
           });
@@ -445,7 +445,7 @@
   }
   
   function cancelUsersViewColumns() {
-    coursesViewColumnsModal.container.classList.add("hide");
+    this.container.classList.add("hide");
   }
   
   function downloadCourses() {

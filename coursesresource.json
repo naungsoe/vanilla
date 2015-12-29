@@ -137,6 +137,8 @@
 	"invalidRequiredField": "Fill out this field.",
 	"invalidDateField": "Try with correct date.",
 	"invalidTimeField": "Try with correct time.",
-	"invalidEmailField": "Try with correct email address.",
-	"invalidPasswordField": "Try password with at least 8 characters."
+	"invalidEmailField": "Try with correct Email address.",
+	"invalidURLField": "Try with correct URL.",
+	"invalidPasswordField": "Try password with at least 8 characters.",
+	"invalidLinkField": "Try with correct URL / Email address."
 }

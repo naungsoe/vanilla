@@ -934,6 +934,23 @@ table {
   word-wrap: break-word;
 }
 
+.richtext .modal > .content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.richtext .form-insert-link > .fieldset {
+  padding: 0;
+}
+
+.richtext .form-insert-link > .fieldset > .field > .label {
+  width: 140px;
+}
+
+.richtext .form-insert-link > .fieldset > .field > .control > input[type='text'] {
+  width: 270px;
+}
+
 .search-box {
   background-color: #fff;
   left: 235px;

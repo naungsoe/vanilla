@@ -20,7 +20,7 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.RichText = function(selector) {
     var content = '',
-      changes = 0,
+      resource = {},
       range = {},
       unformatHandler = function() {},
       boldHandler = function() {},
@@ -37,12 +37,16 @@ limitations under the License.
       orderedListHandler = function() {},
       unorderedListHandler = function() {},
       linkHandler = function() {},
+      linkModal = {},
+      imageHandler = function() {},
+      imageModal = {},
       editorFocusHandler = function() {},
       editorBlurHandler = function() {},
       editorChangeHandler = function() {},
       changeHandler = function() {};
     
-    function bindData(context, data) {
+    function bindData(context, data, resource) {
+      context.resource = resource || {};
       context.content = data.content || '';
     }
     
@@ -312,6 +316,12 @@ limitations under the License.
       
       linkHandler = bindLink(context);
       link.addEventListener('click', linkHandler, false);
+      
+      var image = helpers.query('.image', toolbar);
+      image.removeEventListener('click', imageHandler, false);
+      
+      imageHandler = bindImage(context);
+      image.addEventListener('click', imageHandler, false);
     }
     
     function execCommand(command, value) {
@@ -360,8 +370,253 @@ limitations under the License.
     
     function bindLink(context) {
       return function(event) {
+        var linkModalId = 'linkModal-'
+          + context.container.getAttribute('id');
         
+        var view = helpers.query('#' + linkModalId);
+        if (helpers.isEmpty(view)) {
+          view = document.createElement('div');
+          view.setAttribute('id', linkModalId);
+          view.innerHTML = getLinkHTML(context);
+          context.container.appendChild(view);
+          
+          linkModal = UI.Modal(view);
+        }
+        
+        linkModal.bind({})
+          .proceed(insertLink, context)
+          .cancel(cancelInsertLink);
+        
+        updateLinkDetails(context);
       };
+    }
+    
+    function getLinkHTML(context) {
+      var modalId = context.container.getAttribute('id');
+      
+      return '<div class="modal">'
+        + '<header class="header">'
+        + '<h3 class="title">Insert Link</h3>'
+        + '</header>'
+        + '<section class="content">'
+        + '<form class="form form-insert-link">'
+        + '<fieldset class="fieldset">'
+        + '<div class="field">'
+        + '<label for="linkAddress-' + modalId + '" '
+        + 'class="label">URL / Email address</label>'
+        + '<div class="control">'
+        + '<input id="linkAddress-' + modalId + '" '
+        + 'type="text" value="" />'
+        + '</div></div>'
+        + '<div class="field">'
+        + '<label for="linkText-' + modalId + '" '
+        + 'class="label">Text to display</label>'
+        + '<div class="control">'
+        + '<input id="linkText-' + modalId + '" '
+        + 'type="text" value="" />'
+        + '</div></div>'
+        + '</fieldset></form>'
+        + '</section>'
+        + '<nav class="actions">'
+        + '<button type="button" class="cancel" '
+        + 'flat>Cancel</button>'
+        + '<button type="button" class="proceed" '
+        + 'flat primary>Insert</button>'
+        + '</nav>'
+        + '</div>';
+    }
+    
+    function insertLink(context) {
+      if (isLinkFormValid(context)) {
+        this.container.classList.add("hide");
+        
+        var modalId = context.container.getAttribute('id'),
+          address = helpers.query('#linkAddress-' + modalId),
+          text = helpers.query('#linkText-' + modalId);
+        
+        var href = helpers.isEmail(address.value)
+          ? ('mailto:' + address.value) : address.value;
+        
+        var html = '<a href="' + href + '">'
+          + (helpers.isEmpty(text.value) ? href : text.value)
+          + '</a>';
+        
+        context.restoreRange();
+        document.execCommand('insertHTML', false, html);
+      }
+    }
+    
+    function isLinkFormValid(context) {
+      var modalId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + modalId);
+      
+      if (helpers.isURL(address.value)
+          || helpers.isEmail(address.value)) {
+        clearError(address);
+      }
+      else {
+        addError(address, context.resource.invalidLinkField);
+      }
+      
+      var form = helpers.query('.form-insert-link ', context.container),
+        errors = helpers.queryAll('.error', form);
+      
+      return (errors.length === 0);
+    }
+    
+    function addError(field, message) {
+      field.parentNode.parentNode.classList.add("error");
+      
+      var hint = helpers.query('.hint', field.parentNode);
+      if (helpers.isEmpty(hint)) {
+        var hint = document.createElement('div');
+        hint.classList.add('hint');
+        field.parentNode.appendChild(hint);
+      }
+      hint.innerHTML = '<div class="hint">' + message + '</div>';
+    }
+    
+    function clearError(field) {
+      field.parentNode.parentNode.classList.remove("error");
+      
+      var hint = helpers.query('.hint', field.parentNode);
+      if (!helpers.isEmpty(hint)) {
+        field.parentNode.removeChild(hint);
+      }
+    }
+    
+    function cancelInsertLink() {
+      this.container.classList.add("hide");
+    }
+    
+    function updateLinkDetails(context) {
+      var selection = window.getSelection(),
+        modalId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + modalId),
+        text = helpers.query('#linkText-' + modalId);
+      
+      address.value = '';
+      text.value = '';
+      
+      if (selection.anchorNode === selection.focusNode) {
+        if (selection.anchorNode.nodeName === 'A') {
+          address.value = selection.anchorNode.getAttribute('href');
+          text.value = selection.anchorNode.textContent;
+        }
+        else if (selection.anchorOffset < selection.focusOffset) {
+          text.value = selection.anchorNode.textContent.substring(
+            selection.anchorOffset, selection.focusOffset);
+        }
+      }
+    }
+    
+    function bindImage(context) {
+      return function(event) {
+        var imageModalId = 'imageModal-'
+          + context.container.getAttribute('id');
+        
+        var view = helpers.query('#' + imageModalId);
+        if (helpers.isEmpty(view)) {
+          view = document.createElement('div');
+          view.setAttribute('id', imageModalId);
+          view.innerHTML = getImageHTML(context);
+          context.container.appendChild(view);
+          
+          imageModal = UI.Modal(view);
+        }
+        
+        imageModal.bind({})
+          .proceed(insertImage, context)
+          .cancel(cancelInsertImage);
+        
+        updateImageDetails(context);
+      };
+    }
+    
+    function getImageHTML(context) {
+      var modalId = context.container.getAttribute('id');
+      
+      return '<div class="modal">'
+        + '<header class="header">'
+        + '<h3 class="title">Insert Link</h3>'
+        + '</header>'
+        + '<section class="content">'
+        + '<form class="form form-insert-link">'
+        + '<fieldset class="fieldset">'
+        + '<div class="field">'
+        + '<label for="imageAddress-' + modalId + '" '
+        + 'class="label">URL / Email address</label>'
+        + '<div class="control">'
+        + '<input id="imageAddress-' + modalId + '" '
+        + 'type="text" value="" />'
+        + '</div></div>'
+        + '<div class="field">'
+        + '<label for="imageText-' + modalId + '" '
+        + 'class="label">Text to display</label>'
+        + '<div class="control">'
+        + '<input id="imageText-' + modalId + '" '
+        + 'type="text" value="" />'
+        + '</div></div>'
+        + '</fieldset></form>'
+        + '</section>'
+        + '<nav class="actions">'
+        + '<button type="button" class="cancel" '
+        + 'flat>Cancel</button>'
+        + '<button type="button" class="proceed" '
+        + 'flat primary>Insert</button>'
+        + '</nav>'
+        + '</div>';
+    }
+    
+    function insertImage(context) {
+      if (isImageFormValid(context)) {
+        this.container.classList.add("hide");
+        
+        var modalId = context.container.getAttribute('id'),
+          address = helpers.query('#linkAddress-' + modalId),
+          text = helpers.query('#linkText-' + modalId);
+        
+        var href = helpers.isEmail(address.value)
+          ? ('mailto:' + address.value) : address.value;
+        
+        var html = '<a href="' + href + '">'
+          + (helpers.isEmpty(text.value) ? href : text.value)
+          + '</a>';
+        
+        context.restoreRange();
+        document.execCommand('insertHTML', false, html);
+      }
+    }
+    
+    function isImageFormValid(context) {
+      var modalId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + modalId);
+      
+      if (helpers.isURL(address.value)
+          || helpers.isEmail(address.value)) {
+        clearError(address);
+      }
+      else {
+        addError(address, context.resource.invalidLinkField);
+      }
+      
+      var form = helpers.query('.form-insert-link ', context.container),
+        errors = helpers.queryAll('.error', form);
+      
+      return (errors.length === 0);
+    }
+    
+    function cancelInsertImage() {
+      this.container.classList.add("hide");
+    }
+    
+    function updateImageDetails(context) {
+      var selection = window.getSelection(),
+        modalId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + modalId),
+        text = helpers.query('#linkText-' + modalId);
+      
+      
     }
     
     function bindEditor(context) {
@@ -412,9 +667,13 @@ limitations under the License.
       get container() {
         return helpers.query(selector);
       },
-	  
-	  get changes() {
-        return changes;
+      
+      get resource() {
+        return resource;
+      },
+      
+      set resource(value) {
+        resource = value;
       },
       
 	  get content() {
@@ -425,15 +684,16 @@ limitations under the License.
         content = value;
       },
       
-      bind: function(data) {
-        bindData(this, data);
+      bind: function(data, resource) {
+        bindData(this, data, resource);
 		bindRichText(this);
         return this;
       },
       
       saveRange: function() {
-        if (window.getSelection().rangeCount) {
-          range = window.getSelection().getRangeAt(0);
+        var selection = window.getSelection();
+        if (selection.rangeCount) {
+          range = selection.getRangeAt(0);
         }
       },
       

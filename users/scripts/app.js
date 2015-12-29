@@ -271,12 +271,12 @@
   
   function saveUserDetails(userCreateForm) {
     if (userCreateForm.valid) {
-      userCreateModal.container.classList.add("hide");
+      this.container.classList.add("hide");
     }
   }
   
   function cancelSaveUserDetails() {
-    userCreateModal.container.classList.add("hide");
+    this.container.classList.add("hide");
   }
   
   function loadUserEditFormView() {
@@ -362,7 +362,7 @@
   }
   
   function cancelDeleteUsers() {
-    usersDeleteModal.container.classList.add("hide");
+    this.container.classList.add("hide");
   }
   
   function changeUsersView() {
