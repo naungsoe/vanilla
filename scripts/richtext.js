@@ -42,6 +42,7 @@ limitations under the License.
       imageModal = {},
       editorFocusHandler = function() {},
       editorBlurHandler = function() {},
+      editorKeydownHandler = function() {},
       editorChangeHandler = function() {},
       changeHandler = function() {};
     
@@ -402,15 +403,15 @@ limitations under the License.
         + '<form class="form form-insert-link">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<label for="linkAddress-' + modalId + '" '
-        + 'class="label">URL / Email address</label>'
+        + '<label for="linkAddress-' + modalId + '" class="label">'
+        + context.resource.linkAddressField + '</label>'
         + '<div class="control">'
         + '<input id="linkAddress-' + modalId + '" '
         + 'type="text" value="" />'
         + '</div></div>'
         + '<div class="field">'
-        + '<label for="linkText-' + modalId + '" '
-        + 'class="label">Text to display</label>'
+        + '<label for="linkText-' + modalId + '" class="label">'
+        + context.resource.linkTextField + '</label>'
         + '<div class="control">'
         + '<input id="linkText-' + modalId + '" '
         + 'type="text" value="" />'
@@ -418,10 +419,10 @@ limitations under the License.
         + '</fieldset></form>'
         + '</section>'
         + '<nav class="actions">'
-        + '<button type="button" class="cancel" '
-        + 'flat>Cancel</button>'
-        + '<button type="button" class="proceed" '
-        + 'flat primary>Insert</button>'
+        + '<button type="button" class="cancel" flat>'
+        + context.resource.cancelActionRequest + '</button>'
+        + '<button type="button" class="proceed" flat primary>'
+        + context.resource.insertActionRequest + '</button>'
         + '</nav>'
         + '</div>';
     }
@@ -437,7 +438,7 @@ limitations under the License.
         var href = helpers.isEmail(address.value)
           ? ('mailto:' + address.value) : address.value;
         
-        var html = '<a href="' + href + '">'
+        var html = '<a href="' + href + '" target="_blank">'
           + (helpers.isEmpty(text.value) ? href : text.value)
           + '</a>';
         
@@ -450,12 +451,11 @@ limitations under the License.
       var modalId = context.container.getAttribute('id'),
         address = helpers.query('#linkAddress-' + modalId);
       
-      if (helpers.isURL(address.value)
-          || helpers.isEmail(address.value)) {
+      if (helpers.isURL(address.value) || helpers.isEmail(address.value)) {
         clearError(address);
       }
       else {
-        addError(address, context.resource.invalidLinkField);
+        addError(address, context.resource.invalidLinkAddressField);
       }
       
       var form = helpers.query('.form-insert-link ', context.container),
@@ -623,6 +623,7 @@ limitations under the License.
       var editor = helpers.query('.editor', context.container);
       editor.removeEventListener('focus', editorFocusHandler, false);
       editor.removeEventListener('blur', editorBlurHandler, false);
+      editor.removeEventListener('keydown', editorKeydownHandler, false);
       editor.removeEventListener('change', editorChangeHandler, false);
       
       editorFocusHandler = bindEditorFocus(context);
@@ -631,19 +632,75 @@ limitations under the License.
       editorBlurHandler = bindEditorBlur(context);
       editor.addEventListener('blur', editorBlurHandler, false);
       
+      editorKeydownHandler = bindEditorKeydown(context);
+      editor.addEventListener('keydown', editorKeydownHandler, false);
+      
       editorChangeHandler = bindEditorChange(context);
-      editor.addEventListener('blur', editorChangeHandler, false);
+      editor.addEventListener('change', editorChangeHandler, false);
     }
     
     function bindEditorFocus(context) {
       return function(event) {
-        context.saveRange();
+        setTimeout(function() {
+          var selection = window.getSelection();
+          if (!helpers.isEmpty(selection.focusNode)) {
+            var node = selection.focusNode;
+            while (node.nodeName !== 'BODY') {
+              if (node.classList 
+                  && node.classList.contains('editor')) {
+                break;
+              }
+              
+              if (node.nodeName === 'A') {
+                showLinkMenu(context, node);
+                break;
+              }
+              node = node.parentNode;
+            };
+          }
+          context.saveRange();
+        }, 100);
       };
+    }
+    
+    function showLinkMenu(context, node) {
+      var href = node.getAttribute('href'),
+        html = 'Link:<a href="' + href + '" '
+          + 'class="link fixed" target="_blank">' + href + '</a>'
+          + '<div class="separator"></div>'
+          + '<a href="#edit" class="link">'
+          + context.resource.editActionRequest + '</a>'
+          + '<a href="#remove" class="link">'
+          + context.resource.removeActionRequest + '</a>';
+      
+      var popup = helpers.query('.popup', context.container);
+      popup.innerHTML = html;
+      
+      popup.style.left = node.offsetLeft + 'px';
+      popup.style.top = node.offsetTop + node.offsetHeight + 'px';
+            
+      if (!popup.classList.contains('open')) {         
+        popup.classList.add('open');
+      }
+    }
+    
+    function hideMenu(context) {
+      var popup = helpers.query('.popup', context.container);
+      if (popup.classList.contains('open')) {
+        popup.classList.remove('open');
+      }
     }
     
     function bindEditorBlur(context) {
       return function(event) {
+        hideMenu(context);
         context.saveRange();
+      };
+    }
+    
+    function bindEditorKeydown(context) {
+      return function(event) {
+        
       };
     }
     
@@ -655,6 +712,11 @@ limitations under the License.
         var event = new CustomEvent('change', {});
         context.container.dispatchEvent(event);
       };
+    }
+    
+    function updateContent(context) {
+      var editor = helpers.query('.editor', context.container);
+      editor.innerHTML = context.content;
     }
     
     function bindChange(context, callback, data) {
@@ -682,11 +744,12 @@ limitations under the License.
       
       set content(value) {
         content = value;
+		bindRichText(this);
+        updateContent(this);
       },
       
       bind: function(data, resource) {
         bindData(this, data, resource);
-		bindRichText(this);
         return this;
       },
       

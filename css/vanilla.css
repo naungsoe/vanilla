@@ -570,6 +570,7 @@ table {
 
 .datepicker > .calendar > .body > .dates > table > thead > tr > th {
   color: rgba(0,0,0,.54);
+  height: 32px;
 }
 
 .datepicker > .calendar > .body > .dates > table > tbody > tr > td {
@@ -769,6 +770,50 @@ table {
   padding-bottom: 7px;
 }
 
+.popup {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
+  display: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+}
+
+.popup > .link,
+.popup > .separator {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.popup > .link {
+  font-size: 13px;
+  margin: 0 4px;
+  max-width: 140px;
+  text-decoration: none;
+}
+
+.popup > .link:first-child {
+  margin-left: 0;
+}
+
+.popup > .link:hover {
+  text-decoration: underline;
+}
+
+.popup > .separator {
+  background-color: #bdbdbd;
+  height: 16px;
+  width: 1px;
+}
+
+.popup.open {
+  display: block;
+}
+
 .richtext {
   border: 1px solid #bdbdbd;
 }
@@ -828,6 +873,12 @@ table {
   color: rgba(0,0,0,.54);
   margin: 0;
   padding: 10px 12px;
+}
+
+.richtext > .tool-bar > .primary > button > i,
+.richtext > .tool-bar > .secondary > button > i {
+  width: 12px;
+  max-width: 12px;
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
@@ -1322,7 +1373,7 @@ table {
   height: 15px;
   position: absolute;
   right: 15%;
-  top: 20%;
+  top: 15%;
   width: 15px;
 }
 

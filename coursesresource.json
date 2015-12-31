@@ -113,8 +113,11 @@
 		{ "id": "none", "name": "None" }
 	],
 	"requestLoading": "Loading...",
-    "okActionRequest": "OK",
-    "cancelActionRequest": "Cancel",
+	"okActionRequest": "OK",
+	"insertActionRequest": "Insert",
+	"editActionRequest": "Edit",
+	"removeActionRequest": "Remove",
+	"cancelActionRequest": "Cancel",
 	"tryAgainRequest": "Try again?",
 	"undoActionRequest": "Undo?",
 	"searchRecordsEntry": "Type to search",
@@ -140,5 +143,7 @@
 	"invalidEmailField": "Try with correct Email address.",
 	"invalidURLField": "Try with correct URL.",
 	"invalidPasswordField": "Try password with at least 8 characters.",
-	"invalidLinkField": "Try with correct URL / Email address."
+	"linkAddressField": "URL / email address",
+	"linkTextField": "Text to display",
+	"invalidLinkAddressField": "Try with correct URL / email address."
 }
