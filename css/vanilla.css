@@ -674,26 +674,36 @@ table {
   border: 1px solid #fff;
   display: inline-block;
   height: 34px;
+  position: relative;
+  vertical-align: top;
   width: 34px;
 }
 
 .colorpicker > .plate > .item > i {
-  color: #fff;
+  color: #212121;
   display: inline-block;
-  font-size: 14px;
-  width: 36px;
-  line-height: 36px;
+  font-size: 16px;
+  left: 8px;
+  position: absolute;
   text-align: center;
+  top: 8px;
   vertical-align: middle;
   visibility: hidden;
 }
 
-.colorpicker > .plate > .selected > i {
-  visibility: visible;
-}
-
 .colorpicker > .plate > .highlight {
   border: 1px solid #bdbdbd;
+}
+
+.colorpicker > .plate > .selected > .background {
+  color: #fff;
+  font-size: 18px;
+  left: 7px;
+  top: 7px;
+}
+
+.colorpicker > .plate > .selected > i {
+  visibility: visible;
 }
 
 .popover > .content {
@@ -830,6 +840,10 @@ table {
   background-color: #f5f5f5;
 }
 
+.richtext > .tool-bar > .secondary {
+  background-color: #fff;
+}
+
 .richtext > .tool-bar > .primary > button,
 .richtext > .tool-bar > .secondary > button,
 .richtext > .tool-bar > .primary > .dropdown,
@@ -934,24 +948,9 @@ table {
   padding: 0 2px;
 }
 
-.richtext > .tool-bar > .primary > .more > .expand {
-  display: block;
-}
-
-.richtext > .tool-bar > .primary > .more > .collapse {
-  display: none;
-}
-
 .richtext > .tool-bar > .primary > .more.expanded {
+  background-color: #bdbdbd;
   color: rgba(0,0,0,.87);
-}
-
-.richtext > .tool-bar > .primary > .more.expanded > .expand {
-  display: none;
-}
-
-.richtext > .tool-bar > .primary > .more.expanded > .collapse {
-  display: block;
 }
 
 .richtext > .tool-bar > .primary > .text-align > .menu  > .item {

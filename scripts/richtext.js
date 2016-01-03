@@ -119,8 +119,7 @@ limitations under the License.
         + '<button type="button" class="redo" flat>'
         + '<i class="fa fa-rotate-right"></i></button>'
         + '<button type="button" class="more" flat>'
-        + '<i class="fa fa-chevron-down expand"></i>'
-        + '<i class="fa fa-chevron-up collapse"></i></button>'
+        + '<i class="fa fa-ellipsis-h"></i></button>'
         + '</div>';
       
       html = html + '<div class="secondary hide">'
@@ -431,7 +430,8 @@ limitations under the License.
       if (isLinkFormValid(context)) {
         this.container.classList.add("hide");
         
-        var modalId = context.container.getAttribute('id'),
+        var selection = window.getSelection(),
+          modalId = context.container.getAttribute('id'),
           address = helpers.query('#linkAddress-' + modalId),
           text = helpers.query('#linkText-' + modalId);
         
@@ -443,7 +443,19 @@ limitations under the License.
           + '</a>';
         
         context.restoreRange();
-        document.execCommand('insertHTML', false, html);
+        if (selection.anchorNode === selection.focusNode) {
+          document.execCommand('insertHTML', false, html);
+        }
+        else {
+          document.execCommand('createLink', false, href);
+          
+          var range  = selection.getRangeAt(0);
+          if (selection.focusOffset === range.endOffset) {
+            range.selectNode(document.body);
+            context.restoreRange();
+            document.execCommand('insertHTML', false, html);
+          }
+        }
       }
     }
     
@@ -491,6 +503,7 @@ limitations under the License.
     
     function updateLinkDetails(context) {
       var selection = window.getSelection(),
+        range  = selection.getRangeAt(0),
         modalId = context.container.getAttribute('id'),
         address = helpers.query('#linkAddress-' + modalId),
         text = helpers.query('#linkText-' + modalId);
@@ -499,13 +512,35 @@ limitations under the License.
       text.value = '';
       
       if (selection.anchorNode === selection.focusNode) {
-        if (selection.anchorNode.nodeName === 'A') {
-          address.value = selection.anchorNode.getAttribute('href');
-          text.value = selection.anchorNode.textContent;
-        }
-        else if (selection.anchorOffset < selection.focusOffset) {
+        if (selection.anchorOffset < selection.focusOffset) {
           text.value = selection.anchorNode.textContent.substring(
             selection.anchorOffset, selection.focusOffset);
+        }
+        else {
+          var node = selection.anchorNode;
+          while (node.nodeName !== 'A') {
+            if (node.classList && node.classList.contains('editor')) {
+              break;
+            }
+            node = node.parentNode;
+          }
+          
+          if (node.nodeName === 'A') {
+            address.value = node.getAttribute('href');
+            text.value = node.textContent;
+            range.selectNode(selection.anchorNode);
+            range.selectNodeContents(selection.anchorNode);
+          }
+        }
+      }
+      else {
+        if (selection.focusOffset === range.endOffset) {
+          text.value = selection.focusNode.textContent.substring(
+            0, selection.focusOffset);
+        }
+        else {
+          text.value = selection.anchorNode.textContent.substring(
+            0, selection.anchorOffset);
         }
       }
     }

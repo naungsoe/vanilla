@@ -31,6 +31,10 @@ limitations under the License.
       
     function bindData(context, data) {
 	  context.items = data.items || [
+        //black
+        '#252525', '#616161', '#9e9e9e',
+        '#bdbdbd', '#e0e0e0', '#ffffff',
+        
         //red
         '#d32f2f', '#e53935', '#ef5350',
         '#e57373', '#ef9a9a', '#ffcdd2',
@@ -49,11 +53,7 @@ limitations under the License.
         
         //yellow
         '#fbc02d', '#fdd835', '#ffee58',
-        '#fff176', '#fff59d', '#fff9c4',
-        
-        //black
-        '#252525', '#616161', '#9e9e9e',
-        '#bdbdbd', '#e0e0e0', '#ffffff'
+        '#fff176', '#fff59d', '#fff9c4'
       ];
 	  context.selected = data.selected || '';
     }
@@ -107,6 +107,7 @@ limitations under the License.
       context.items.forEach(function(item) {
 	    html = html + '<li data-value="' + item + '" class="item" '
           + 'style="background-color: ' + item + ';">'
+          + '<i class="fa fa-check background"></i>'
           + '<i class="fa fa-check"></i></li>';
       });
       return html;

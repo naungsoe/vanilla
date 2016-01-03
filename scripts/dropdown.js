@@ -142,6 +142,11 @@ limitations under the License.
                     + itemHeight);
                 }
               }
+              
+              if ((positionTop * -1) > container.offsetTop) {
+                positionTop = 0;
+              }
+              
               menu.style.top = positionTop + 'px';
               menu.scrollTop = scrollTop;
             }
