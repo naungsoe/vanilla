@@ -38,9 +38,12 @@ limitations under the License.
       unorderedListHandler = function() {},
       linkHandler = function() {},
       linkModal = {},
+      unlinkHandler = function() {},
       imageHandler = function() {},
       imageModal = {},
-      editorFocusHandler = function() {},
+      editHandler = function() {},
+      removeHandler = function() {},
+      editorClickHandler = function() {},
       editorBlurHandler = function() {},
       editorKeydownHandler = function() {},
       editorChangeHandler = function() {},
@@ -194,6 +197,8 @@ limitations under the License.
         + '<div class="separator"></div>'
         + '<button type="button" class="link" flat>'
         + '<i class="fa fa-link"></i></button>'
+        + '<button type="button" class="unlink" flat>'
+        + '<i class="fa fa-unlink"></i></button>'
         + '<button type="button" class="image" flat>'
         + '<i class="fa fa-file-image-o"></i></button>'
         + '<button type="button" class="media" flat>'
@@ -317,6 +322,12 @@ limitations under the License.
       linkHandler = bindLink(context);
       link.addEventListener('click', linkHandler, false);
       
+      var unlink = helpers.query('.unlink', toolbar);
+      unlink.removeEventListener('click', unlinkHandler, false);
+      
+      unlinkHandler = bindUnlink(context);
+      unlink.addEventListener('click', unlinkHandler, false);
+      
       var image = helpers.query('.image', toolbar);
       image.removeEventListener('click', imageHandler, false);
       
@@ -370,8 +381,8 @@ limitations under the License.
     
     function bindLink(context) {
       return function(event) {
-        var linkModalId = 'linkModal-'
-          + context.container.getAttribute('id');
+        var richtextId = context.container.getAttribute('id'),
+          linkModalId = 'linkModal-' + richtextId;
         
         var view = helpers.query('#' + linkModalId);
         if (helpers.isEmpty(view)) {
@@ -428,10 +439,15 @@ limitations under the License.
     
     function insertLink(context) {
       if (isLinkFormValid(context)) {
+        context.restoreRange();
         this.container.classList.add("hide");
         
-        var selection = window.getSelection(),
-          modalId = context.container.getAttribute('id'),
+        var selection = window.getSelection();
+        if (helpers.isEmpty(selection.anchorNode)) {
+          return;
+        }
+        
+        var modalId = context.container.getAttribute('id'),
           address = helpers.query('#linkAddress-' + modalId),
           text = helpers.query('#linkText-' + modalId);
         
@@ -442,19 +458,34 @@ limitations under the License.
           + (helpers.isEmpty(text.value) ? href : text.value)
           + '</a>';
         
-        context.restoreRange();
+        var range = selection.getRangeAt(0),
+          node = selection.anchorNode;
+        
         if (selection.anchorNode === selection.focusNode) {
+          while (node.nodeName !== 'A') {
+            if (node.classList && node.classList.contains('editor')) {
+              break;
+            }
+            node = node.parentNode;
+          }
+          
+          if (node.nodeName === 'A') {
+            range.selectNodeContents(node);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
           document.execCommand('insertHTML', false, html);
         }
         else {
           document.execCommand('createLink', false, href);
           
-          var range  = selection.getRangeAt(0);
-          if (selection.focusOffset === range.endOffset) {
-            range.selectNode(document.body);
-            context.restoreRange();
-            document.execCommand('insertHTML', false, html);
-          }
+          node = (selection.focusOffset === range.endOffset)
+            ? selection.anchorNode : selection.focusNode;
+          
+          range.selectNode(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          document.execCommand('insertHTML', false, html);
         }
       }
     }
@@ -502,8 +533,12 @@ limitations under the License.
     }
     
     function updateLinkDetails(context) {
-      var selection = window.getSelection(),
-        range  = selection.getRangeAt(0),
+      var selection = window.getSelection();
+      if (helpers.isEmpty(selection.anchorNode)) {
+        return;
+      }
+      
+      var range  = selection.getRangeAt(0),
         modalId = context.container.getAttribute('id'),
         address = helpers.query('#linkAddress-' + modalId),
         text = helpers.query('#linkText-' + modalId);
@@ -512,25 +547,21 @@ limitations under the License.
       text.value = '';
       
       if (selection.anchorNode === selection.focusNode) {
-        if (selection.anchorOffset < selection.focusOffset) {
+        var node = selection.anchorNode;
+        while (node.nodeName !== 'A') {
+          if (node.classList && node.classList.contains('editor')) {
+            break;
+          }
+          node = node.parentNode;
+        }
+        
+        if (node.nodeName === 'A') {
+          address.value = node.getAttribute('href');
+          text.value = node.textContent;
+        }
+        else if (selection.anchorOffset < selection.focusOffset) {
           text.value = selection.anchorNode.textContent.substring(
             selection.anchorOffset, selection.focusOffset);
-        }
-        else {
-          var node = selection.anchorNode;
-          while (node.nodeName !== 'A') {
-            if (node.classList && node.classList.contains('editor')) {
-              break;
-            }
-            node = node.parentNode;
-          }
-          
-          if (node.nodeName === 'A') {
-            address.value = node.getAttribute('href');
-            text.value = node.textContent;
-            range.selectNode(selection.anchorNode);
-            range.selectNodeContents(selection.anchorNode);
-          }
         }
       }
       else {
@@ -543,6 +574,14 @@ limitations under the License.
             0, selection.anchorOffset);
         }
       }
+      address.focus();
+    }
+    
+    function bindUnlink(context) {
+      return function(event) {
+        var selection = window.getSelection(),
+          range = selection.getRangeAt(0);
+      };
     }
     
     function bindImage(context) {
@@ -656,13 +695,13 @@ limitations under the License.
     
     function bindEditor(context) {
       var editor = helpers.query('.editor', context.container);
-      editor.removeEventListener('focus', editorFocusHandler, false);
+      editor.removeEventListener('click', editorClickHandler, false);
       editor.removeEventListener('blur', editorBlurHandler, false);
       editor.removeEventListener('keydown', editorKeydownHandler, false);
       editor.removeEventListener('change', editorChangeHandler, false);
       
-      editorFocusHandler = bindEditorFocus(context);
-      editor.addEventListener('focus', editorFocusHandler, false);
+      editorClickHandler = bindEditorClick(context);
+      editor.addEventListener('click', editorClickHandler, false);
       
       editorBlurHandler = bindEditorBlur(context);
       editor.addEventListener('blur', editorBlurHandler, false);
@@ -674,26 +713,28 @@ limitations under the License.
       editor.addEventListener('change', editorChangeHandler, false);
     }
     
-    function bindEditorFocus(context) {
+    function bindEditorClick(context) {
       return function(event) {
         setTimeout(function() {
           var selection = window.getSelection();
-          if (!helpers.isEmpty(selection.focusNode)) {
-            var node = selection.focusNode;
-            while (node.nodeName !== 'BODY') {
-              if (node.classList 
-                  && node.classList.contains('editor')) {
-                break;
-              }
-              
-              if (node.nodeName === 'A') {
-                showLinkMenu(context, node);
-                break;
-              }
-              node = node.parentNode;
-            };
+          if (helpers.isEmpty(selection.focusNode)) {
+            return;
           }
-          context.saveRange();
+          
+          var node = selection.focusNode;
+          while (node.nodeName !== 'A') {
+            if (node.classList && node.classList.contains('editor')) {
+              break;
+            }              
+            node = node.parentNode;
+          }
+          
+          if (node.nodeName === 'A') {
+            showLinkMenu(context, node);
+          }
+          else {
+            hideMenu(context);
+          }
         }, 100);
       };
     }
@@ -701,11 +742,11 @@ limitations under the License.
     function showLinkMenu(context, node) {
       var href = node.getAttribute('href'),
         html = 'Link:<a href="' + href + '" '
-          + 'class="link fixed" target="_blank">' + href + '</a>'
+          + 'class="fixed" target="_blank">' + href + '</a>'
           + '<div class="separator"></div>'
-          + '<a href="#edit" class="link">'
+          + '<a href="#edit" class="edit">'
           + context.resource.editActionRequest + '</a>'
-          + '<a href="#remove" class="link">'
+          + '<a href="#remove" class="remove">'
           + context.resource.removeActionRequest + '</a>';
       
       var popup = helpers.query('.popup', context.container);
@@ -713,10 +754,46 @@ limitations under the License.
       
       popup.style.left = node.offsetLeft + 'px';
       popup.style.top = node.offsetTop + node.offsetHeight + 'px';
-            
+      
+      bindLinkMenuActions(context, popup);
+      
       if (!popup.classList.contains('open')) {         
         popup.classList.add('open');
       }
+    }
+    
+    function bindLinkMenuActions(context, menu) {
+      var edit = helpers.query('.edit', menu);      
+      edit.removeEventListener('click', editHandler, false);
+      
+      editHandler = bindEdit(context);
+      edit.addEventListener('click', editHandler, false);
+      
+      var remove = helpers.query('.remove', menu);
+      remove.removeEventListener('click', removeHandler, false);
+      
+      removeHandler = bindRemove(context);
+      remove.addEventListener('click', removeHandler, false);
+    }
+    
+    function bindEdit(context) {
+      return function(event) {
+        var toolbar = helpers.query('.tool-bar', context.container),
+          link = helpers.query('.link', toolbar);
+        
+        var event = new CustomEvent('click', {});
+        link.dispatchEvent(event);
+      };
+    }
+    
+    function bindRemove(context) {
+      return function(event) {
+        var toolbar = helpers.query('.tool-bar', context.container),
+          link = helpers.query('.unlink', toolbar);
+        
+        var event = new CustomEvent('click', {});
+        link.dispatchEvent(event);
+      };
     }
     
     function hideMenu(context) {
@@ -728,14 +805,36 @@ limitations under the License.
     
     function bindEditorBlur(context) {
       return function(event) {
-        hideMenu(context);
-        context.saveRange();
+        setTimeout(function() {
+          hideMenu(context);
+          context.saveRange();
+        }, 100);
       };
     }
     
     function bindEditorKeydown(context) {
       return function(event) {
-        
+        setTimeout(function() {
+          var selection = window.getSelection();
+          if (helpers.isEmpty(selection.focusNode)) {
+            return;
+          }
+          
+          var node = selection.focusNode;
+          while (node.nodeName !== 'A') {
+            if (node.classList && node.classList.contains('editor')) {
+              break;
+            }
+            node = node.parentNode;
+          }
+          
+          if (node.nodeName === 'A') {
+            showLinkMenu(context, node);
+          }
+          else {
+            hideMenu(context);
+          }
+        }, 100);
       };
     }
     

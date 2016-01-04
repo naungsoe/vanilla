@@ -680,7 +680,7 @@ table {
 }
 
 .colorpicker > .plate > .item > i {
-  color: #212121;
+  color: #fff;
   display: inline-block;
   font-size: 16px;
   left: 8px;
@@ -696,10 +696,8 @@ table {
 }
 
 .colorpicker > .plate > .selected > .background {
-  color: #fff;
-  font-size: 18px;
-  left: 7px;
-  top: 7px;
+  color: #212121;
+  top: 10px;
 }
 
 .colorpicker > .plate > .selected > i {

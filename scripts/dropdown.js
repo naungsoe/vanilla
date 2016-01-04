@@ -145,6 +145,7 @@ limitations under the License.
               
               if ((positionTop * -1) > container.offsetTop) {
                 positionTop = 0;
+                scrollTop = item.offsetTop;
               }
               
               menu.style.top = positionTop + 'px';
