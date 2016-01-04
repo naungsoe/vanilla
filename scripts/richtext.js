@@ -47,6 +47,8 @@ limitations under the License.
       editorBlurHandler = function() {},
       editorKeydownHandler = function() {},
       editorChangeHandler = function() {},
+      docClickHandler = function() {},
+      winResizeHandler = function() {},
       changeHandler = function() {};
     
     function bindData(context, data, resource) {
@@ -65,6 +67,16 @@ limitations under the License.
       toolbar.innerHTML = getToolbarHTML(context);
       bindToolbar(context);
       bindEditor(context);
+      
+      document.removeEventListener('click', docClickHandler, false);
+      
+      docClickHandler = bindDocClick(context);
+      document.addEventListener('click', docClickHandler, false);
+      
+      window.removeEventListener('resize', winResizeHandler, false);
+      
+      winResizeHandler = bindWindowResize(context.container);
+      window.addEventListener('resize', winResizeHandler, false);
     }
     
     function getToolbarHTML(context) {
@@ -197,7 +209,7 @@ limitations under the License.
         + '<div class="separator"></div>'
         + '<button type="button" class="link" flat>'
         + '<i class="fa fa-link"></i></button>'
-        + '<button type="button" class="unlink" flat>'
+        + '<button type="button" class="unlink hide" flat>'
         + '<i class="fa fa-unlink"></i></button>'
         + '<button type="button" class="image" flat>'
         + '<i class="fa fa-file-image-o"></i></button>'
@@ -462,7 +474,7 @@ limitations under the License.
           node = selection.anchorNode;
         
         if (selection.anchorNode === selection.focusNode) {
-          while (node.nodeName !== 'A') {
+          while ((node.nodeName !== 'BODY') && (node.nodeName !== 'A')) {
             if (node.classList && node.classList.contains('editor')) {
               break;
             }
@@ -548,7 +560,7 @@ limitations under the License.
       
       if (selection.anchorNode === selection.focusNode) {
         var node = selection.anchorNode;
-        while (node.nodeName !== 'A') {
+        while ((node.nodeName !== 'BODY') && (node.nodeName !== 'A')) {
           if (node.classList && node.classList.contains('editor')) {
             break;
           }
@@ -579,8 +591,31 @@ limitations under the License.
     
     function bindUnlink(context) {
       return function(event) {
-        var selection = window.getSelection(),
-          range = selection.getRangeAt(0);
+        var selection = window.getSelection();
+        if (helpers.isEmpty(selection.anchorNode)) {
+          return;
+        }
+        
+        var node = selection.anchorNode;
+        while ((node.nodeName !== 'BODY') && (node.nodeName !== 'A')) {
+          if (node.classList && node.classList.contains('editor')) {
+            break;
+          }
+          node = node.parentNode;
+        }
+        
+        if (node.nodeName === 'A') {
+          var range = document.createRange();
+          range.selectNode(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          document.execCommand('unlink', false, '');
+          
+          range.setStart(selection.anchorNode, selection.focusOffset);
+          range.setEnd(selection.anchorNode, selection.focusOffset);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
       };
     }
     
@@ -741,8 +776,9 @@ limitations under the License.
     
     function showLinkMenu(context, node) {
       var href = node.getAttribute('href'),
-        html = 'Link:<a href="' + href + '" '
-          + 'class="fixed" target="_blank">' + href + '</a>'
+        html = '<label>Link:</label>'
+          + '<a href="' + href + '" class="fixed" '
+          + 'target="_blank">' + href + '</a>'
           + '<div class="separator"></div>'
           + '<a href="#edit" class="edit">'
           + context.resource.editActionRequest + '</a>'
@@ -805,10 +841,7 @@ limitations under the License.
     
     function bindEditorBlur(context) {
       return function(event) {
-        setTimeout(function() {
-          hideMenu(context);
-          context.saveRange();
-        }, 100);
+        context.saveRange();
       };
     }
     
@@ -845,6 +878,18 @@ limitations under the License.
         
         var event = new CustomEvent('change', {});
         context.container.dispatchEvent(event);
+      };
+    }
+    
+    function bindDocClick(context) {
+      return function(event) {
+        hideMenu(context);
+      };
+    }
+    
+    function bindWindowResize(context) {
+      return function(event) {
+        hideMenu(context);
       };
     }
     

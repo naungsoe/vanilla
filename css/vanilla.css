@@ -778,50 +778,6 @@ table {
   padding-bottom: 7px;
 }
 
-.popup {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
-  display: none;
-  margin: 0;
-  overflow: hidden;
-  padding: 8px;
-  position: absolute;
-  z-index: 1;
-}
-
-.popup > .link,
-.popup > .separator {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.popup > .link {
-  font-size: 13px;
-  margin: 0 4px;
-  max-width: 140px;
-  text-decoration: none;
-}
-
-.popup > .link:first-child {
-  margin-left: 0;
-}
-
-.popup > .link:hover {
-  text-decoration: underline;
-}
-
-.popup > .separator {
-  background-color: #bdbdbd;
-  height: 16px;
-  width: 1px;
-}
-
-.popup.open {
-  display: block;
-}
-
 .richtext {
   border: 1px solid #bdbdbd;
 }
@@ -980,6 +936,60 @@ table {
   overflow: auto;
   padding: 8px;
   word-wrap: break-word;
+}
+
+.richtext > .popup {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
+  display: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 6px 8px;
+  position: absolute;
+  z-index: 1;
+}
+
+.richtext > .popup > a,
+.richtext > .popup > label,
+.richtext > .popup > .separator {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.richtext > .popup > a,
+.richtext > .popup > label {
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.richtext > .popup > a {
+  max-width: 160px;
+  text-decoration: none;
+}
+
+.richtext > .popup > a:first-child {
+  margin-left: 0;
+}
+
+.richtext > .popup > a:hover {
+  text-decoration: underline;
+}
+
+.richtext > .popup > label {
+  margin-left: 0;
+}
+
+.richtext > .popup > .separator {
+  background-color: #bdbdbd;
+  height: 16px;
+  width: 1px;
+}
+
+.richtext > .popup.open {
+  display: block;
 }
 
 .richtext .modal > .content {

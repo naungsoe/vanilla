@@ -22,7 +22,7 @@ limitations under the License.
     var content = '',
       proceedHandler = function() {},
 	  cancelHandler = function() {},
-      resizeHandler = function() {};
+      winResizeHandler = function() {};
       
     function bindData(context, data) {
 	  context.content = data.content || '';
@@ -34,10 +34,10 @@ limitations under the License.
         content.innerHTML = context.content;
       }
             
-      window.removeEventListener('resize', resizeHandler, false);
+      window.removeEventListener('resize', winResizeHandler, false);
       
-      resizeHandler = bindWindowResize(context.container);
-      window.addEventListener('resize', resizeHandler, false);
+      winResizeHandler = bindWindowResize(context.container);
+      window.addEventListener('resize', winResizeHandler, false);
       
       bindBackdrop(context);
       showModal(context);
