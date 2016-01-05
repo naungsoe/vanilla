@@ -23,10 +23,20 @@
   width: 140px;
 }
 
-.form-setup-user > .fieldset > .field {
-  width: 480px;
+.form-setup-user > .fieldset {
+  min-width: 460px;
 }
 
 .form-setup-user > .fieldset > .field > .label {
+  padding-left: 0;
   width: 160px;
+}
+
+.form-setup-user > .fieldset > .field > .control {
+  padding-right: 0;
+}
+
+.form-setup-user > .fieldset > .field > .control > input[type='text'],
+.form-setup-user > .fieldset > .field > .control > input[type='password'] {
+  width: 270px;
 }

@@ -486,7 +486,14 @@ limitations under the License.
             selection.removeAllRanges();
             selection.addRange(range);
           }
-          document.execCommand('insertHTML', false, html);
+          
+          if (selection.anchorOffset === selection.focusOffset) {
+            document.execCommand('insertHTML', false, html);
+          }
+          else {
+            document.execCommand('createLink', false, href);
+            document.execCommand('insertText', false, text.value);
+          }
         }
         else {
           document.execCommand('createLink', false, href);
@@ -647,21 +654,25 @@ limitations under the License.
       
       return '<div class="modal">'
         + '<header class="header">'
-        + '<h3 class="title">Insert Link</h3>'
+        + '<h3 class="title">Insert Image</h3>'
+        + '<div class="tabs"><nav class="nav">'
+        + '<a href="#url" class="tab url active">Web Address (URL)</a>'
+        + '<a href="#upload" class="tab upload">Upload</a>'
+        + '</nav></div>'
         + '</header>'
         + '<section class="content">'
-        + '<form class="form form-insert-link">'
+        + '<form class="form form-upload-image">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
         + '<label for="imageAddress-' + modalId + '" '
-        + 'class="label">URL / Email address</label>'
+        + 'class="label">Web address</label>'
         + '<div class="control">'
         + '<input id="imageAddress-' + modalId + '" '
         + 'type="text" value="" />'
         + '</div></div>'
         + '<div class="field">'
         + '<label for="imageText-' + modalId + '" '
-        + 'class="label">Text to display</label>'
+        + 'class="label">Alternate text</label>'
         + '<div class="control">'
         + '<input id="imageText-' + modalId + '" '
         + 'type="text" value="" />'
@@ -794,7 +805,22 @@ limitations under the License.
       bindLinkMenuActions(context, popup);
       
       if (!popup.classList.contains('open')) {         
-        popup.classList.add('open');
+        popup.classList.add('open');        
+      }
+      
+      var offsetWidth = popup.offsetWidth,
+        offsetLeft = popup.offsetLeft,
+        editorOffsetLeft = context.container.offsetLeft,
+        docWidth = document.body.offsetWidth;
+      
+      if ((offsetWidth + offsetLeft) > docWidth) {
+        do {
+          offsetLeft = offsetLeft - 50;
+        } while ((offsetWidth + offsetLeft) > docWidth);
+        
+        offsetLeft = (offsetLeft < editorOffsetLeft)
+          ? editorOffsetLeft : offsetLeft;
+        popup.style.left = offsetLeft + 'px';
       }
     }
     
