@@ -418,7 +418,7 @@ limitations under the License.
     }
     
     function getLinkHTML(context) {
-      var modalId = context.container.getAttribute('id');
+      var richtextId = context.container.getAttribute('id');
       
       return '<div class="modal">'
         + '<header class="header">'
@@ -428,17 +428,17 @@ limitations under the License.
         + '<form class="form form-insert-link">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<label for="linkAddress-' + modalId + '" class="label">'
+        + '<label for="linkAddress-' + richtextId + '" class="label">'
         + context.resource.linkAddressField + '</label>'
         + '<div class="control">'
-        + '<input id="linkAddress-' + modalId + '" '
+        + '<input id="linkAddress-' + richtextId + '" '
         + 'type="text" value="" />'
         + '</div></div>'
         + '<div class="field">'
-        + '<label for="linkText-' + modalId + '" class="label">'
+        + '<label for="linkText-' + richtextId + '" class="label">'
         + context.resource.linkTextField + '</label>'
         + '<div class="control">'
-        + '<input id="linkText-' + modalId + '" '
+        + '<input id="linkText-' + richtextId + '" '
         + 'type="text" value="" />'
         + '</div></div>'
         + '</fieldset></form>'
@@ -466,9 +466,9 @@ limitations under the License.
           anchorOffset = selection.anchorOffset,
           focusNode = selection.focusNode,
           focusOffset = selection.focusOffset,
-          modalId = context.container.getAttribute('id'),
-          address = helpers.query('#linkAddress-' + modalId),
-          text = helpers.query('#linkText-' + modalId),
+          richtextId = context.container.getAttribute('id'),
+          address = helpers.query('#linkAddress-' + richtextId),
+          text = helpers.query('#linkText-' + richtextId),
           href = helpers.isEmail(address.value)
             ? ('mailto:' + address.value) : address.value;
         
@@ -510,8 +510,8 @@ limitations under the License.
     }
     
     function isLinkFormValid(context) {
-      var modalId = context.container.getAttribute('id'),
-        address = helpers.query('#linkAddress-' + modalId);
+      var richtextId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + richtextId);
       
       if (helpers.isURL(address.value) || helpers.isEmail(address.value)) {
         clearError(address);
@@ -562,9 +562,9 @@ limitations under the License.
         anchorOffset = selection.anchorOffset,
         focusNode = selection.focusNode,
         focusOffset = selection.focusOffset,
-        modalId = context.container.getAttribute('id'),
-        address = helpers.query('#linkAddress-' + modalId),
-        text = helpers.query('#linkText-' + modalId);
+        richtextId = context.container.getAttribute('id'),
+        address = helpers.query('#linkAddress-' + richtextId),
+        text = helpers.query('#linkText-' + richtextId);
       
       if (anchorNode === focusNode) {
         var node = anchorNode;
@@ -637,8 +637,8 @@ limitations under the License.
     
     function bindImage(context) {
       return function(event) {
-        var imageModalId = 'imageModal-'
-          + context.container.getAttribute('id');
+        var richtextId = context.container.getAttribute('id'),
+          imageModalId = 'imageModal-' + richtextId;
         
         var view = helpers.query('#' + imageModalId);
         if (helpers.isEmpty(view)) {
@@ -653,11 +653,18 @@ limitations under the License.
         imageModal.bind({})
           .proceed(insertImage, context)
           .cancel(cancelInsertImage, context);
+        
+        var richtextId = context.container.getAttribute('id'),
+          address = helpers.query('#imageAddress-' + richtextId)
+        
+        clearError(address);
+        address.value = '';
+        address.focus();
       };
     }
     
     function getImageHTML(context) {
-      var modalId = context.container.getAttribute('id');
+      var richtextId = context.container.getAttribute('id');
       
       return '<div class="modal">'
         + '<header class="header">'
@@ -673,17 +680,17 @@ limitations under the License.
         + '<form class="form form-image-url">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<label for="imageAddress-' + modalId + '" class="label">'
+        + '<label for="imageAddress-' + richtextId + '" class="label">'
         + context.resource.imageAddressField + '</label>'
         + '<div class="control">'
-        + '<input id="imageAddress-' + modalId + '" '
+        + '<input id="imageAddress-' + richtextId + '" '
         + 'type="text" value="" />'
         + '</div></div>'
         + '</fieldset></form>'
         + '<form class="form form-upload-image hide">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<div for="imageUpload-' + modalId + '" '
+        + '<div for="imageUpload-' + richtextId + '" '
         + 'class="droparea"></div>'
         + '</div>'
         + '</fieldset></form>'
@@ -701,13 +708,21 @@ limitations under the License.
       if (isImageFormValid(context)) {
         this.container.classList.add("hide");
         
-        var modalId = context.container.getAttribute('id'),
-          address = helpers.query('#imageAddress-' + modalId),
-          altText = address.value.substring(address.value.lastIndexOf('/'));
+        var richtextId = context.container.getAttribute('id'),
+          src = helpers.query('#imageAddress-' + richtextId).value,
+          alt = src.substring(src.lastIndexOf('/'));
         
-        helpers.imageSize(address.value, function() {
-          var html = '<img src="' + address.value + '" alt="' + altText + '" '
-            + 'width="' + this.width + '" height="' + this.height + '">';
+        helpers.loadImageSize(src, function() {
+          var editor = helpers.query('.editor', context.container),
+            maxSize = getElementSize(editor, 20);
+          
+          var size = (this.width < maxSize.width) 
+            ? this : helpers.getAspectRatio(this, maxSize);
+          
+          var html = '<img src="' + src + '" alt="' + alt + '" '
+            + 'width="' + size.width + '" height="' + size.height + '" '
+            + 'data-width="' + this.width + '" '
+            + 'data-height="' + this.height + '">';
           
           context.restoreRange();
           document.execCommand('insertHTML', false, html);
@@ -715,9 +730,25 @@ limitations under the License.
       }
     }
     
+    function getElementSize(element, reduce) {
+      var computedStyle = getComputedStyle(element);
+      reduce = reduce || 0;
+      
+      return {
+        width: element.clientWidth
+          - parseFloat(computedStyle.paddingLeft)
+          - parseFloat(computedStyle.paddingRight)
+          - reduce,
+        height: element.clientHeight
+          - parseFloat(computedStyle.paddingTop)
+          - parseFloat(computedStyle.paddingBottom)
+          - reduce
+      };
+    }
+    
     function isImageFormValid(context) {
-      var modalId = context.container.getAttribute('id'),
-        address = helpers.query('#imageAddress-' + modalId);
+      var richtextId = context.container.getAttribute('id'),
+        address = helpers.query('#imageAddress-' + richtextId);
       
       if (helpers.isURL(address.value)) {
         clearError(address);
@@ -766,18 +797,28 @@ limitations under the License.
           }
           
           var node = selection.focusNode;
-          while (node.nodeName !== 'A') {
-            if (node.classList && node.classList.contains('editor')) {
+          while ((node.nodeType !== Node.ELEMENT_NODE)
+              || ((node.nodeType === Node.ELEMENT_NODE) 
+                && !node.classList.contains('editor'))) {
+            if ((node.nodeName === 'A') 
+                || (node.nodeName === 'IMG')) {
               break;
-            }              
+            }
             node = node.parentNode;
           }
           
-          if (node.nodeName === 'A') {
-            showLinkMenu(context, node);
-          }
-          else {
-            hideMenu(context);
+          switch (node.nodeName) {
+            case 'A':
+              showLinkMenu(context, node);
+              break;
+            
+            case 'IMG':
+              showImageMenu(context, node);
+              break;
+            
+            default:
+              hideMenu(context);
+              break;
           }
         }, 100);
       };
@@ -860,6 +901,45 @@ limitations under the License.
       var popup = helpers.query('.popup', context.container);
       if (popup.classList.contains('open')) {
         popup.classList.remove('open');
+      }
+    }
+    
+    function showImageMenu(context, node) {
+      var href = node.getAttribute('href'),
+        html = '<label>Link:</label>'
+          + '<a href="' + href + '" class="fixed" '
+          + 'target="_blank">' + href + '</a>'
+          + '<div class="separator"></div>'
+          + '<a href="#edit" class="edit">'
+          + context.resource.editActionRequest + '</a>'
+          + '<a href="#remove" class="remove">'
+          + context.resource.removeActionRequest + '</a>';
+      
+      var popup = helpers.query('.popup', context.container);
+      popup.innerHTML = html;
+      
+      popup.style.left = node.offsetLeft + 'px';
+      popup.style.top = node.offsetTop + node.offsetHeight + 'px';
+      
+      bindLinkMenuActions(context, popup);
+      
+      if (!popup.classList.contains('open')) {         
+        popup.classList.add('open');        
+      }
+      
+      var offsetWidth = popup.offsetWidth,
+        offsetLeft = popup.offsetLeft,
+        editorOffsetLeft = context.container.offsetLeft,
+        docWidth = document.body.offsetWidth;
+      
+      if ((offsetWidth + offsetLeft) > docWidth) {
+        do {
+          offsetLeft = offsetLeft - 50;
+        } while ((offsetWidth + offsetLeft) > docWidth);
+        
+        offsetLeft = (offsetLeft < editorOffsetLeft)
+          ? editorOffsetLeft : offsetLeft;
+        popup.style.left = offsetLeft + 'px';
       }
     }
     

@@ -111,7 +111,7 @@ limitations under the License.
       return Array.prototype.slice.call(value);
     },
     
-    imageSize: function(src, callback) {
+    loadImageSize: function(src, callback) {
       var img = document.createElement('img');
       img.setAttribute('src', src);
       img.addEventListener('load', function() {
@@ -119,9 +119,12 @@ limitations under the License.
       });
     },
     
-    aspectRatio: function(width, height, maxWidth, maxHeight) {
-      var ratio = Math.min((maxWidth / width), (maxHeight / height));
-      return { width: (width * ratio), height: (height * ratio) };
+    getAspectRatio: function(size, maxSize) {
+      var ratio = Math.min((maxSize.width / size.width),
+        (maxSize.height / size.height));
+      
+      return { width: (size.width * ratio), 
+        height: (size.height * ratio) };
     },
     
     mixin: function(base, extend) {

@@ -94,6 +94,7 @@ textarea  {
   border: 0;
   border-bottom: 1px solid #bdbdbd;
   font-size: 14px;
+  line-height: 18px;
   height: 23px;
   outline: none;
   padding: 4px 0 8px 0;
@@ -1328,14 +1329,15 @@ table {
 .form > .fieldset > .field > .control {
   display: inline-block;
   font-size: 14px;
+  line-height: 18px;
   vertical-align: top;
 }
 
 .form > .fieldset > .field > .label {
   color: rgba(0,0,0,.54);
-  width: 90px;
   padding: 8px 24px;
   text-align: right;
+  width: 90px;
 }
 
 .form > .fieldset > .field > .control {

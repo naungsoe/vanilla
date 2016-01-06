@@ -54,7 +54,8 @@
       startTime.bind(startTimeData, context.resource)
         .change(changeStartTime, context);
       
-      var summaryData = { content: 'This <b>rich<i>text</i>-area</b> is a test <a href="http://www.google.com"><b>Hello,</b></a>' };
+      var summaryData = { content: 'This <b>rich<i>text</i>-area</b> is a test <a href="http://www.google.com"><b>Hello,</b></a>'
+        + '<img src="https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0Bzhp5Z4wHba3by0wMFNhNzV2UE0/components_textfields_multiline3.png" alt="/components_textfields_multiline3.png" width="232" height="136.7578947368421" data-width="1520" data-height="896"></img>' };
       //var summaryData = { content: '<b>Hello,</b> world!' };
       summary.bind(summaryData, context.resource)
         .change(changeSummary, context);
