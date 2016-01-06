@@ -562,9 +562,6 @@ limitations under the License.
         address = helpers.query('#linkAddress-' + modalId),
         text = helpers.query('#linkText-' + modalId);
       
-      address.value = '';
-      text.value = '';
-      
       if (selection.anchorNode === selection.focusNode) {
         var node = selection.anchorNode;
         while ((node.nodeName !== 'BODY') && (node.nodeName !== 'A')) {
@@ -578,21 +575,39 @@ limitations under the License.
           address.value = node.getAttribute('href');
           text.value = node.textContent;
         }
-        else if (selection.anchorOffset < selection.focusOffset) {
-          text.value = selection.anchorNode.textContent.substring(
-            selection.anchorOffset, selection.focusOffset);
+        else {
+          address.value = '';
+          if (selection.anchorOffset < selection.focusOffset) {
+            text.value = selection.anchorNode.textContent.substring(
+              selection.anchorOffset, selection.focusOffset);
+          }
+          else {
+            text.value = selection.anchorNode.textContent.substring(
+              selection.focusOffset, selection.anchorOffset);
+          }
         }
       }
       else {
+        address.value = '';
         if (selection.focusOffset === range.endOffset) {
-          text.value = selection.focusNode.textContent.substring(
+          var selected = selection.focusNode.textContent.substring(
             0, selection.focusOffset);
+          
+          if (helpers.isEmpty(selected)) {
+            text.value = selection.anchorNode.textContent.substring(
+              0, selection.anchorOffset) + selected;
+          }
+          else {
+            text.value = selected;
+          }
         }
         else {
           text.value = selection.anchorNode.textContent.substring(
             0, selection.anchorOffset);
         }
       }
+      
+      clearError(address);
       address.focus();
     }
     
