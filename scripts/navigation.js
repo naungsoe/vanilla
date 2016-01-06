@@ -87,9 +87,9 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
-        var menuItems = helpers.queryAll('.menu > li', this.container);
-        helpers.toArray(menuItems).forEach(function(menuItem) {
-          menuItem.classList.remove('selected');
+        var links = helpers.queryAll('.selected', this.container);
+        helpers.toArray(links).forEach(function(link) {
+          link.classList.remove('selected');
         });
         
         event.currentTarget.classList.add('selected');
