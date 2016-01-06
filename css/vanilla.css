@@ -1018,23 +1018,23 @@ table {
 }
 
 .richtext .form-insert-link > .fieldset,
-.richtext .form-upload-image > .fieldset {
+.richtext .form-image-url > .fieldset {
   padding: 0;  
 }
 
 .richtext .form-insert-link > .fieldset > .field > .label,
-.richtext .form-upload-image > .fieldset > .field > .label {
+.richtext .form-image-url > .fieldset > .field > .label {
   padding-left: 0;
   width: 130px;
 }
 
 .richtext .form-insert-link > .fieldset > .field > .control,
-.richtext .form-upload-image > .fieldset > .field > .control {
+.richtext .form-image-url > .fieldset > .field > .control {
   padding-right: 0;
 }
 
 .richtext .form-insert-link > .fieldset > .field > .control > input[type='text'],
-.richtext .form-upload-image > .fieldset > .field > .control > input[type='text'] {
+.richtext .form-image-url > .fieldset > .field > .control > input[type='text'] {
   width: 270px;
 }
 
@@ -1042,11 +1042,11 @@ table {
   min-width: 430px;
 }
 
-.richtext .form-upload-image > .fieldset {
+.richtext .form-image-url > .fieldset {
   min-width: 390px;
 }
 
-.richtext .form-upload-image > .fieldset > .field > .label {
+.richtext .form-image-url > .fieldset > .field > .label {
   width: 90px;
 }
 

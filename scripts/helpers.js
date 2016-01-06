@@ -111,6 +111,19 @@ limitations under the License.
       return Array.prototype.slice.call(value);
     },
     
+    imageSize: function(src, callback) {
+      var img = document.createElement('img');
+      img.setAttribute('src', src);
+      img.addEventListener('load', function() {
+        callback.call({ width: this.width, height: this.height });
+      });
+    },
+    
+    aspectRatio: function(width, height, maxWidth, maxHeight) {
+      var ratio = Math.min((maxWidth / width), (maxHeight / height));
+      return { width: (width * ratio), height: (height * ratio) };
+    },
+    
     mixin: function(base, extend) {
       for (var name in extend) {
         if (!hasOwnProperty.call(extend, name) 

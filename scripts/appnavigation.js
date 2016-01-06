@@ -25,7 +25,8 @@ limitations under the License.
       backdropHandler = function() {},
       menuHandler = function() {},
       nameHandler = function() {},
-      selectHandler = function() {};
+      selectHandler = function() {},
+      selectHandlerAttached = false;
     
     function bindData(context, data) {
       context.selected = data.selected || '';
@@ -61,8 +62,16 @@ limitations under the License.
     function selectGlobalNavigation(context) {
       context.selected = this.selected;
       
-      var event = new CustomEvent('change', {});
-      context.container.dispatchEvent(event);
+      if (selectHandlerAttached) {
+        var event = new CustomEvent('change', {});
+        context.container.dispatchEvent(event);
+      }
+      else {
+        var items = context.items.filter(function(item) {
+          return (item.id === context.selected);
+        });
+        helpers.redirect(items[0].url);
+      }
     }
     
     function bindBackdrop(context) {
@@ -81,8 +90,8 @@ limitations under the License.
     
     function bindBackdropClick(context) {
       return function(event) {
-        var navigation = helpers.query('.app-global-nav')
-          ,backdrop = helpers.query('.backdrop', context.container);
+        var navigation = helpers.query('.app-global-nav'),
+          backdrop = helpers.query('.backdrop', context.container);
         
         navigation.classList.remove('open');
         backdrop.classList.add('hide');
@@ -158,6 +167,7 @@ limitations under the License.
         
         selectHandler = bindSelect(this, callback, data);
         this.container.addEventListener('change', selectHandler, false);
+        selectHandlerAttached = true;
         return this;
       }
     };

@@ -36,6 +36,7 @@ limitations under the License.
       
       var links = helpers.queryAll('.link', context.container);
 	  helpers.toArray(links).forEach(function(link) {
+        link.removeEventListener('click', selectHandler, false);
 	    link.removeEventListener('click', linkHandler, false);  
 	  });
 	  
@@ -62,6 +63,7 @@ limitations under the License.
     function bindLink(navigation) {
       return function(event) {
         event = event || window.event;
+        
 		event.preventDefault();
 		var url = event.currentTarget.getAttribute("href");
 		helpers.redirect(url);
@@ -87,6 +89,7 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
+        event.preventDefault();
         var links = helpers.queryAll('.selected', this.container);
         helpers.toArray(links).forEach(function(link) {
           link.classList.remove('selected');
@@ -94,7 +97,7 @@ limitations under the License.
         
         event.currentTarget.classList.add('selected');
         context.selected = event.currentTarget.dataset.value;
-        callback.call(context);
+        callback.call(context, data);
       };
     }
     
@@ -130,7 +133,8 @@ limitations under the License.
       select: function(callback, data) {
         var links = helpers.queryAll('.link', this.container);
         helpers.toArray(links).forEach(function(link) {
-          link.removeEventListener('click', selectHandler, false);  
+          link.removeEventListener('click', linkHandler, false);
+          link.removeEventListener('click', selectHandler, false);
         });
         
         selectHandler = bindSelect(this, callback, data);

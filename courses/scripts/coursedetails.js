@@ -54,7 +54,7 @@
       startTime.bind(startTimeData, context.resource)
         .change(changeStartTime, context);
       
-      var summaryData = { content: 'This <b>is</b> a test <a href="http://www.google.com"><b>Hello,</b></a>' };
+      var summaryData = { content: 'This <b>rich<i>text</i>-area</b> is a test <a href="http://www.google.com"><b>Hello,</b></a>' };
       //var summaryData = { content: '<b>Hello,</b> world!' };
       summary.bind(summaryData, context.resource)
         .change(changeSummary, context);
