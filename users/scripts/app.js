@@ -88,6 +88,7 @@
   }
   
   function executeSideNavigation() {
+     helpers.locationHash = sideNavigation.selected;
      switch (sideNavigation.selected) {
        case 'active':
        case 'inactive':
@@ -118,7 +119,7 @@
       + '<div class="item">Notifications loaded.</div></div>';
     userNodifications.bind({ content: html });
   }
-
+  
   function loadNotificationsFailed() {
     var html = '<div class="error">'
         + pageResource.loadNotificationsFailed

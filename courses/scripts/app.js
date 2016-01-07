@@ -94,11 +94,12 @@
   }
   
   function executeSideNavigation() {
+     helpers.locationHash = sideNavigation.selected;
      switch (sideNavigation.selected) {
        case 'mycourses':
        case 'sharedwithme':
+       case 'recent':
        case 'deleted':
-       case 'all':
          var title = helpers.query('#coursesViewTitle');
          var items = sideNavigation.items.filter(function(item) {
            return (item.id === sideNavigation.selected);
@@ -110,7 +111,7 @@
          break;
      }
   }
-   
+  
   function loadNotifications() {
     showMessage(pageResource.requestLoading);
     helpers.request('/Polymer/vanilla/notifications.json')
@@ -124,7 +125,7 @@
       + '<div class="item">Notifications loaded.</div></div>';
     userNodifications.bind({ content: html });
   }
-
+  
   function loadNotificationsFailed() {
     var html = '<div class="error">'
         + pageResource.loadNotificationsFailed

@@ -61,6 +61,7 @@ limitations under the License.
         editor = helpers.query('.editor', context.container),
         textarea = helpers.query('.textarea', context.container);
       
+      editor.tabIndex = 0;
       editor.contentEditable  = 'true';
       textarea.classList.add('hide');
       
@@ -790,18 +791,24 @@ limitations under the License.
     
     function bindEditorClick(context) {
       return function(event) {
+        event = event || window.event;
+        
         setTimeout(function() {
-          var selection = window.getSelection();
-          if (helpers.isEmpty(selection.focusNode)) {
+          var selection = window.getSelection(),
+            node = selection.focusNode;
+          
+          if (event.target.nodeName === "IMG") {
+            node = event.target;
+          }
+          else if (helpers.isEmpty(node)) {
             return;
           }
-          
-          var node = selection.focusNode;
+             
           while ((node.nodeType !== Node.ELEMENT_NODE)
               || ((node.nodeType === Node.ELEMENT_NODE) 
                 && !node.classList.contains('editor'))) {
-            if ((node.nodeName === 'A') 
-                || (node.nodeName === 'IMG')) {
+            if ((node.nodeName === 'A')
+               || (node.nodeName === 'IMG')) {
               break;
             }
             node = node.parentNode;
@@ -824,6 +831,19 @@ limitations under the License.
       };
     }
     
+    function getParentElements(node) {
+      var elementNodes = [];
+      if (node.nodeType === Node.TEXT_NODE) {
+        node = node.parentNode;
+      }
+      
+      while (!node.classList.contains('editor')) {
+        elementNodes.push(node);
+        node = node.parentNode;
+      }
+      return elementNodes;
+    }
+    
     function showLinkMenu(context, node) {
       var href = node.getAttribute('href'),
         html = '<label>Link:</label>'
@@ -832,16 +852,20 @@ limitations under the License.
           + '<div class="separator"></div>'
           + '<a href="#edit" class="edit">'
           + context.resource.editActionRequest + '</a>'
+          + '<div class="separator"></div>'
           + '<a href="#remove" class="remove">'
           + context.resource.removeActionRequest + '</a>';
       
+      showMenu(context, node, html);
+      bindLinkMenuActions(context);
+    }
+    
+    function showMenu(context, node, html) {
       var popup = helpers.query('.popup', context.container);
       popup.innerHTML = html;
       
       popup.style.left = node.offsetLeft + 'px';
       popup.style.top = node.offsetTop + node.offsetHeight + 'px';
-      
-      bindLinkMenuActions(context, popup);
       
       if (!popup.classList.contains('open')) {         
         popup.classList.add('open');        
@@ -863,7 +887,8 @@ limitations under the License.
       }
     }
     
-    function bindLinkMenuActions(context, menu) {
+    function bindLinkMenuActions(context) {
+      var menu = helpers.query('.popup', context.container);
       var edit = helpers.query('.edit', menu);      
       edit.removeEventListener('click', editHandler, false);
       
@@ -905,42 +930,42 @@ limitations under the License.
     }
     
     function showImageMenu(context, node) {
-      var href = node.getAttribute('href'),
-        html = '<label>Link:</label>'
-          + '<a href="' + href + '" class="fixed" '
-          + 'target="_blank">' + href + '</a>'
+      var html = '<a href="#small" class="small">'
+          + context.resource.smallActionRequest + '</a>'
           + '<div class="separator"></div>'
-          + '<a href="#edit" class="edit">'
-          + context.resource.editActionRequest + '</a>'
+          + '<a href="#small" class="fit">'
+          + context.resource.fitActionRequest + '</a>'
+          + '<div class="separator"></div>'
+          + '<a href="#small" class="original">'
+          + context.resource.originalActionRequest + '</a>'
+          + '<div class="separator"></div>'
           + '<a href="#remove" class="remove">'
           + context.resource.removeActionRequest + '</a>';
       
-      var popup = helpers.query('.popup', context.container);
-      popup.innerHTML = html;
-      
-      popup.style.left = node.offsetLeft + 'px';
-      popup.style.top = node.offsetTop + node.offsetHeight + 'px';
-      
-      bindLinkMenuActions(context, popup);
-      
-      if (!popup.classList.contains('open')) {         
-        popup.classList.add('open');        
-      }
-      
-      var offsetWidth = popup.offsetWidth,
-        offsetLeft = popup.offsetLeft,
-        editorOffsetLeft = context.container.offsetLeft,
-        docWidth = document.body.offsetWidth;
-      
-      if ((offsetWidth + offsetLeft) > docWidth) {
-        do {
-          offsetLeft = offsetLeft - 50;
-        } while ((offsetWidth + offsetLeft) > docWidth);
+      showMenu(context, node, html);
+      showImageResizeFrame(context, node);
+      //bindLinkMenuActions(context, popup);
+    }
+    
+    function showImageResizeFrame(context, node) {
+      var frame = helpers.query('.resize-frame');
+      if (helpers.isEmpty(frame)) {
+        var html = '<div class="top-left"></div>'
+          + '<div class="top-right"></div>'
+          + '<div class="bottom-left"></div>'
+          + '<div class="bottom-right"></div>';
         
-        offsetLeft = (offsetLeft < editorOffsetLeft)
-          ? editorOffsetLeft : offsetLeft;
-        popup.style.left = offsetLeft + 'px';
+        var frame = document.createElement('div');
+        frame.classList.add('resize-frame');
+        frame.innerHTML = html;
+        
+        context.container.appendChild(frame);
       }
+      
+      frame.style.top = node.offsetTop + 'px';
+      frame.style.left = node.offsetLeft + 'px';
+      frame.style.width = node.offsetWidth + 'px';
+      frame.style.height = node.offsetHeight + 'px';
     }
     
     function bindEditorBlur(context) {
@@ -958,18 +983,23 @@ limitations under the License.
           }
           
           var node = selection.focusNode;
-          while (node.nodeName !== 'A') {
-            if (node.classList && node.classList.contains('editor')) {
+          while ((node.nodeType !== Node.ELEMENT_NODE)
+              || ((node.nodeType === Node.ELEMENT_NODE) 
+                && !node.classList.contains('editor'))) {
+            if (node.nodeName === 'A') {
               break;
             }
             node = node.parentNode;
           }
           
-          if (node.nodeName === 'A') {
-            showLinkMenu(context, node);
-          }
-          else {
-            hideMenu(context);
+          switch (node.nodeName) {
+            case 'A':
+              showLinkMenu(context, node);
+              break;
+            
+            default:
+              hideMenu(context);
+              break;
           }
         }, 100);
       };
@@ -1061,6 +1091,9 @@ limitations under the License.
       },
       
       selectNode: function(node, start, end) {
+        if (helpers.isEmpty(range)) {
+          range = document.createRange();
+        }
         range.selectNode(node);
         
         start =  helpers.isEmpty(start) 
@@ -1069,12 +1102,17 @@ limitations under the License.
         end = helpers.isEmpty(end) 
           ? range.endOffset : end;
         
-        range.setStart(node, start);
-        range.setEnd(node, end);
+        if (node.nodeName !== 'IMG') {
+          range.setStart(node, start);
+          range.setEnd(node, end);
+        }
         this.restoreRange();
       },
       
       selectNodeContents: function(node, start, end) {
+        if (helpers.isEmpty(range)) {
+          range = document.createRange();
+        }
         range.selectNodeContents(node);
         
         start =  helpers.isEmpty(start) 

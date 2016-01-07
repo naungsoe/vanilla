@@ -45,6 +45,14 @@ limitations under the License.
       return window.location;
     },
     
+    get locationHash() {
+      return window.location.hash;
+    },
+    
+    set locationHash(value) {
+      window.location.hash = value;
+    },
+    
     query: function(selector, container) {
       if (helpers.isString(selector)) {
         var node = (container || document).querySelector(selector);
