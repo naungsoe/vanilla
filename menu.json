@@ -18,6 +18,24 @@
 		]
 	},
 	{
+		"id": "resources",
+		"name": "Resources",
+		"icon": "fa fa-university",
+		"url": "http://localhost/Polymer/vanilla/resources/index.html"
+	},
+	{
+		"id": "quizes",
+		"name": "Quizes",
+		"icon": "fa fa-puzzle-piece",
+		"url": "http://localhost/Polymer/vanilla/quizes/index.html"
+	},
+	{
+		"id": "survey",
+		"name": "Survey",
+		"icon": "fa fa-bar-chart",
+		"url": "http://localhost/Polymer/vanilla/survey/index.html"
+	},
+	{
 		"id": "facilities",
 		"name": "Facilities",
 		"icon": "fa fa-flask",
@@ -28,12 +46,6 @@
 		"name": "Attendance",
 		"icon": "fa fa-calendar-check-o",
 		"url": "http://localhost/Polymer/vanilla/attendance/index.html"
-	},
-	{
-		"id": "survey",
-		"name": "Survey",
-		"icon": "fa fa-bar-chart",
-		"url": "http://localhost/Polymer/vanilla/survey/index.html"
 	},
 	{
 		"id": "social",

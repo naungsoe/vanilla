@@ -55,7 +55,8 @@
         .change(changeStartTime, context);
       
       var summaryData = { content: 'This <b>rich<i>text</i>-area</b> is a test <a href="http://www.google.com"><b>Hello,</b></a>'
-        + '<img src="https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0Bzhp5Z4wHba3by0wMFNhNzV2UE0/components_textfields_multiline3.png" alt="/components_textfields_multiline3.png" width="232" height="136.7578947368421" data-width="1520" data-height="896"/>' };
+        + '<img src="https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0Bzhp5Z4wHba3by0wMFNhNzV2UE0/components_textfields_multiline3.png" alt="/components_textfields_multiline3.png" width="232" height="136.7578947368421" data-width="1520" data-height="896"/>'
+        + '<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table<' };
       //var summaryData = { content: '<b>Hello,</b> world!' };
       //<iframe width="560" height="315" src="https://www.youtube.com/embed/h9jRxIicqV8" frameborder="0" allowfullscreen></iframe>
       summary.bind(summaryData, context.resource)
@@ -91,38 +92,6 @@
       return (errors.length === 0);
     }
     
-    function validateRequiredFields(context, fields) {
-      helpers.toArray(fields).forEach(function(field) {
-        if (helpers.isEmpty(field.value)) {
-          addError(field, context.resource.invalidRequiredField);
-        }
-        else {
-          clearError(field);
-        }
-      });
-    }
-    
-    function addError(field, message) {
-      field.parentNode.parentNode.classList.add("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (helpers.isEmpty(hint)) {
-        var hint = document.createElement('div');
-        hint.classList.add('hint');
-        field.parentNode.appendChild(hint);
-      }
-      hint.innerHTML = '<div class="hint">' + message + '</div>';
-    }
-    
-    function clearError(field) {
-      field.parentNode.parentNode.classList.remove("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (!helpers.isEmpty(hint)) {
-        field.parentNode.removeChild(hint);
-      }
-    }
-    
     return {
       get container() {
         return helpers.query(selector);
@@ -147,6 +116,10 @@
       
       get valid() {
         return isFormValid(this);
+      },
+      
+      get hidden() {
+        return this.container.classList.contains('hide');
       },
       
       bind: function(data, resource) {

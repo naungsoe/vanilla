@@ -122,6 +122,10 @@
         return isFormValid(this);
       },
       
+      get hidden() {
+        return this.container.classList.contains('hide');
+      },
+      
       bind: function(data, resource) {
         bindData(this, data, resource);
         return this;

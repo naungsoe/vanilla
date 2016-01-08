@@ -39,61 +39,15 @@
       alternateEmail.value = context.user.alternateEmail;
     }
     
-    function isFormValid(context) {
+    function validate(context) {
       var container = context.container;
-      var requiredFields = helpers.queryAll('input[required]', container);
-      validateRequiredFields(context, requiredFields);
+      var requireds = helpers.queryAll('input[required]', container);
+      var message = context.resource.invalidRequiredField;
+      formhelpers.validateRequired(context, requireds, message);
 
-      var emailFields = helpers.queryAll('input[email]', container);
-      validateEmailFields(context, emailFields);
-      
-      var errors = helpers.queryAll('.error', container);
-      return (errors.length === 0);
-    }
-    
-    function validateRequiredFields(context, fields) {
-      helpers.toArray(fields).forEach(function(field) {
-        if (helpers.isEmpty(field.value)) {
-          addError(field, context.resource.invalidRequiredField);
-        }
-        else {
-          clearError(field);
-        }
-      });
-    }
-    
-    function validateEmailFields(context, fields) {
-      helpers.toArray(fields).forEach(function(field) {
-        if (!helpers.isEmpty(field.value)) {
-          if (helpers.isEmail(field.value)) {
-            addError(field, context.resource.invalidEmailField);
-          }
-          else {
-            clearError(field);
-          }
-        }
-      });
-    }
-    
-    function addError(field, message) {
-      field.parentNode.parentNode.classList.add("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (helpers.isEmpty(hint)) {
-        var hint = document.createElement('div');
-        hint.classList.add('hint');
-        field.parentNode.appendChild(hint);
-      }
-      hint.innerHTML = '<div class="hint">' + message + '</div>';
-    }
-    
-    function clearError(field) {
-      field.parentNode.parentNode.classList.remove("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (!helpers.isEmpty(hint)) {
-        field.parentNode.removeChild(hint);
-      }
+      var emails = helpers.queryAll('input[email]', container);
+      message = context.resource.invalidEmailField;
+      formhelpers.validateEmail(context, emails, message);
     }
     
     return {
@@ -119,11 +73,16 @@
       },
       
       get valid() {
-        return isFormValid(this);
+        return !formhelpers.hasError(this.container);
       },
       
       bind: function(data, resource) {
         bindData(this, data, resource);
+        return this;
+      },
+      
+      validate: function() {
+        validate(this);
         return this;
       }
     };

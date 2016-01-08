@@ -99,6 +99,7 @@ limitations under the License.
           }
           return true;
       }
+      return false;
     },
     
     isString: function(value) {

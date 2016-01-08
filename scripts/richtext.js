@@ -41,8 +41,11 @@ limitations under the License.
       unlinkHandler = function() {},
       imageHandler = function() {},
       imageModal = {},
-      editHandler = function() {},
-      removeHandler = function() {},
+      editLinkHandler = function() {},
+      removeLinkHandler = function() {},
+      compressImageHandler = function() {},
+      expandImageHandler = function() {},
+      removeImageHandler = function() {},
       editorClickHandler = function() {},
       editorBlurHandler = function() {},
       editorKeydownHandler = function() {},
@@ -824,6 +827,7 @@ limitations under the License.
               break;
             
             default:
+              hideFrame(context);
               hideMenu(context);
               break;
           }
@@ -846,15 +850,15 @@ limitations under the License.
     
     function showLinkMenu(context, node) {
       var href = node.getAttribute('href'),
-        html = '<label>Link:</label>'
+        html = '<div class="content">'
+          + '<div class="link"><label>Link:</label>'
           + '<a href="' + href + '" class="fixed" '
-          + 'target="_blank">' + href + '</a>'
-          + '<div class="separator"></div>'
-          + '<a href="#edit" class="edit">'
-          + context.resource.editActionRequest + '</a>'
-          + '<div class="separator"></div>'
-          + '<a href="#remove" class="remove">'
-          + context.resource.removeActionRequest + '</a>';
+          + 'target="_blank">' + href + '</a></div></div>'
+          + '<div class="actions">'
+          + '<button type="button" class="edit" flat>'
+          + '<i class="fa fa-pencil"></i></button>'
+          + '<button type="button" class="remove" flat>'
+          + '<i class="fa fa-times"></i></button></div>';
       
       showMenu(context, node, html);
       bindLinkMenuActions(context);
@@ -862,8 +866,14 @@ limitations under the License.
     
     function showMenu(context, node, html) {
       var popup = helpers.query('.popup', context.container);
-      popup.innerHTML = html;
+      if (helpers.isEmpty(popup)) {        
+        popup = document.createElement('div');
+        popup.classList.add('popup');
+        
+        context.container.appendChild(popup);
+      }
       
+      popup.innerHTML = html;
       popup.style.left = node.offsetLeft + 'px';
       popup.style.top = node.offsetTop + node.offsetHeight + 'px';
       
@@ -874,7 +884,7 @@ limitations under the License.
       var offsetWidth = popup.offsetWidth,
         offsetLeft = popup.offsetLeft,
         editorOffsetLeft = context.container.offsetLeft,
-        docWidth = document.body.offsetWidth;
+        docWidth = document.body.offsetWidth - 20;
       
       if ((offsetWidth + offsetLeft) > docWidth) {
         do {
@@ -890,19 +900,19 @@ limitations under the License.
     function bindLinkMenuActions(context) {
       var menu = helpers.query('.popup', context.container);
       var edit = helpers.query('.edit', menu);      
-      edit.removeEventListener('click', editHandler, false);
+      edit.removeEventListener('click', editLinkHandler, false);
       
-      editHandler = bindEdit(context);
-      edit.addEventListener('click', editHandler, false);
+      editLinkHandler = bindEditLink(context);
+      edit.addEventListener('click', editLinkHandler, false);
       
       var remove = helpers.query('.remove', menu);
-      remove.removeEventListener('click', removeHandler, false);
+      remove.removeEventListener('click', removeLinkHandler, false);
       
-      removeHandler = bindRemove(context);
-      remove.addEventListener('click', removeHandler, false);
+      removeLinkHandler = bindRemoveLink(context);
+      remove.addEventListener('click', removeLinkHandler, false);
     }
     
-    function bindEdit(context) {
+    function bindEditLink(context) {
       return function(event) {
         var toolbar = helpers.query('.tool-bar', context.container),
           link = helpers.query('.link', toolbar);
@@ -912,7 +922,7 @@ limitations under the License.
       };
     }
     
-    function bindRemove(context) {
+    function bindRemoveLink(context) {
       return function(event) {
         var toolbar = helpers.query('.tool-bar', context.container),
           link = helpers.query('.unlink', toolbar);
@@ -922,50 +932,134 @@ limitations under the License.
       };
     }
     
+    function hideFrame(context) {
+      var frame = helpers.query('.frame', context.container);
+      if (!helpers.isEmpty(frame)
+          && frame.classList.contains('open')) {
+        frame.classList.remove('open');
+      }
+    }
+    
     function hideMenu(context) {
       var popup = helpers.query('.popup', context.container);
-      if (popup.classList.contains('open')) {
+      if (!helpers.isEmpty(popup)
+          && popup.classList.contains('open')) {
         popup.classList.remove('open');
       }
     }
     
     function showImageMenu(context, node) {
-      var html = '<a href="#small" class="small">'
-          + context.resource.smallActionRequest + '</a>'
-          + '<div class="separator"></div>'
-          + '<a href="#small" class="fit">'
-          + context.resource.fitActionRequest + '</a>'
-          + '<div class="separator"></div>'
-          + '<a href="#small" class="original">'
-          + context.resource.originalActionRequest + '</a>'
-          + '<div class="separator"></div>'
-          + '<a href="#remove" class="remove">'
-          + context.resource.removeActionRequest + '</a>';
+      var html = '<div class="actions">'
+          + '<button type="button" class="compress" flat>'
+          + '<i class="fa fa-compress"></i></button>'
+          + '<button type="button" class="expand" flat>'
+          + '<i class="fa fa-expand"></i></button>'
+          + '<button type="button" class="remove" flat>'
+          + '<i class="fa fa-times"></i></button></div>'
+          + '</div>';
       
       showMenu(context, node, html);
-      showImageResizeFrame(context, node);
-      //bindLinkMenuActions(context, popup);
+      showImageFrame(context, node);
+      bindImageFrameActions(context, node);
+      bindImageMenuActions(context, node);
     }
     
-    function showImageResizeFrame(context, node) {
-      var frame = helpers.query('.resize-frame');
+    function showImageFrame(context, node) {
+      var frame = helpers.query('.frame', context.container);
       if (helpers.isEmpty(frame)) {
-        var html = '<div class="top-left"></div>'
+        var html = '<div class="resize">'
+          + '<div class="area">'
+          + '<div class="top-left"></div>'
           + '<div class="top-right"></div>'
           + '<div class="bottom-left"></div>'
-          + '<div class="bottom-right"></div>';
+          + '<div class="bottom-right"></div>'
+          + '</div></div>';
         
-        var frame = document.createElement('div');
-        frame.classList.add('resize-frame');
+        frame = document.createElement('div');
+        frame.classList.add('frame');
         frame.innerHTML = html;
         
         context.container.appendChild(frame);
       }
       
-      frame.style.top = node.offsetTop + 'px';
-      frame.style.left = node.offsetLeft + 'px';
-      frame.style.width = node.offsetWidth + 'px';
-      frame.style.height = node.offsetHeight + 'px';
+      var editor = helpers.query('.editor', context.container);
+      frame.style.top = editor.offsetTop + 'px';
+      frame.style.left = editor.offsetLeft + 'px';
+      frame.style.width = editor.clientWidth + 'px';
+      frame.style.height = editor.clientHeight + 'px';
+      
+      var resize = helpers.query('.resize', frame);
+      resize.style.width = editor.clientWidth + 'px';
+      resize.style.height = editor.clientHeight + 'px';
+      
+      var area = helpers.query('.area', frame);
+      area.style.top = (node.offsetTop - editor.offsetTop) + 'px';
+      area.style.left = (node.offsetLeft - editor.offsetLeft) + 'px';
+      area.style.width = node.offsetWidth + 'px';
+      area.style.height = node.offsetHeight + 'px';
+      
+      if (!frame.classList.contains('open')) {         
+        frame.classList.add('open');        
+      }
+    }
+    
+    function bindImageFrameActions(context, node) {
+    }
+    
+    function bindImageMenuActions(context, node) {
+      var menu = helpers.query('.popup', context.container);
+      var compress = helpers.query('.compress', menu);
+      compress.removeEventListener('click', compressImageHandler, false);
+      
+      compressImageHandler = bindResizeImage(context, node, 'compress');
+      compress.addEventListener('click', compressImageHandler, false);
+      
+      var expand = helpers.query('.expand', menu);
+      expand.removeEventListener('click', expandImageHandler, false);
+      
+      expandImageHandler = bindResizeImage(context, node, 'expand');
+      expand.addEventListener('click', expandImageHandler, false);
+      
+      var remove = helpers.query('.remove', menu);
+      remove.removeEventListener('click', removeImageHandler, false);
+      
+      removeImageHandler = bindRemoveImage(context, node);
+      remove.addEventListener('click', removeImageHandler, false);
+    }
+    
+    function bindResizeImage(context, node, action) {
+      return function(event) {
+        var resize = (action === 'compress') ? -100 : 100,
+          minSize = { width: 200, height: 200 },
+          maxSize = { width: 1100, height: 1100 };
+        
+        var size = getElementSize(node);
+        if (size.width > size.height) {
+          if ((size.width > minSize.width)
+              ||  (size.width < maxSize.width)) {
+            size.width = size.width + resize;
+            size.height = size.height + resize;
+          }
+        }
+        else {
+          if ((size.height > minSize.height)
+              ||  (size.height < maxSize.height)) {
+            size.width = size.width + resize;
+            size.height = size.height + resize;
+          }
+        }
+        
+        size = helpers.getAspectRatio(getElementSize(node), size);
+        node.style.width = size.width + 'px';
+        node.style.height = size.height + 'px';
+      };
+    }
+    
+    function bindRemoveImage(context, node) {
+      return function(event) {
+        var editor = helpers.query('.editor', context.container);
+        editor.removeChild(node);
+      };
     }
     
     function bindEditorBlur(context) {
@@ -998,6 +1092,7 @@ limitations under the License.
               break;
             
             default:
+              hideFrame(context);
               hideMenu(context);
               break;
           }
@@ -1017,6 +1112,7 @@ limitations under the License.
     
     function bindDocClick(context) {
       return function(event) {
+        hideFrame(context);
         hideMenu(context);
       };
     }

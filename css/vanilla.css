@@ -971,51 +971,103 @@ table {
   display: none;
   margin: 0;
   overflow: hidden;
-  padding: 6px 8px;
   position: absolute;
-  z-index: 1;
 }
 
-.richtext > .popup > a,
-.richtext > .popup > label,
-.richtext > .popup > .separator {
+.richtext > .popup > .content,
+.richtext > .popup > .actions {
   display: table-cell;
-  vertical-align: middle;
 }
 
-.richtext > .popup > a,
-.richtext > .popup > label {
-  font-size: 13px;
+.richtext > .popup > .content > .link > a,
+.richtext > .popup > .content > .link > label {
+  display: table-cell;
+  font-size: 14px;
   line-height: 16px;
 }
 
-.richtext > .popup > a {
+.richtext > .popup > .content > .link > a {
+  margin-right: 8px;
   max-width: 160px;
-  padding: 0 4px;
+  padding: 10px 16px 10px 4px;
   text-decoration: none;
 }
 
-.richtext > .popup > a:first-child {
-  margin-left: 0;
-}
-
-.richtext > .popup > a:hover {
+.richtext > .popup > .content > .link > a:hover {
   text-decoration: underline;
 }
 
-.richtext > .popup > .separator {
-  background-color: #bdbdbd;
-  height: 16px;
-  width: 1px;
+.richtext > .popup > .content > .link > label {
+  padding: 10px 0 10px 8px;
+}
+
+.richtext > .popup > .actions {
+  min-width: 64px;
+}
+
+.richtext > .popup > .actions > button[flat] {
+  margin: 0;
+  padding: 10px;
+  width: 32px;
 }
 
 .richtext > .popup.open {
   display: block;
 }
 
-.richtext > .resize-frame {
+.richtext > .frame {
+  display: none;
   position: absolute;
-  background-color: rgba(0,0,0,.1);
+  z-index: 0;
+  opacity: 1;
+}
+
+.richtext > .frame > .resize {
+  overflow: hidden;
+  position: relative;
+}
+
+.richtext > .frame > .resize > .area {   
+  position: absolute;
+  background-color: rgba(0,0,0,.05);
+  border: 1px solid #1976d2;
+  margin-left: -1px;
+  margin-top: -1px;
+}
+
+.richtext > .frame > .resize > .area > .top-left,
+.richtext > .frame > .resize > .area > .top-right,
+.richtext > .frame > .resize > .area > .bottom-left,
+.richtext > .frame > .resize > .area > .bottom-right {
+  background-color: #fff;
+  border: 1px solid #1976d2;
+  height: 8px;
+  position: absolute;
+  width: 8px;
+}
+
+.richtext > .frame > .resize > .area > .top-left,
+.richtext > .frame > .resize > .area > .top-right {
+  top: -4px;
+}
+
+.richtext > .frame > .resize > .area > .bottom-left,
+.richtext > .frame > .resize > .area > .bottom-right {
+  bottom: -4px;
+}
+
+.richtext > .frame > .resize > .area > .top-left,
+.richtext > .frame > .resize > .area > .bottom-left {
+  left: -4px;
+}
+
+.richtext > .frame > .resize > .area > .top-right,
+.richtext > .frame > .resize > .area > .bottom-right {
+  right: -4px;
+}
+
+.richtext > .frame.open {
+  display: block;
 }
 
 .richtext .tabs {

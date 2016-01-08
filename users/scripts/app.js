@@ -271,6 +271,7 @@
   }
   
   function saveUserDetails(userCreateForm) {
+    userCreateForm.validate();
     if (userCreateForm.valid) {
       this.container.classList.add("hide");
     }

@@ -87,17 +87,21 @@
   function changeCourseWizardStep() {
     switch (courseWizard.selected) {
       case "details":
-        var detailsData = {};
-        courseDetails.bind(detailsData);
-        courseDetails.toggle();
-        courseActivities.toggle();
+        if (courseDetails.hidden) {
+          var detailsData = {};
+          courseDetails.bind(detailsData);
+          courseDetails.toggle();
+          courseActivities.toggle();
+        }
         break;
       
       case "resources":
-        var courseData = {};
-        courseActivities.bind(courseData);
-        courseDetails.toggle();
-        courseActivities.toggle();
+        if (courseActivities.hidden) {
+          var courseData = {};
+          courseActivities.bind(courseData);
+          courseDetails.toggle();
+          courseActivities.toggle();
+        }
         break;
     }
   }

@@ -113,13 +113,8 @@
 		{ "id": "none", "name": "None" }
 	],
 	"requestLoading": "Loading...",
-	"smallActionRequest": "Small",
-	"fitActionRequest": "Fit",
-	"originalActionRequest": "Original",
 	"okActionRequest": "OK",
 	"insertActionRequest": "Insert",
-	"editActionRequest": "Edit",
-	"removeActionRequest": "Remove",
 	"cancelActionRequest": "Cancel",
 	"tryAgainRequest": "Try again?",
 	"undoActionRequest": "Undo?",
