@@ -20,15 +20,17 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.Wizard = function(selector) {
     var steps = [],
-      previous = '',
+      completed = [],
       selected = '',
+      current = '',
       stepHandler = function() {},
       changeHandler = function() {};
     
     function bindData(context, data) {
       context.steps = data.steps || [];
-	  context.previous = data.previous || '';
+	  context.completed = data.completed || [];
 	  context.selected = data.selected || '';
+	  context.current = data.current || '';
     }
     
     function bindWizard(context) {
@@ -44,34 +46,38 @@ limitations under the License.
     }
     
     function updateStatus(context) {
-      if (context.selected === '') {
-	    return;
-	  }
-      
       var steps = helpers.queryAll('.step', context.container);
       helpers.toArray(steps).forEach(function(step, index) {
+        step.classList.remove('completed');
         step.classList.remove('selected');
       });
       
-      var step = helpers.query(
-        '.step[data-value="' + context.selected + '"]', context.container);
-      step.classList.add('selected');
+      if (!helpers.isEmpty(context.completed)) {
+        context.completed.forEach(function(step) {
+          var step = helpers.query(
+            '.step[data-value="' + step + '"]', context.container);
+          
+          step.classList.add('completed');
+        });
+	  }
+      
+      if (!helpers.isEmpty(context.selected)) {
+        var step = helpers.query(
+          '.step[data-value="' + context.selected + '"]', context.container);
+        
+        step.removeAttribute('disabled');
+        step.classList.add('selected');
+	  }
     }
     
     function bindStep(context) {
       return function(event) {
         event = event || window.event;
-        context.previous = context.selected;
-        context.selected = event.currentTarget.dataset.value;
+        context.current = event.currentTarget.dataset.value;
         
         var event = new CustomEvent('change', {});
         context.container.dispatchEvent(event);
       };
-    }
-    
-    function enableStep(context, step) {
-      var step = helpers.query('.step[data-value="' + step + '"]');
-      step.removeAttribute('disabled');
     }
     
     function bindChange(context, callback, data) {
@@ -94,13 +100,19 @@ limitations under the License.
 		bindWizard(this);
 		updateStatus(this);
       },
-	  
-	  get previous() {
-        return previous;
+      
+      get completed() {
+        return completed;
       },
       
-      set previous(value) {
-        previous = value;
+      set completed(value) {
+        if (Array.isArray(value)) {
+          completed = value;
+        }
+        else {
+          completed.push(value);
+        }
+        updateStatus(this);
       },
       
 	  get selected() {
@@ -112,13 +124,16 @@ limitations under the License.
 		updateStatus(this);
       },
       
-      bind: function(data) {
-        bindData(this, data);
-        return this;
+	  get current() {
+        return current;
       },
       
-      enable: function(step) {
-        enableStep(this, step);
+      set current(value) {
+        current = value;
+      },
+      
+      bind: function(data) {
+        bindData(this, data);
         return this;
       },
       

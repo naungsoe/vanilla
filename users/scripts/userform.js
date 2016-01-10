@@ -25,17 +25,21 @@
     function bindForm(context) {
       var container = context.container;
       firstName = helpers.query('#firstName', container);
-      lastName = helpers.query('#lastName', container);
-      email = helpers.query('#email', container);
-      password = helpers.query('#password', container);
-      confirmPassword = helpers.query('#confirmPassword', container);
-      alternateEmail = helpers.query('#alternateEmail', container);
-      
       firstName.value = context.user.name.first;
+      
+      lastName = helpers.query('#lastName', container);
       lastName.value = context.user.name.last;
+      
+      email = helpers.query('#email', container);
       email.value = context.user.email;
+      
+      password = helpers.query('#password', container);
       password.value = context.user.password;
+      
+      confirmPassword = helpers.query('#confirmPassword', container);
       confirmPassword.value = context.user.confirmPassword;
+      
+      alternateEmail = helpers.query('#alternateEmail', container);
       alternateEmail.value = context.user.alternateEmail;
     }
     
@@ -43,11 +47,11 @@
       var container = context.container;
       var requireds = helpers.queryAll('input[required]', container);
       var message = context.resource.invalidRequiredField;
-      formhelpers.validateRequired(context, requireds, message);
+      formHelpers.validateRequired(context, requireds, message);
 
       var emails = helpers.queryAll('input[email]', container);
       message = context.resource.invalidEmailField;
-      formhelpers.validateEmail(context, emails, message);
+      formHelpers.validateEmail(context, emails, message);
     }
     
     return {
@@ -73,7 +77,7 @@
       },
       
       get valid() {
-        return !formhelpers.hasError(this.container);
+        return !formHelpers.hasError(this.container);
       },
       
       bind: function(data, resource) {

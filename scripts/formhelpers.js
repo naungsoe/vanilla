@@ -17,14 +17,14 @@ limitations under the License.
 (function() {
   'use strict';
   
-  var formhelpers = {
+  var formHelpers = {
     validateRequired: function(context, fields, message) {
       helpers.toArray(fields).forEach(function(field) {
         if (helpers.isEmpty(field.value)) {
-          formhelpers.addError(field, message);
+          formHelpers.addError(field, message);
         }
         else {
-          formhelpers.clearError(field);
+          formHelpers.clearError(field);
         }
       });
     },
@@ -33,10 +33,10 @@ limitations under the License.
       helpers.toArray(fields).forEach(function(field) {
         if (!helpers.isEmpty(field.value)) {
           if (helpers.isEmail(field.value)) {
-            formhelpers.addError(field, message);
+            formHelpers.addError(field, message);
           }
           else {
-            formhelpers.clearError(field);
+            formHelpers.clearError(field);
           }
         }
       });
@@ -69,5 +69,5 @@ limitations under the License.
     }
   };
   
-  window.formhelpers = formhelpers;
+  window.formHelpers = formHelpers;
 })();

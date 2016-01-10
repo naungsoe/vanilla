@@ -58,7 +58,7 @@
       <button type="button" class="step" data-value="details" flat>
         <span class="icon"><label>1</label><i class="fa fa-check completed"></i></span><span class="text">Course details</span>
       </a>
-      <button type="button" class="step" data-value="resources" flat disabled>
+      <button type="button" class="step" data-value="activities" flat>
         <span class="icon"><label>2</label><i class="fa fa-check"></i></span><span class="text">Activity / Resource</span>
       </button>
     </nav>
@@ -136,13 +136,13 @@
         </div>
       </div>
     </div>
-    <nav class="actions">
+    <nav id="courseActions" class="actions">
       <div class="left">
-        <button type="button" class="cancel" flat>Back</button>
+        <button type="button" class="back" flat>Back</button>
       </div>
       <div class="right">
         <button type="button" class="cancel" flat>Cancel</button>
-        <button type="button" class="proceed" flat primary>Continue</button>
+        <button type="button" class="continue" flat primary>Continue</button>
       </div>
     </nav>
   </section>
@@ -151,6 +151,7 @@
   <script src="../scripts/Promise.js"></script>
   <script src="../scripts/Template.js"></script>
   <script src="../scripts/helpers.js"></script>
+  <script src="../scripts/formhelpers.js"></script>
   <script src="../scripts/navigation.js"></script>
   <script src="../scripts/checkboxgroup.js"></script>
   <script src="../scripts/dropdown.js"></script>

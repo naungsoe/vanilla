@@ -22,78 +22,13 @@
           alternateEmail: '' };
     }
     
-    function bindForm(context) {
+    function bindActivities(context) {
       var container = context.container;
-      firstName = helpers.query('#firstName', container);
-      lastName = helpers.query('#lastName', container);
-      email = helpers.query('#email', container);
-      password = helpers.query('#password', container);
-      confirmPassword = helpers.query('#confirmPassword', container);
-      alternateEmail = helpers.query('#alternateEmail', container);
       
-      firstName.value = context.user.name.first;
-      lastName.value = context.user.name.last;
-      email.value = context.user.email;
-      password.value = context.user.password;
-      confirmPassword.value = context.user.confirmPassword;
-      alternateEmail.value = context.user.alternateEmail;
     }
     
-    function isFormValid(context) {
-      var container = context.container;
-      var requiredFields = helpers.queryAll('input[required]', container);
-      validateRequiredFields(context, requiredFields);
-
-      var emailFields = helpers.queryAll('input[email]', container);
-      validateEmailFields(context, emailFields);
+    function validate(context) {
       
-      var errors = helpers.queryAll('.error', container);
-      return (errors.length === 0);
-    }
-    
-    function validateRequiredFields(context, fields) {
-      helpers.toArray(fields).forEach(function(field) {
-        if (helpers.isEmpty(field.value)) {
-          addError(field, context.resource.invalidRequiredField);
-        }
-        else {
-          clearError(field);
-        }
-      });
-    }
-    
-    function validateEmailFields(context, fields) {
-      helpers.toArray(fields).forEach(function(field) {
-        if (!helpers.isEmpty(field.value)) {
-          if (helpers.isEmail(field.value)) {
-            addError(field, context.resource.invalidEmailField);
-          }
-          else {
-            clearError(field);
-          }
-        }
-      });
-    }
-    
-    function addError(field, message) {
-      field.parentNode.parentNode.classList.add("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (helpers.isEmpty(hint)) {
-        var hint = document.createElement('div');
-        hint.classList.add('hint');
-        field.parentNode.appendChild(hint);
-      }
-      hint.innerHTML = '<div class="hint">' + message + '</div>';
-    }
-    
-    function clearError(field) {
-      field.parentNode.parentNode.classList.remove("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (!helpers.isEmpty(hint)) {
-        field.parentNode.removeChild(hint);
-      }
     }
     
     return {
@@ -109,21 +44,21 @@
         resource = value;
       },
       
-      get user() {
+      get activities() {
         return user;
       },
       
-      set user(value) {
-        user = value;
-        bindForm(this);
-      },
-      
-      get valid() {
-        return isFormValid(this);
+      set activities(value) {
+        activities = value;
+        bindActivities(this);
       },
       
       get hidden() {
         return this.container.classList.contains('hide');
+      },
+      
+      get valid() {
+        return !formHelpers.hasError(this.container);
       },
       
       bind: function(data, resource) {
@@ -131,8 +66,22 @@
         return this;
       },
       
-      toggle: function() {
-        this.container.classList.toggle('hide');
+      show: function() {
+        if (this.container.classList.contains('hide')) {
+          this.container.classList.remove('hide');
+        }
+        return this;
+      },
+      
+      hide: function() {
+        if (!this.container.classList.contains('hide')) {
+          this.container.classList.add('hide');
+        }
+        return this;
+      },
+      
+      validate: function() {
+        validate(this);
         return this;
       }
     };

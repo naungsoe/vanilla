@@ -14,9 +14,13 @@
 	pageNavigation = {},
     userNodifications = {},
     userProfile = {},
+    courseData = {},
     courseWizard = {},
     courseDetails = {},
-    courseActivities = {};
+    courseActivities = {},
+    backHandler = function() {},
+    cancelHandler = function() {},
+    continueHandler = function() {};
   
   function initApplicatin(response) {
     pageResource = response;
@@ -80,29 +84,120 @@
     courseWizard.bind(wizardData)
       .change(changeCourseWizardStep);
     
-    var detailsData = {};
-    courseDetails.bind(detailsData, pageResource);
+    courseDetails.bind(courseData, pageResource);
+    showCourseDetails();
+    bindCourseDetailsActions();
   }
   
   function changeCourseWizardStep() {
     switch (courseWizard.selected) {
       case "details":
-        if (courseDetails.hidden) {
-          var detailsData = {};
-          courseDetails.bind(detailsData);
-          courseDetails.toggle();
-          courseActivities.toggle();
+        courseDetails.validate();
+        if (!courseDetails.valid) {
+          return;
         }
+        courseData.course = courseDetails.course;
         break;
       
-      case "resources":
-        if (courseActivities.hidden) {
-          var courseData = {};
-          courseActivities.bind(courseData);
-          courseDetails.toggle();
-          courseActivities.toggle();
+      case "activities":
+        courseActivities.validate();
+        if (!courseActivities.valid) {
+          return;
         }
         break;
     }
+    
+    switch (courseWizard.current) {
+      case "details":
+        showCourseDetails();
+        bindCourseDetailsActions();
+        break;
+      
+      case "activities":
+        showCourseActivities();
+        showCourseActivitiesActions();
+        break;
+    }
+  }
+  
+  function showCourseDetails() {
+    if (!courseDetails.hidden) {
+      return;
+    }
+    
+    courseDetails.bind(courseData, pageResource);
+    courseActivities.hide();
+    courseDetails.show();
+  }
+  
+  function bindCourseDetailsActions() {
+    var actions = helpers.query('#courseActions'),
+      back = helpers.query('.back', actions),
+      cancel = helpers.query('.cancel', actions),
+      cont = helpers.query('.continue', actions);
+    
+    back.setAttribute('disabled', '');
+    cancel.removeAttribute('disabled');
+    cont.removeAttribute('disabled');
+    
+    back.removeEventListener('click', backHandler, false);
+    cancel.removeEventListener('click', cancelHandler, false);
+    cont.removeEventListener('click', continueHandler, false);
+    
+    cancelHandler = bindCourseDetailsCancel();
+    cancel.addEventListener('click', cancelHandler, false);
+    
+    continueHandler = bindCourseDetailsContinue();
+    cont.addEventListener('click', continueHandler, false);
+  }
+  
+  function bindCourseDetailsCancel() {
+    return function(event) {
+      helpers.redirect(helpers.getQuery('redirect'));
+    };
+  }
+  
+  function bindCourseDetailsContinue() {
+    return function(event) {
+      courseDetails.validate();
+      if (courseDetails.valid) {
+        courseData.course = courseDetails.course;
+        courseWizard.completed = 'details';
+        courseWizard.selected = 'activities';
+        showCourseActivities();
+        showCourseActivitiesActions();
+      }
+    };
+  }
+  
+  function showCourseActivities() {
+    if (!courseActivities.hidden) {
+      return;
+    }
+    
+    courseActivities.bind(courseData, pageResource);
+    courseDetails.hide();
+    courseActivities.show();
+  }
+  
+  function showCourseActivitiesActions() {
+    var actions = helpers.query('#courseActions'),
+      back = helpers.query('.back', actions),
+      cancel = helpers.query('.cancel', actions),
+      cont = helpers.query('.continue', actions);
+    
+    back.removeAttribute('disabled', '');
+    cancel.removeAttribute('disabled');
+    cont.removeAttribute('disabled');
+    
+    back.removeEventListener('click', backHandler, false);
+    cancel.removeEventListener('click', cancelHandler, false);
+    cont.removeEventListener('click', continueHandler, false);
+    
+    cancelHandler = bindCourseDetailsCancel();
+    cancel.addEventListener('click', backHandler, false);
+    
+    continueHandler = bindCourseDetailsContinue();
+    cancel.addEventListener('click', continueHandler, false);
   }
 })();

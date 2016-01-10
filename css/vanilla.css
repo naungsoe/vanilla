@@ -38,26 +38,32 @@ body {
 
 h1 {
   font-size: 34px;
+  line-height: 38px;
 }
 
 h2 {
   font-size: 24px;
+  line-height: 28px;
 }
 
 h3 {
   font-size: 18px;
+  line-height: 22px;
 }
 
 h4 {
   font-size: 14px;
+  line-height: 18px;
 }
 
 h5 {
   font-size: 12px;
+  line-height: 16px;
 }
 
 h6 {
   font-size: 10px;
+  line-height: 14px;
 }
 
 font[size='2'] {
@@ -472,7 +478,7 @@ table {
 
 .dropdown[select] > .toggle > .text,
 .datepicker > .toggle > .date,
-.timepicker > .toggle > .time
+.timepicker > .toggle > .time,
 .colorpicker > .toggle > .text {
   color: rgba(0,0,0,.87);
 }
@@ -1569,7 +1575,8 @@ table {
   text-decoration: none;
 }
 
-.wizard > .step:hover {
+.wizard > .step:hover,
+.wizard > .step:focus {
   background-color: transparent;
 }
 
@@ -1605,6 +1612,14 @@ table {
 
 .wizard > .step > .text {
   color: rgba(0,0,0,.26);
+}
+
+.wizard > .completed > .icon {
+  background-color: #757575;
+}
+
+.wizard > .completed > .text {
+  color: rgba(0,0,0,.87);
 }
 
 .wizard > .selected > .icon {
