@@ -196,7 +196,6 @@ button[flat][primary] {
 
 button[flat][disabled] {
   color: rgba(0,0,0,.38);
-  padding: 8px;
 }
 
 button[flat][disabled]:hover {
@@ -961,12 +960,20 @@ table {
   min-width: 90px;
 }
 
-.richtext > .editor {
+.richtext > .content {
   max-height: 160px;
   min-height: 160px;
   overflow: auto;
+  position: relative;
+}
+
+.richtext > .content > .editor {
   padding: 8px;
   word-wrap: break-word;
+}
+
+.richtext > .content > .editor table td {
+  border: 1px dotted #757575;
 }
 
 .richtext > .popup {
@@ -1021,58 +1028,83 @@ table {
   display: block;
 }
 
-.richtext > .frame {
+.richtext > .content > .frame {
   display: none;
   position: absolute;
-  z-index: 0;
-  opacity: 1;
-}
-
-.richtext > .frame > .resize {
-  overflow: hidden;
-  position: relative;
-}
-
-.richtext > .frame > .resize > .area {   
-  position: absolute;
-  background-color: rgba(0,0,0,.05);
   border: 1px solid #1976d2;
   margin-left: -1px;
   margin-top: -1px;
 }
 
-.richtext > .frame > .resize > .area > .top-left,
-.richtext > .frame > .resize > .area > .top-right,
-.richtext > .frame > .resize > .area > .bottom-left,
-.richtext > .frame > .resize > .area > .bottom-right {
+.richtext > .content > .frame > .top-left,
+.richtext > .content > .frame > .top-right,
+.richtext > .content > .frame > .bottom-left,
+.richtext > .content > .frame > .bottom-right {
   background-color: #fff;
   border: 1px solid #1976d2;
   height: 8px;
   position: absolute;
   width: 8px;
+  z-index: 1;
 }
 
-.richtext > .frame > .resize > .area > .top-left,
-.richtext > .frame > .resize > .area > .top-right {
+.richtext > .content > .frame > .top-left,
+.richtext > .content > .frame > .top-right {
   top: -4px;
 }
 
-.richtext > .frame > .resize > .area > .bottom-left,
-.richtext > .frame > .resize > .area > .bottom-right {
+.richtext > .content > .frame > .bottom-left,
+.richtext > .content > .frame > .bottom-right {
   bottom: -4px;
 }
 
-.richtext > .frame > .resize > .area > .top-left,
-.richtext > .frame > .resize > .area > .bottom-left {
+.richtext > .content > .frame > .top-left,
+.richtext > .content > .frame > .bottom-left {
   left: -4px;
 }
 
-.richtext > .frame > .resize > .area > .top-right,
-.richtext > .frame > .resize > .area > .bottom-right {
+.richtext > .content > .frame  > .top-right,
+.richtext > .content > .frame > .bottom-right {
   right: -4px;
 }
 
-.richtext > .frame.open {
+.richtext > .content > .frame > .top-left:hover,
+.richtext > .content > .frame > .top-right:hover,
+.richtext > .content > .frame > .bottom-left:hover,
+.richtext > .content > .frame > .bottom-right:hover {
+  background-color: #1976d2;
+  cursor: default;
+}
+
+.richtext > .content > .frame > .top-left:hover,
+.richtext > .content > .frame > .bottom-right:hover {
+  cursor: nw-resize;
+}
+
+.richtext > .content > .frame > .top-right:hover,
+.richtext > .content > .frame > .bottom-left:hover {
+  cursor: ne-resize
+}
+
+.richtext > .content > .frame > .actions {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top: 0;
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 2px 5px -1px rgba(0,0,0,.26);
+  margin: 0;
+  position: absolute;
+  bottom: -38px;
+  left: 0;
+}
+
+.richtext > .content > .frame > .actions > button[flat] {
+  margin: 0;
+  padding: 10px;
+  width: 32px;
+}
+
+.richtext > .content > .frame.open {
   display: block;
 }
 
@@ -1650,7 +1682,7 @@ table {
 
 .wizard-content > .actions > .left,
 .wizard-content > .actions > .right {
-  margin: 9px 16px;
+  margin: 9px 8px;
 }
 
 .wizard-content > .actions > .left {

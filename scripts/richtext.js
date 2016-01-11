@@ -43,6 +43,9 @@ limitations under the License.
       imageModal = {},
       editLinkHandler = function() {},
       removeLinkHandler = function() {},
+      frameMousedownHandler = function() {},
+      docMouseupHandler = function() {},
+      docMousemoveHandler = function() {},
       compressImageHandler = function() {},
       expandImageHandler = function() {},
       removeImageHandler = function() {},
@@ -79,7 +82,7 @@ limitations under the License.
       
       window.removeEventListener('resize', winResizeHandler, false);
       
-      winResizeHandler = bindWindowResize(context.container);
+      winResizeHandler = bindWindowResize(context);
       window.addEventListener('resize', winResizeHandler, false);
     }
     
@@ -823,7 +826,7 @@ limitations under the License.
               break;
             
             case 'IMG':
-              showImageMenu(context, node);
+              showImageFrame(context, node);
               break;
             
             default:
@@ -865,7 +868,9 @@ limitations under the License.
     }
     
     function showMenu(context, node, html) {
-      var popup = helpers.query('.popup', context.container);
+      var content = helpers.query('.content', context.container),
+        popup = helpers.query('.popup', context.container);
+      
       if (helpers.isEmpty(popup)) {        
         popup = document.createElement('div');
         popup.classList.add('popup');
@@ -874,8 +879,10 @@ limitations under the License.
       }
       
       popup.innerHTML = html;
-      popup.style.left = node.offsetLeft + 'px';
-      popup.style.top = node.offsetTop + node.offsetHeight + 'px';
+      popup.style.left = content.offsetLeft
+        + node.offsetLeft + 'px';
+      popup.style.top = content.offsetTop
+        + node.offsetTop + node.offsetHeight + 'px';
       
       if (!popup.classList.contains('open')) {         
         popup.classList.add('open');        
@@ -948,110 +955,137 @@ limitations under the License.
       }
     }
     
-    function showImageMenu(context, node) {
-      var html = '<div class="actions">'
+    function showImageFrame(context, node) {
+      var frame = helpers.query('.frame', context.container);      
+      if (helpers.isEmpty(frame)) {        
+        var html = '<div class="top-left"></div>'
+          + '<div class="top-right"></div>'
+          + '<div class="bottom-left"></div>'
+          + '<div class="bottom-right"></div>'
+          + '<div class="actions">'
           + '<button type="button" class="compress" flat>'
           + '<i class="fa fa-compress"></i></button>'
           + '<button type="button" class="expand" flat>'
           + '<i class="fa fa-expand"></i></button>'
           + '<button type="button" class="remove" flat>'
-          + '<i class="fa fa-times"></i></button></div>'
-          + '</div>';
-      
-      showMenu(context, node, html);
-      showImageFrame(context, node);
-      bindImageFrameActions(context, node);
-      bindImageMenuActions(context, node);
-    }
-    
-    function showImageFrame(context, node) {
-      var frame = helpers.query('.frame', context.container);
-      if (helpers.isEmpty(frame)) {
-        var html = '<div class="resize">'
-          + '<div class="area">'
-          + '<div class="top-left"></div>'
-          + '<div class="top-right"></div>'
-          + '<div class="bottom-left"></div>'
-          + '<div class="bottom-right"></div>'
-          + '</div></div>';
+          + '<i class="fa fa-times"></i></button></div>';
         
         frame = document.createElement('div');
         frame.classList.add('frame');
         frame.innerHTML = html;
         
-        context.container.appendChild(frame);
+        var content = helpers.query('.content', context.container);      
+        content.appendChild(frame);
       }
       
-      var editor = helpers.query('.editor', context.container);
-      frame.style.top = editor.offsetTop + 'px';
-      frame.style.left = editor.offsetLeft + 'px';
-      frame.style.width = editor.clientWidth + 'px';
-      frame.style.height = editor.clientHeight + 'px';
-      
-      var resize = helpers.query('.resize', frame);
-      resize.style.width = editor.clientWidth + 'px';
-      resize.style.height = editor.clientHeight + 'px';
-      
-      var area = helpers.query('.area', frame);
-      area.style.top = (node.offsetTop - editor.offsetTop) + 'px';
-      area.style.left = (node.offsetLeft - editor.offsetLeft) + 'px';
-      area.style.width = node.offsetWidth + 'px';
-      area.style.height = node.offsetHeight + 'px';
+      frame.style.top = node.offsetTop + 'px';
+      frame.style.left = node.offsetLeft + 'px';
+      frame.style.width = node.offsetWidth + 'px';
+      frame.style.height = node.offsetHeight + 'px';
       
       if (!frame.classList.contains('open')) {         
         frame.classList.add('open');        
       }
+      
+      context.selectNode(node);
+      bindImageFrameActions(context, node);
     }
     
     function bindImageFrameActions(context, node) {
-    }
-    
-    function bindImageMenuActions(context, node) {
-      var menu = helpers.query('.popup', context.container);
-      var compress = helpers.query('.compress', menu);
+      var frame = helpers.query('.frame', context.container),
+        tLeft = helpers.query('.top-left', frame),
+        tRight = helpers.query('.top-right', frame),
+        bLeft = helpers.query('.bottom-left', frame),
+        bRight = helpers.query('.bottom-right', frame);
+      
+      tLeft.removeEventListener('mousedown', frameMousedownHandler, false);
+      tRight.removeEventListener('mousedown', frameMousedownHandler, false);
+      bLeft.removeEventListener('mousedown', frameMousedownHandler, false);
+      bRight.removeEventListener('mousedown', frameMousedownHandler, false);
+      
+      frameMousedownHandler = bindFrameMousedown(context, node);
+      tLeft.addEventListener('mousedown', frameMousedownHandler, false);
+      
+      document.removeEventListener('mouseup', docMouseupHandler, false);
+      document.removeEventListener('mousemove', docMousemoveHandler, false);
+      
+      var compress = helpers.query('.compress', frame);
       compress.removeEventListener('click', compressImageHandler, false);
       
       compressImageHandler = bindResizeImage(context, node, 'compress');
       compress.addEventListener('click', compressImageHandler, false);
       
-      var expand = helpers.query('.expand', menu);
+      var expand = helpers.query('.expand', frame);
       expand.removeEventListener('click', expandImageHandler, false);
       
       expandImageHandler = bindResizeImage(context, node, 'expand');
       expand.addEventListener('click', expandImageHandler, false);
       
-      var remove = helpers.query('.remove', menu);
+      var remove = helpers.query('.remove', frame);
       remove.removeEventListener('click', removeImageHandler, false);
       
       removeImageHandler = bindRemoveImage(context, node);
       remove.addEventListener('click', removeImageHandler, false);
     }
     
+    function bindFrameMousedown(context, node) {
+      return function(event) {
+        event = event || window.event;
+        
+        var frame = helpers.query('.frame', context.container);
+        frame.classList.add('resizing');
+      };
+    }
+    
+    function bindFrameMouseup(context, node) {
+      return function(event) {
+        event = event || window.event;
+        
+        var frame = helpers.query('.frame', context.container);
+        frame.classList.remove('resizing');
+      };
+    }
+    
+    function bindFrameMousemove(context, node) {
+      return function(event) {
+        event = event || window.event;
+        
+        var frame = helpers.query('.frame', context.container);
+        if (frame.classList.contains('resizing')) {
+          if (event.target.classList.contains('top-left')) {
+            console.log(event.clientX);
+            //frame.style.top = event.clientX + 'px';
+          }
+        }
+      };
+    }
+    
     function bindResizeImage(context, node, action) {
       return function(event) {
-        var resize = (action === 'compress') ? -100 : 100,
-          minSize = { width: 200, height: 200 },
-          maxSize = { width: 1100, height: 1100 };
+        var minSize = { width: 200, height: 200 },
+          maxSize = { width: 1000, height: 1000 };
         
         var size = getElementSize(node);
-        if (size.width > size.height) {
-          if ((size.width > minSize.width)
-              ||  (size.width < maxSize.width)) {
-            size.width = size.width + resize;
-            size.height = size.height + resize;
-          }
+        if ((action === 'compress')
+            && (size.width < minSize.width))  {
+          return;
         }
-        else {
-          if ((size.height > minSize.height)
-              ||  (size.height < maxSize.height)) {
-            size.width = size.width + resize;
-            size.height = size.height + resize;
-          }
+        else if ((action === 'expand')
+            && (size.width > maxSize.width)) {
+          return;
         }
+        
+        var resize = (action === 'compress') ? -50 : 50;
+        size.width = size.width + resize;
+        size.height = size.height + resize;
         
         size = helpers.getAspectRatio(getElementSize(node), size);
         node.style.width = size.width + 'px';
         node.style.height = size.height + 'px';
+        
+        var frame = helpers.query('.frame', context.container);
+        frame.style.width = size.width + 'px';
+        frame.style.height = size.height + 'px';
       };
     }
     
@@ -1059,6 +1093,7 @@ limitations under the License.
       return function(event) {
         var editor = helpers.query('.editor', context.container);
         editor.removeChild(node);
+        hideFrame(context);
       };
     }
     
@@ -1070,6 +1105,12 @@ limitations under the License.
     
     function bindEditorKeydown(context) {
       return function(event) {
+        event = event || window.event;
+        
+        if ((event.keyCode < 37) || (event.keyCode > 40)) {
+          return;  
+        }
+        
         setTimeout(function() {
           var selection = window.getSelection();
           if (helpers.isEmpty(selection.focusNode)) {
@@ -1112,8 +1153,20 @@ limitations under the License.
     
     function bindDocClick(context) {
       return function(event) {
-        hideFrame(context);
-        hideMenu(context);
+        event = event || window.event;
+        
+		var target = event.target;
+		while (!target.classList.contains('richtext')) {
+		  if (target.nodeName === "BODY") {
+		    break;
+		  }
+		  target = target.parentNode;
+		}
+        
+        if (target !== context.container) {
+		  hideFrame(context);  
+          hideMenu(context);
+        }        
       };
     }
     
