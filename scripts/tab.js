@@ -19,8 +19,9 @@ limitations under the License.
   
   window.UI = window.UI || {};
   window.UI.Tab = function(selector) {
-    var selected = '';
-      
+    var selected = '',
+      changeHandler = function() {};
+    
     function bindData(context, data) {
       context.selected = data.selected || '';
     }
@@ -43,6 +44,12 @@ limitations under the License.
       tab.classList.add('selected');
     }
     
+    function bindChange(context, callback, data) {
+      return function(event) {
+        callback.call(context, data);
+      };
+    }
+    
     return {
       get container() {
         return helpers.query(selector);
@@ -59,6 +66,14 @@ limitations under the License.
       
       bind: function(data) {
         bindData(this, data);
+        return this;
+      },
+      
+      change: function(callback, data) {
+        this.container.removeEventListener('change', changeHandler, false);
+        
+        changeHandler = bindChange(this, callback, data);
+        this.container.addEventListener('change', changeHandler, false);
         return this;
       }
     };

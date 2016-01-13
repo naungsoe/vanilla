@@ -207,7 +207,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('colorpicker')) {
+        while (target.classList
+            && !target.classList.contains('colorpicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }

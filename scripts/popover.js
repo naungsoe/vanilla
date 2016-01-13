@@ -70,7 +70,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('popover')) {
+		while (target.classList
+            && !target.classList.contains('popover')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }

@@ -927,7 +927,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('timepicker')) {
+		while (target.classList
+            && !target.classList.contains('timepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }

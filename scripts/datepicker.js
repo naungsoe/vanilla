@@ -1042,7 +1042,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('datepicker')) {
+        while (target.classList
+            && !target.classList.contains('datepicker')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }

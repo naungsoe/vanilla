@@ -41,6 +41,7 @@ limitations under the License.
       unlinkHandler = function() {},
       imageHandler = function() {},
       imageModal = {},
+      imageModalTab = {},
       editLinkHandler = function() {},
       removeLinkHandler = function() {},
       frameMousedownHandler = function() {},
@@ -655,11 +656,17 @@ limitations under the License.
           context.container.appendChild(view);
           
           imageModal = UI.Modal(view);
+          
+          var tabs = helpers.query('.tabs', view);
+          imageModalTab = UI.Tab(tabs);
         }
         
         imageModal.bind({})
           .proceed(insertImage, context)
           .cancel(cancelInsertImage, context);
+        
+        imageModalTab.bind({ selected: '' })
+          .change(changeImageTab, context);
         
         var richtextId = context.container.getAttribute('id'),
           address = helpers.query('#imageAddress-' + richtextId)
@@ -775,6 +782,11 @@ limitations under the License.
       context.restoreRange();
     }
     
+    function changeImageTab(context) {
+      var richtextId = context.container.getAttribute('id'),
+        imageModalId = 'imageModal-' + richtextId;
+    }
+    
     function bindEditor(context) {
       var editor = helpers.query('.editor', context.container);
       editor.removeEventListener('click', editorClickHandler, false);
@@ -823,10 +835,12 @@ limitations under the License.
           switch (node.nodeName) {
             case 'A':
               showLinkMenu(context, node);
+              hideFrame(context);
               break;
             
             case 'IMG':
               showImageFrame(context, node);
+              hideMenu(context);
               break;
             
             default:
@@ -956,8 +970,8 @@ limitations under the License.
     }
     
     function showImageFrame(context, node) {
-      var frame = helpers.query('.frame', context.container);      
-      if (helpers.isEmpty(frame)) {        
+      var frame = helpers.query('.frame', context.container);
+      if (helpers.isEmpty(frame)) {
         var html = '<div class="top-left"></div>'
           + '<div class="top-right"></div>'
           + '<div class="bottom-left"></div>'
@@ -974,7 +988,7 @@ limitations under the License.
         frame.classList.add('frame');
         frame.innerHTML = html;
         
-        var content = helpers.query('.content', context.container);      
+        var content = helpers.query('.content', context.container);
         content.appendChild(frame);
       }
       
@@ -983,11 +997,10 @@ limitations under the License.
       frame.style.width = node.offsetWidth + 'px';
       frame.style.height = node.offsetHeight + 'px';
       
-      if (!frame.classList.contains('open')) {         
+      if (!frame.classList.contains('open')) {
         frame.classList.add('open');        
       }
       
-      context.selectNode(node);
       bindImageFrameActions(context, node);
     }
     
@@ -1005,9 +1018,18 @@ limitations under the License.
       
       frameMousedownHandler = bindFrameMousedown(context, node);
       tLeft.addEventListener('mousedown', frameMousedownHandler, false);
+      tRight.addEventListener('mousedown', frameMousedownHandler, false);
+      bLeft.addEventListener('mousedown', frameMousedownHandler, false);
+      bRight.addEventListener('mousedown', frameMousedownHandler, false);
       
       document.removeEventListener('mouseup', docMouseupHandler, false);
       document.removeEventListener('mousemove', docMousemoveHandler, false);
+      
+      docMouseupHandler = bindDocMouseup(context, node);
+      document.addEventListener('mouseup', docMouseupHandler, false);
+      
+      docMousemoveHandler = bindDocMousemove(context, node);
+      document.addEventListener('mousemove', docMousemoveHandler, false);
       
       var compress = helpers.query('.compress', frame);
       compress.removeEventListener('click', compressImageHandler, false);
@@ -1031,32 +1053,103 @@ limitations under the License.
     function bindFrameMousedown(context, node) {
       return function(event) {
         event = event || window.event;
+        event.preventDefault();
         
         var frame = helpers.query('.frame', context.container);
         frame.classList.add('resizing');
+        frame.dataset.resize = event.target.className;
       };
     }
     
-    function bindFrameMouseup(context, node) {
+    function bindDocMouseup(context, node) {
       return function(event) {
         event = event || window.event;
         
         var frame = helpers.query('.frame', context.container);
+        if (!frame.classList.contains('resizing')) {
+          return;
+        }
+        
+        node.style.width = frame.offsetWidth + 'px';
+        node.style.height = frame.offsetHeight + 'px';
+        
+        frame.style.top = node.offsetTop + 'px';
+        frame.style.left = node.offsetLeft + 'px';
         frame.classList.remove('resizing');
       };
     }
     
-    function bindFrameMousemove(context, node) {
+    function bindDocMousemove(context, node) {
       return function(event) {
         event = event || window.event;
         
+        var minSize = { width: 100, height: 100 },
+          maxSize = { width: 1000, height: 1000 };
+        
         var frame = helpers.query('.frame', context.container);
-        if (frame.classList.contains('resizing')) {
-          if (event.target.classList.contains('top-left')) {
-            console.log(event.clientX);
-            //frame.style.top = event.clientX + 'px';
-          }
+        if (!frame.classList.contains('resizing')) {
+          return;
         }
+        
+        var rect = node.getBoundingClientRect();
+        var size = { width: 0, height: 0 };
+        switch (frame.dataset.resize) {
+          case 'top-left':
+            size = {
+              width: (node.offsetWidth - (event.clientX - rect.left)),
+              height: (node.offsetHeight - (event.clientY - rect.top))
+            };
+            break;
+          
+          case 'top-right':
+            size = {
+              width: (node.offsetWidth - (rect.right - event.clientX)),
+              height: (node.offsetHeight - (event.clientY - rect.top))
+            };
+            break;
+          
+          case 'bottom-left':
+            size = {
+              width: (node.offsetWidth - (event.clientX - rect.left)),
+              height: (node.offsetHeight - (rect.bottom - event.clientY))
+            };
+            break;
+          
+          case 'bottom-right':
+            size = {
+              width: (node.offsetWidth - (rect.right - event.clientX)),
+              height: (node.offsetHeight - (rect.bottom - event.clientY))
+            };
+            break;
+        }
+        
+        size = helpers.getAspectRatio(getElementSize(node), size);
+        if ((size.width < minSize.width)
+            || (size.width > maxSize.width)) {
+          return;
+        }
+        
+        switch (frame.dataset.resize) {
+          case 'top-left':
+            frame.style.top = node.offsetTop
+              - (size.height - node.offsetHeight) + 'px';
+            frame.style.left = node.offsetLeft
+              - (size.width - node.offsetWidth) + 'px';
+            break;
+          
+          case 'top-right':
+            frame.style.top = node.offsetTop
+              - (size.height - node.offsetHeight) + 'px';
+            break;
+          
+          case 'bottom-left':
+            frame.style.left = node.offsetLeft
+              - (size.width - node.offsetWidth) + 'px';
+            break;
+        }
+        
+        frame.style.width = size.width  + 'px';
+        frame.style.height = size.height + 'px';
       };
     }
     
@@ -1156,15 +1249,21 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('richtext')) {
+        while (target.classList
+            && !target.classList.contains('richtext')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
 		  target = target.parentNode;
 		}
         
-        if (target !== context.container) {
-		  hideFrame(context);  
+        var frame = helpers.query('.frame', context.container);
+        if (frame.dataset
+            && !helpers.isEmpty(frame.dataset.resize)) {
+          frame.dataset.resize = '';
+        }
+        else if (target !== context.container) {
+          hideFrame(context);
           hideMenu(context);
         }        
       };

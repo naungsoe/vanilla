@@ -173,7 +173,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('search-box')) {
+		while (target.classList
+            && !target.classList.contains('search-box')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }

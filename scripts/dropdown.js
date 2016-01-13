@@ -245,7 +245,8 @@ limitations under the License.
         event = event || window.event;
         
 		var target = event.target;
-		while (!target.classList.contains('dropdown')) {
+		while (target.classList
+            && !target.classList.contains('dropdown')) {
 		  if (target.nodeName === "BODY") {
 		    break;
 		  }
