@@ -898,7 +898,9 @@ table {
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle > .text,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle > .text {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle > .text,
+.richtext > .tool-bar > .primary > .colorpicker > .toggle > .text,
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle > .text {
   color: rgba(0,0,0,.54);
 }
 
@@ -967,6 +969,14 @@ table {
 .richtext > .tool-bar > .secondary > .font-size > .menu  > .item {
   line-height: normal;
   min-width: 90px;
+}
+
+.richtext > .tool-bar > .primary > .active,
+.richtext > .tool-bar > .secondary > .active,
+.richtext > .tool-bar > .primary > .active:hover,
+.richtext > .tool-bar > .secondary > .active:hover {
+  background-color: #e0e0e0;
+  color: rgba(0,0,0,.87);
 }
 
 .richtext > .content {
@@ -1588,9 +1598,11 @@ table {
   vertical-align: top;
 }
 
-.tabs > .nav > .active {
+.tabs > .nav > .selected {
+  background-color: transparent;
   border-bottom: 2px solid #1976d2;
   color: #1976d2;
+  font-weight: normal;
   padding: 14px 12px 16px 12px;
 }
 

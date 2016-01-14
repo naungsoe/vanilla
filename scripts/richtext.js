@@ -665,7 +665,7 @@ limitations under the License.
           .proceed(insertImage, context)
           .cancel(cancelInsertImage, context);
         
-        imageModalTab.bind({ selected: '' })
+        imageModalTab.bind({ selected: 'url' })
           .change(changeImageTab, context);
         
         var richtextId = context.container.getAttribute('id'),
@@ -684,9 +684,9 @@ limitations under the License.
         + '<header class="header">'
         + '<h3 class="title">Insert Image</h3>'
         + '<div class="tabs"><nav class="nav">'
-        + '<a href="#url" class="tab url active">'
+        + '<a href="#url" class="tab" data-value="url">'
         + context.resource.imageAddressTab + '</a>'
-        + '<a href="#upload" class="tab upload">'
+        + '<a href="#upload" class="tab" data-value="upload">'
         + context.resource.imageUploadTab + '</a>'
         + '</nav></div>'
         + '</header>'
@@ -694,8 +694,9 @@ limitations under the License.
         + '<form class="form form-image-url">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<label for="imageAddress-' + richtextId + '" class="label">'
-        + context.resource.imageAddressField + '</label>'
+        + '<label for="imageAddress-' + richtextId + '" '
+        + 'class="label">' + context.resource.imageAddressField
+        + '</label>'
         + '<div class="control">'
         + '<input id="imageAddress-' + richtextId + '" '
         + 'type="text" value="" />'
@@ -705,7 +706,7 @@ limitations under the License.
         + '<fieldset class="fieldset">'
         + '<div class="field">'
         + '<div for="imageUpload-' + richtextId + '" '
-        + 'class="droparea"></div>'
+        + 'class="dropzone">Drop here!</div>'
         + '</div>'
         + '</fieldset></form>'
         + '</section>'
@@ -760,8 +761,14 @@ limitations under the License.
       };
     }
     
+    function getElementRect(element) {
+      return element.getBoundingClientRect();
+    }
+    
     function isImageFormValid(context) {
       var richtextId = context.container.getAttribute('id'),
+        imageModalId = 'imageModal-' + richtextId,
+        imageModal = helpers.query('#' + imageModalId),
         address = helpers.query('#imageAddress-' + richtextId);
       
       if (helpers.isURL(address.value)) {
@@ -771,7 +778,7 @@ limitations under the License.
         addError(address, context.resource.invalidImageAddressField);
       }
       
-      var form = helpers.query('.form-image-url', context.container),
+      var form = helpers.query('.form-image-url', imageModal),
         errors = helpers.queryAll('.error', form);
       
       return (errors.length === 0);
@@ -784,7 +791,14 @@ limitations under the License.
     
     function changeImageTab(context) {
       var richtextId = context.container.getAttribute('id'),
-        imageModalId = 'imageModal-' + richtextId;
+        imageModalId = 'imageModal-' + richtextId,
+        imageModal = helpers.query('#' + imageModalId);
+      
+      var urlForm = helpers.query('.form-image-url', imageModal),
+        uploadForm = helpers.query('.form-upload-image', imageModal);
+      
+      urlForm.classList.toggle('hide');
+      uploadForm.classList.toggle('hide');
     }
     
     function bindEditor(context) {
@@ -821,35 +835,91 @@ limitations under the License.
           else if (helpers.isEmpty(node)) {
             return;
           }
-             
+          
+          var parents = [],
+            inserted = null;
+          
           while ((node.nodeType !== Node.ELEMENT_NODE)
               || ((node.nodeType === Node.ELEMENT_NODE) 
                 && !node.classList.contains('editor'))) {
-            if ((node.nodeName === 'A')
-               || (node.nodeName === 'IMG')) {
-              break;
+            
+           if (helpers.isEmpty(inserted)) {
+              if ((node.nodeName === 'A')
+                 || (node.nodeName === 'IMG')) {
+                inserted = node;
+              }
             }
+            parents.push(node.parentNode);
             node = node.parentNode;
           }
           
-          switch (node.nodeName) {
-            case 'A':
-              showLinkMenu(context, node);
-              hideFrame(context);
-              break;
-            
-            case 'IMG':
-              showImageFrame(context, node);
-              hideMenu(context);
-              break;
-            
-            default:
-              hideFrame(context);
-              hideMenu(context);
-              break;
+          resetToolbarStatus(context);
+          updateToolbarStatus(context, parents);
+          if (!helpers.isEmpty(inserted)) {
+            showInsertedNodeMenu(context, inserted);
           }
         }, 100);
       };
+    }
+    
+    function updateToolbarStatus(context, parents) {
+      var toolbar = helpers.query('.tool-bar', context.container),
+        bold = helpers.query('.bold', toolbar),
+        italic = helpers.query('.italic', toolbar),
+        underline = helpers.query('.underline', toolbar),
+        strikethrough = helpers.query('.strikethrough', toolbar);
+      
+      parents.forEach(function(parent) {
+        switch (parent.nodeName) {
+          case 'B':
+            bold.classList.add('active');
+            break;
+          
+          case 'I':
+            italic.classList.add('active');
+            break;
+          
+          case 'U':
+            underline.classList.add('active');
+            break;
+          
+          case 'STRIKE':
+            strikethrough.classList.add('active');
+            break;
+        }
+      });
+    }
+    
+    function resetToolbarStatus(context) {
+      var toolbar = helpers.query('.tool-bar', context.container),
+        bold = helpers.query('.bold', toolbar),
+        italic = helpers.query('.italic', toolbar),
+        underline = helpers.query('.underline', toolbar),
+        strikethrough = helpers.query('.strikethrough', toolbar);
+      
+      bold.classList.remove('active');
+      italic.classList.remove('active');
+      underline.classList.remove('active');
+      strikethrough.classList.remove('active');
+    }
+    
+    function showInsertedNodeMenu(context, node) {
+      switch (node.nodeName) {
+        case 'A':
+          showLinkMenu(context, node);
+          hideFrame(context);
+          break;
+        
+        case 'IMG':
+          showImageFrame(context, node);
+          hideMenu(context);
+          break;
+        
+        default:
+          hideFrame(context);
+          hideMenu(context);
+          break;
+      }
     }
     
     function getParentElements(node) {
@@ -1091,7 +1161,7 @@ limitations under the License.
           return;
         }
         
-        var rect = node.getBoundingClientRect();
+        var rect = getElementRect(node);
         var size = { width: 0, height: 0 };
         switch (frame.dataset.resize) {
           case 'top-left':
@@ -1263,6 +1333,7 @@ limitations under the License.
           frame.dataset.resize = '';
         }
         else if (target !== context.container) {
+          resetToolbarStatus(context);
           hideFrame(context);
           hideMenu(context);
         }        

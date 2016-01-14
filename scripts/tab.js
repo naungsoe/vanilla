@@ -20,19 +20,53 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.Tab = function(selector) {
     var selected = '',
+      tabHandler = function() {},
       changeHandler = function() {};
     
     function bindData(context, data) {
       context.selected = data.selected || '';
     }
     
+    function bindTabs(context) {
+      var tabs = helpers.queryAll(
+        '.tabs > .nav > .tab', context.container);
+      helpers.toArray(tabs).forEach(function(tab) {
+        tab.removeEventListener('click', tabHandler, false);
+      });
+      
+      tabHandler = bindTab(context);
+      helpers.toArray(tabs).forEach(function(tab) {
+        tab.addEventListener('click', tabHandler, false);
+      });
+    }
+	
+    function bindTab(context) {
+      return function(event) {
+        event = event || window.event;
+        event.preventDefault();
+        
+        var tabs = helpers.queryAll(
+          '.tabs > .nav > .selected', context.container);
+        helpers.toArray(tabs).forEach(function(tab) {
+          tab.classList.remove('selected');
+        });
+        
+        event.currentTarget.classList.add('selected');
+        context.selected = event.currentTarget.dataset.value;
+        
+        var event = new CustomEvent('change', {});
+        context.container.dispatchEvent(event);
+      };
+    }
+    
     function updateStatus(context) {
       if (context.selected === '') {
 	    return;
       }
-
+      
       var container = context.container,
-        tabs = helpers.queryAll('.tabs > .selected', container);
+        tabs = helpers.queryAll(
+          '.tabs > .nav > .selected', container);
       
       helpers.toArray(tabs).forEach(function(tab) {
         tab.classList.remove('selected');
@@ -66,6 +100,7 @@ limitations under the License.
       
       bind: function(data) {
         bindData(this, data);
+        bindTabs(this);
         return this;
       },
       
