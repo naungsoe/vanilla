@@ -73,6 +73,10 @@ limitations under the License.
     function bindStep(context) {
       return function(event) {
         event = event || window.event;
+        
+        if (event.currentTarget.classList.contains('selected')) {
+          return;
+        }
         context.current = event.currentTarget.dataset.value;
         
         var event = new CustomEvent('change', {});
@@ -143,6 +147,10 @@ limitations under the License.
         changeHandler = bindChange(this, callback, data);
         this.container.addEventListener('change', changeHandler, false);
         return this;
+      },
+      
+      proceed: function() {
+        this.selected = this.current;
       }
     };
   };

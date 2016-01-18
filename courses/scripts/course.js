@@ -118,6 +118,7 @@
         showCourseActivitiesActions();
         break;
     }
+    courseWizard.proceed();
   }
   
   function showCourseDetails() {

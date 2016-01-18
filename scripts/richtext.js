@@ -422,6 +422,8 @@ limitations under the License.
           .cancel(cancelInsertLink, context);
         
         updateLinkDetails(context);
+        hideFrame(context);
+        hideMenu(context);
       };
     }
     
@@ -674,6 +676,8 @@ limitations under the License.
         clearError(address);
         address.value = '';
         address.focus();
+        hideFrame(context);
+        hideMenu(context);
       };
     }
     
