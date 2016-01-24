@@ -280,6 +280,7 @@ table {
 }
 
 .checkbox  {
+  overflow: hidden;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -1356,12 +1357,12 @@ table {
   text-align: left;
 }
 
-.table thead > tr > th > .checkbox,
+.table thead > tr > th > .control,
 .table thead > tr > th > .title {
   cursor: default;
 }
 
-.table thead > tr > th > .checkbox {
+.table thead > tr > th > .control {
   padding: 17px 24px 17px 24px;
 }
 
@@ -1403,13 +1404,14 @@ table {
   background-color: #f5f5f5;
 }
 
-.table thead > .selected > th > .checkbox > .unchecked,
-.table tbody > .selected > td > .checkbox > .unchecked {
+.table thead > .selected > th > .control > .checkbox > .unchecked,
+.table tbody > .selected > td > .control > .checkbox > .unchecked {
   display: none;
 }
 
-.table thead > .selected > th > .checkbox > .checked,
-.table tbody > .selected > td > .checkbox > .checked {
+.table thead > .selected > th > .control > .checkbox > .checked,
+.table tbody > .selected > td > .control > .checkbox > .checked {
+  animation: checkbox .2s 1;
   display: inline-block;
 }
 
@@ -1670,7 +1672,7 @@ table {
 }
 
 .wizard > .completed > .icon {
-  background-color: #757575;
+  background-color: #616161;
 }
 
 .wizard > .completed > .text {
@@ -1701,6 +1703,7 @@ table {
 .wizard-content > .actions {
   border-top: 1px solid #ddd;
   bottom: 0;
+  height: 55px;
   left: 0;
   position: absolute;
   right: 0;
@@ -1761,6 +1764,10 @@ table {
 
 .clock > .hands > .selected {
   visibility: visible;
+}
+
+.dropzone {
+  border: 2px dashed #ddd;
 }
 
 .app-bar {
@@ -2138,5 +2145,5 @@ table {
 }
 
 .popover-profile > .content > .nav > .link:hover {
-  background-color: #eee;
+  background-color: #e0e0e0;
 }

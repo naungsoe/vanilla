@@ -75,7 +75,7 @@ limitations under the License.
       });
 
       var checkbox = helpers.query(
-        'thead > tr > th > .checkbox', context.container);
+        'thead > tr > th > .control > .checkbox', context.container);
       checkbox.removeEventListener('click', checkAllHandler, false);
       
       checkAllHandler = bindCheckAll(context);
@@ -97,7 +97,7 @@ limitations under the License.
       foot.innerHTML = footHTML;
       
       var checkboxes = helpers.queryAll(
-        'tbody > tr > td > .checkbox', context.container);
+        'tbody > tr > td > .control > .checkbox', context.container);
       helpers.toArray(checkboxes).forEach(function(checkbox) {
         checkbox.removeEventListener('click', checkHandler, false);  
       });
@@ -149,10 +149,12 @@ limitations under the License.
       });
       html = html + '</colgroup>';
       
-      html = html + '<thead><tr><th><div class="checkbox" data-value="'
+      html = html + '<thead><tr><th><div class="control">'
+        + '<div class="checkbox" data-value="'
         + item.id + '" tabindex="0">'
         + '<i class="checked fa fa-check-square-o"></i>'
-		+ '<i class="unchecked fa fa-square-o"></i></div></th>';
+		+ '<i class="unchecked fa fa-square-o"></i></div>'
+        + '</div></th>';
       
       context.columns.forEach(function(column) {
         if (column.hidden === "false") {
@@ -189,10 +191,12 @@ limitations under the License.
       else {
         context.items.forEach(function(item) {
           html = html + '<tr><td>';
-          html = html + '<div class="checkbox" data-value="'
+          html = html + '<div class="control">'
+            + '<div class="checkbox" data-value="'
             + item.id + '" tabindex="0">'
             + '<i class="checked fa fa-check-square-o"></i>'
-		    + '<i class="unchecked fa fa-square-o"></i></div></td>';
+		    + '<i class="unchecked fa fa-square-o"></i></div>'
+            + '</div></td>';
           
           context.columns.forEach(function(column) {
             if (column.hidden === "false") {
@@ -300,7 +304,11 @@ limitations under the License.
         var checkbox = helpers.query(
           '.checkbox[data-value="' + item.id + '"]', container);
         if (!helpers.isEmpty(checkbox)) {
-          checkbox.parentNode.parentNode.classList.add('selected');
+          var parent = checkbox.parentNode;
+          while (parent.nodeName !== 'TR') {
+            parent = parent.parentNode;
+          }
+          parent.classList.add('selected');
         }
       });
       
