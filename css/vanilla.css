@@ -203,7 +203,7 @@ button[flat][disabled]:hover {
 }
 
 button[flat] > i {
-  line-height: 16px;
+  display: inline-block;
 }
 
 button[flat-icon] {
@@ -449,7 +449,7 @@ table {
 .dropdown > .menu.selectable  > .item > i {
   color: rgba(0,0,0,.87);
   visibility: hidden;
-  width: 20px;
+  width: 48px;
 }
 
 .dropdown > .menu.selectable  > .selected {
@@ -1574,7 +1574,7 @@ table {
 
 .nav > .link > i {
   font-size: 16px;
-  width: 30px;
+  width: 48px;
 }
 
 .nav > .selected {
