@@ -449,7 +449,7 @@ table {
 .dropdown > .menu.selectable  > .item > i {
   color: rgba(0,0,0,.87);
   visibility: hidden;
-  width: 48px;
+  width: 32px;
 }
 
 .dropdown > .menu.selectable  > .selected {
@@ -662,7 +662,7 @@ table {
 .timepicker > .picker > .header > .hour,
 .timepicker > .picker > .header > .colon,
 .timepicker > .picker > .header > .minute {
-  color: #bbdefb;
+  color: #64b5f6;
   font-size: 56px;
   line-height: 63px;
   margin: 0;
@@ -675,7 +675,7 @@ table {
 
 .timepicker > .picker > .header > .period > .am,
 .timepicker > .picker > .header > .period > .pm {
-  color: #bbdefb;
+  color: #64b5f6;
   display: block;
   font-size: 16px;
   font-weight: bold;
@@ -969,7 +969,7 @@ table {
 
 .richtext > .tool-bar > .secondary > .font-size > .menu  > .item {
   line-height: normal;
-  min-width: 90px;
+  min-width: 110px;
 }
 
 .richtext > .tool-bar > .primary > .active,
@@ -1963,6 +1963,7 @@ table {
 
 .app-side-nav > .filters > .header {
   color: rgba(0,0,0,.54);
+  font-size: 14px;
   padding: 8px 0;
 }
 

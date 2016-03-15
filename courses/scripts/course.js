@@ -145,11 +145,20 @@
     cancel.removeEventListener('click', cancelHandler, false);
     cont.removeEventListener('click', continueHandler, false);
     
+    backHandler = bindCourseDetailsBack();
+    back.addEventListener('click', backHandler, false);
+    
     cancelHandler = bindCourseDetailsCancel();
     cancel.addEventListener('click', cancelHandler, false);
     
     continueHandler = bindCourseDetailsContinue();
     cont.addEventListener('click', continueHandler, false);
+  }
+  
+  function bindCourseDetailsBack() {
+    return function(event) {
+      helpers.redirect(helpers.getQuery('redirect'));
+    };
   }
   
   function bindCourseDetailsCancel() {

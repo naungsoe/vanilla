@@ -399,7 +399,7 @@
     
     usersViewColumnsModal = UI.Modal(view);
     bindUsersViewColumnsModal();
-
+    
     template.parentNode.insertBefore(view, template);
   }
   

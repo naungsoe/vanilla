@@ -516,6 +516,7 @@ limitations under the License.
           context.selectNodeContents(focusNode, 0);
           document.execCommand('insertText', false, text.value);
         }
+        moveCursor(context, focusNode);
       }
     }
     
@@ -863,6 +864,10 @@ limitations under the License.
           if (!helpers.isEmpty(inserted)) {
             showInsertedNodeMenu(context, inserted);
           }
+          else {
+            hideFrame(context);
+            hideMenu(context);
+          }
         }, 100);
       };
     }
@@ -917,27 +922,10 @@ limitations under the License.
         
         case 'IMG':
           showImageFrame(context, node);
-          hideMenu(context);
-          break;
-        
-        default:
-          hideFrame(context);
+          moveCursor(context, node);
           hideMenu(context);
           break;
       }
-    }
-    
-    function getParentElements(node) {
-      var elementNodes = [];
-      if (node.nodeType === Node.TEXT_NODE) {
-        node = node.parentNode;
-      }
-      
-      while (!node.classList.contains('editor')) {
-        elementNodes.push(node);
-        node = node.parentNode;
-      }
-      return elementNodes;
     }
     
     function showLinkMenu(context, node) {
@@ -1230,7 +1218,7 @@ limitations under the License.
     
     function bindResizeImage(context, node, action) {
       return function(event) {
-        var minSize = { width: 200, height: 200 },
+        var minSize = { width: 150, height: 150 },
           maxSize = { width: 1000, height: 1000 };
         
         var size = getElementSize(node);
@@ -1254,6 +1242,8 @@ limitations under the License.
         var frame = helpers.query('.frame', context.container);
         frame.style.width = size.width + 'px';
         frame.style.height = size.height + 'px';
+        frame.style.top = node.offsetTop + 'px';
+        frame.style.left = node.offsetLeft + 'px';
       };
     }
     
@@ -1263,6 +1253,11 @@ limitations under the License.
         editor.removeChild(node);
         hideFrame(context);
       };
+    }
+    
+    function moveCursor(context, node) {
+      var next = node.nextSibling || node;
+      context.collapseRange(next, (next !== node));
     }
     
     function bindEditorBlur(context) {
@@ -1276,6 +1271,8 @@ limitations under the License.
         event = event || window.event;
         
         if ((event.keyCode < 37) || (event.keyCode > 40)) {
+          hideFrame(context);
+          hideMenu(context);
           return;  
         }
         
@@ -1412,6 +1409,16 @@ limitations under the License.
         var selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+      },
+      
+      collapseRange: function(node, toStart) {
+        if (helpers.isEmpty(range)) {
+          range = document.createRange();
+        }
+        
+        range.selectNodeContents(node);
+        range.collapse(toStart);
+        this.restoreRange();
       },
       
       selectNode: function(node, start, end) {
