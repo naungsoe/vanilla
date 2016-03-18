@@ -20,10 +20,37 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.Uploader = function(selector) {
     var url = "",
+      resource = {},
+      uploadHanlder = function() {},
+      dragdropHandler = function() {},
       changeHandler = function() {};
     
-    function bindData(context, data) {
+    function bindData(context, data, resource) {
+      context.resource = resource || {};
 	  context.url = data.url || "";
+    }
+    
+    function bindUploadArea(context) {
+      context.container.innerHTML = getDropzoneHTML(context);
+      
+      var upload = helpers.query('.upload', context.container);
+      upload.removeEventListener('click', uploadHanlder, false);
+      
+      uploadHanlder = bindUpload(context);
+      upload.addEventListener('click', uploadHanlder, false);
+    }
+    
+    function getDropzoneHTML(context) {
+      return '<div class="dropzone">'
+        + '<button type="button" class="upload" raised>'
+        + context.resource.uploadActionRequest + '</button>'
+        + '</div>';
+    }
+    
+    function bindUpload(context, callback) {
+      return function(event) {
+        callback.call(context);
+      };
     }
     
     function bindChange(context, callback) {
@@ -36,9 +63,26 @@ limitations under the License.
       get container() {
         return helpers.query(selector);
       },
+      
+      get url() {
+        return url;
+      },
+      
+      set url(value) {
+        url = value;
+        bindUploadArea(this);
+      },
+      
+      get resource() {
+        return resource;
+      },
+      
+      set resource(value) {
+        resource = value;
+      },
 	  
-      bind: function(data) {
-        bindData(this, data);
+      bind: function(data, resource) {
+        bindData(this, data, resource);
         return this;
       },
       

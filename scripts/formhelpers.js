@@ -43,8 +43,6 @@ limitations under the License.
     },
     
     addError: function(field, message) {
-      field.parentNode.parentNode.classList.add("error");
-      
       var hint = helpers.query('.hint', field.parentNode);
       if (helpers.isEmpty(hint)) {
         var hint = document.createElement('div');
@@ -52,15 +50,15 @@ limitations under the License.
         field.parentNode.appendChild(hint);
       }
       hint.innerHTML = '<div class="hint">' + message + '</div>';
+      field.parentNode.parentNode.classList.add("error");
     },
     
     clearError: function(field) {
-      field.parentNode.parentNode.classList.remove("error");
-      
       var hint = helpers.query('.hint', field.parentNode);
       if (!helpers.isEmpty(hint)) {
         field.parentNode.removeChild(hint);
       }
+      field.parentNode.parentNode.classList.remove("error");
     },
     
     hasError: function(form) {

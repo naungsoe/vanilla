@@ -232,13 +232,7 @@ limitations under the License.
     
     function bindToolbar(context) {
       var toolbar = helpers.query('.tool-bar', context.container);
-      var unformat = helpers.query('.unformat', toolbar)
-      unformat.removeEventListener('click', unformatHandler, false);
-      
-      unformatHandler = execCommand('removeFormat', '', context);
-      unformat.addEventListener('click', unformatHandler, false);
-      
-      var bold = helpers.query('.bold', toolbar)
+      var bold = helpers.query('.bold', toolbar);
       bold.removeEventListener('click', boldHandler, false);
       
       boldHandler = execCommand('bold', '', context);
@@ -273,6 +267,12 @@ limitations under the License.
       
       superscriptHandler = execCommand('superscript', '', context);
       superscript.addEventListener('click', superscriptHandler, false);
+      
+      var unformat = helpers.query('.unformat', toolbar);
+      unformat.removeEventListener('click', unformatHandler, false);
+      
+      unformatHandler = execCommand('removeFormat', '', context);
+      unformat.addEventListener('click', unformatHandler, false);
       
       var textColor = UI.ColorPicker(helpers.query('.text-color', toolbar));
       textColor.bind({ selected: '' })
@@ -379,9 +379,9 @@ limitations under the License.
     
     function bindMore(context) {
       return function(event) {
-         var toolbar = helpers.query('.tool-bar', context.container),
+         var toolbar = helpers.query('.tool-bar', context, container),
            secondaries = helpers.queryAll('.secondary', toolbar),
-           more = helpers.query('.more', toolbar);
+           more = helpers.query('.primary > .more', toolbar);
          
          helpers.toArray(secondaries).forEach(function(secondary) {
            secondary.classList.toggle('hide');
@@ -442,14 +442,14 @@ limitations under the License.
         + context.resource.linkAddressField + '</label>'
         + '<div class="control">'
         + '<input id="linkAddress-' + richtextId + '" '
-        + 'type="text" value="" />'
+        + 'class="address" type="text" value="" />'
         + '</div></div>'
         + '<div class="field">'
         + '<label for="linkText-' + richtextId + '" class="label">'
         + context.resource.linkTextField + '</label>'
         + '<div class="control">'
         + '<input id="linkText-' + richtextId + '" '
-        + 'type="text" value="" />'
+        + 'class="text" type="text" value="" />'
         + '</div></div>'
         + '</fieldset></form>'
         + '</section>'
@@ -476,9 +476,8 @@ limitations under the License.
           anchorOffset = selection.anchorOffset,
           focusNode = selection.focusNode,
           focusOffset = selection.focusOffset,
-          richtextId = context.container.getAttribute('id'),
-          address = helpers.query('#linkAddress-' + richtextId),
-          text = helpers.query('#linkText-' + richtextId),
+          address = helpers.query('.address', this.container),
+          text = helpers.query('.text', this.container),
           href = helpers.isEmail(address.value)
             ? ('mailto:' + address.value) : address.value;
         
@@ -521,41 +520,18 @@ limitations under the License.
     }
     
     function isLinkFormValid(context) {
-      var richtextId = context.container.getAttribute('id'),
-        address = helpers.query('#linkAddress-' + richtextId);
+      var linkForm = helpers.query('.form-insert-link', context.container),
+        address = helpers.query('.address', linkForm);
       
-      if (helpers.isURL(address.value) || helpers.isEmail(address.value)) {
-        clearError(address);
+      if (!helpers.isURL(address.value) && !helpers.isEmail(address.value)) {
+        formHelpers.addError(address, context.resource.invalidLinkAddressField);
       }
       else {
-        addError(address, context.resource.invalidLinkAddressField);
+        formHelpers.clearError(address);
       }
       
-      var form = helpers.query('.form-insert-link', context.container),
-        errors = helpers.queryAll('.error', form);
-      
+      var errors = helpers.queryAll('.error', linkForm);
       return (errors.length === 0);
-    }
-    
-    function addError(field, message) {
-      field.parentNode.parentNode.classList.add("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (helpers.isEmpty(hint)) {
-        var hint = document.createElement('div');
-        hint.classList.add('hint');
-        field.parentNode.appendChild(hint);
-      }
-      hint.innerHTML = '<div class="hint">' + message + '</div>';
-    }
-    
-    function clearError(field) {
-      field.parentNode.parentNode.classList.remove("error");
-      
-      var hint = helpers.query('.hint', field.parentNode);
-      if (!helpers.isEmpty(hint)) {
-        field.parentNode.removeChild(hint);
-      }
     }
     
     function cancelInsertLink(context) {
@@ -573,9 +549,9 @@ limitations under the License.
         anchorOffset = selection.anchorOffset,
         focusNode = selection.focusNode,
         focusOffset = selection.focusOffset,
-        richtextId = context.container.getAttribute('id'),
-        address = helpers.query('#linkAddress-' + richtextId),
-        text = helpers.query('#linkText-' + richtextId);
+        linkForm = helpers.query('.form-insert-link', context.container),
+        address = helpers.query('.address', linkForm),
+        text = helpers.query('.text', linkForm);
       
       if (anchorNode === focusNode) {
         var node = anchorNode;
@@ -612,7 +588,7 @@ limitations under the License.
         }
       }
       
-      clearError(address);
+      formHelpers.clearError(address);
       address.focus();
     }
     
@@ -674,7 +650,7 @@ limitations under the License.
         var richtextId = context.container.getAttribute('id'),
           address = helpers.query('#imageAddress-' + richtextId)
         
-        clearError(address);
+        formHelpers.clearError(address);
         address.value = '';
         address.focus();
         hideFrame(context);
@@ -704,15 +680,13 @@ limitations under the License.
         + '</label>'
         + '<div class="control">'
         + '<input id="imageAddress-' + richtextId + '" '
-        + 'type="text" value="" />'
+        + 'class="address" type="text" value="" />'
         + '</div></div>'
         + '</fieldset></form>'
         + '<form class="form form-upload-image hide">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<div class="dropzone"></div>'
-        + '<input id="imageUpload-' + richtextId + '" '
-        + 'type="hidden" value="" />'
+        + '<div class="upload"></div>'
         + '</div>'
         + '</fieldset></form>'
         + '</section>'
@@ -729,8 +703,7 @@ limitations under the License.
       if (isImageFormValid(context)) {
         this.container.classList.add("hide");
         
-        var richtextId = context.container.getAttribute('id'),
-          src = helpers.query('#imageAddress-' + richtextId).value,
+        var src = helpers.query('.address', this.container).value,
           alt = src.substring(src.lastIndexOf('/'));
         
         helpers.loadImageSize(src, function() {
@@ -772,21 +745,17 @@ limitations under the License.
     }
     
     function isImageFormValid(context) {
-      var richtextId = context.container.getAttribute('id'),
-        imageModalId = 'imageModal-' + richtextId,
-        imageModal = helpers.query('#' + imageModalId),
-        address = helpers.query('#imageAddress-' + richtextId);
+      var imageForm = helpers.query('.form-image-url', context.container),
+        address = helpers.query('.address', imageForm);
       
-      if (helpers.isURL(address.value)) {
-        clearError(address);
+      if (!helpers.isURL(address.value)) {
+        formHelpers.addError(address, context.resource.invalidImageAddressField);
       }
       else {
-        addError(address, context.resource.invalidImageAddressField);
+        formHelpers.clearError(address);
       }
       
-      var form = helpers.query('.form-image-url', imageModal),
-        errors = helpers.queryAll('.error', form);
-      
+      var errors = helpers.queryAll('.error', imageForm);
       return (errors.length === 0);
     }
     
@@ -796,12 +765,8 @@ limitations under the License.
     }
     
     function changeImageTab(context) {
-      var richtextId = context.container.getAttribute('id'),
-        imageModalId = 'imageModal-' + richtextId,
-        imageModal = helpers.query('#' + imageModalId);
-      
-      var urlForm = helpers.query('.form-image-url', imageModal),
-        uploadForm = helpers.query('.form-upload-image', imageModal);
+      var urlForm = helpers.query('.form-image-url', context.container),
+        uploadForm = helpers.query('.form-upload-image', context.container);
       
       urlForm.classList.toggle('hide');
       uploadForm.classList.toggle('hide');
@@ -848,7 +813,6 @@ limitations under the License.
           while ((node.nodeType !== Node.ELEMENT_NODE)
               || ((node.nodeType === Node.ELEMENT_NODE) 
                 && !node.classList.contains('editor'))) {
-            
            if (helpers.isEmpty(inserted)) {
               if ((node.nodeName === 'A')
                  || (node.nodeName === 'IMG')) {
@@ -982,14 +946,14 @@ limitations under the License.
     }
     
     function bindLinkMenuActions(context) {
-      var menu = helpers.query('.popup', context.container);
-      var edit = helpers.query('.edit', menu);      
+      var popup = helpers.query('.popup', context.container);
+      var edit = helpers.query('.edit', popup);      
       edit.removeEventListener('click', editLinkHandler, false);
       
       editLinkHandler = bindEditLink(context);
       edit.addEventListener('click', editLinkHandler, false);
       
-      var remove = helpers.query('.remove', menu);
+      var remove = helpers.query('.remove', popup);
       remove.removeEventListener('click', removeLinkHandler, false);
       
       removeLinkHandler = bindRemoveLink(context);

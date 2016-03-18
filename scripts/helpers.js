@@ -112,7 +112,7 @@ limitations under the License.
     },
     
     isURL: function(value) {
-      var pattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
+      var pattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\#\/\w \.-]*)*\/?$/i;
       return pattern.test(value);
     },
     
