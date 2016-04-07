@@ -45,14 +45,19 @@ limitations under the License.
         event = event || window.event;
         event.preventDefault();
         
+        var tab = event.currentTarget;
+        if (tab.classList.contains('selected')) {
+          return;
+        }
+        
         var tabs = helpers.queryAll(
           '.tabs > .nav > .selected', context.container);
         helpers.toArray(tabs).forEach(function(tab) {
           tab.classList.remove('selected');
         });
         
-        event.currentTarget.classList.add('selected');
-        context.selected = event.currentTarget.dataset.value;
+        tab.classList.add('selected');
+        context.selected = tab.dataset.value;
         
         var event = new CustomEvent('change', {});
         context.container.dispatchEvent(event);

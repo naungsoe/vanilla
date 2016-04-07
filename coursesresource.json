@@ -115,6 +115,7 @@
 	"requestLoading": "Loading...",
 	"okActionRequest": "OK",
 	"insertActionRequest": "Insert",
+	"uploadActionRequest": "Upload",
 	"cancelActionRequest": "Cancel",
 	"tryAgainRequest": "Try again?",
 	"undoActionRequest": "Undo?",
@@ -147,5 +148,6 @@
     "imageAddressTab": "Web Address (URL)",
     "imageUploadTab": "Upload",
 	"imageAddressField": "Web address",
-	"invalidImageAddressField": "Try with correct URL."
+	"invalidImageAddressField": "Try with correct URL.",
+	"imageUploadDropzoneHint": "Drag image file here or"
 }

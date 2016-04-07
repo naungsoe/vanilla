@@ -207,7 +207,13 @@ limitations under the License.
           return sendRequest('GET', url, payload);
         },
         del: function(payload) {
-          return sendRequest('GET', url, payload);
+          return sendRequest('DELETE', url, payload);
+        },
+        post: function(payload) {
+          return sendRequest('POST', url, payload);
+        },
+        update: function(payload) {
+          return sendRequest('UPDATE', url, payload);
         }
       };
     }

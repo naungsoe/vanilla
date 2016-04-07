@@ -20,6 +20,7 @@ limitations under the License.
   window.UI = window.UI || {};
   window.UI.RichText = function(selector) {
     var content = '',
+      uploadURL = '',
       resource = {},
       range = {},
       unformatHandler = function() {},
@@ -42,6 +43,7 @@ limitations under the License.
       imageHandler = function() {},
       imageModal = {},
       imageModalTab = {},
+      imageUploader = {},
       editLinkHandler = function() {},
       removeLinkHandler = function() {},
       frameMousedownHandler = function() {},
@@ -61,6 +63,7 @@ limitations under the License.
     function bindData(context, data, resource) {
       context.resource = resource || {};
       context.content = data.content || '';
+      context.uploadURL = data.uploadURL || '';
     }
     
     function bindRichText(context) {
@@ -379,7 +382,7 @@ limitations under the License.
     
     function bindMore(context) {
       return function(event) {
-         var toolbar = helpers.query('.tool-bar', context, container),
+         var toolbar = helpers.query('.tool-bar', context.container),
            secondaries = helpers.queryAll('.secondary', toolbar),
            more = helpers.query('.primary > .more', toolbar);
          
@@ -638,6 +641,9 @@ limitations under the License.
           
           var tabs = helpers.query('.tabs', view);
           imageModalTab = UI.Tab(tabs);
+          
+          var uploader = helpers.query('.uploader', view);
+          imageUploader = UI.Uploader(uploader);
         }
         
         imageModal.bind({})
@@ -647,8 +653,16 @@ limitations under the License.
         imageModalTab.bind({ selected: 'url' })
           .change(changeImageTab, context);
         
+        imageUploader.bind({ url: context.uploadURL }, context.resource)
+          .complete(completeImageUpload, context);
+        
+        var urlForm = helpers.query('.form-image-url', view),
+          uploadForm = helpers.query('.form-upload-image', view);
+        urlForm.classList.remove('hide');
+        uploadForm.classList.add('hide');
+        
         var richtextId = context.container.getAttribute('id'),
-          address = helpers.query('#imageAddress-' + richtextId)
+          address = helpers.query('#imageAddress-' + richtextId);
         
         formHelpers.clearError(address);
         address.value = '';
@@ -683,10 +697,10 @@ limitations under the License.
         + 'class="address" type="text" value="" />'
         + '</div></div>'
         + '</fieldset></form>'
-        + '<form class="form form-upload-image hide">'
+        + '<form class="form form-upload-image">'
         + '<fieldset class="fieldset">'
         + '<div class="field">'
-        + '<div class="upload"></div>'
+        + '<div class="uploader"></div>'
         + '</div>'
         + '</fieldset></form>'
         + '</section>'
@@ -716,7 +730,7 @@ limitations under the License.
           var html = '<img src="' + src + '" alt="' + alt + '" '
             + 'width="' + size.width + '" height="' + size.height + '" '
             + 'data-width="' + this.width + '" '
-            + 'data-height="' + this.height + '">';
+            + 'data-height="' + this.height + '" />';
           
           context.restoreRange();
           document.execCommand('insertHTML', false, html);
@@ -766,10 +780,16 @@ limitations under the License.
     
     function changeImageTab(context) {
       var urlForm = helpers.query('.form-image-url', context.container),
-        uploadForm = helpers.query('.form-upload-image', context.container);
+        uploadForm = helpers.query('.form-upload-image', context.container),
+        address = helpers.query('.address', urlForm);
       
+      formHelpers.clearError(address);
       urlForm.classList.toggle('hide');
       uploadForm.classList.toggle('hide');
+    }
+    
+    function completeImageUpload(context) {
+      
     }
     
     function bindEditor(context) {
@@ -1344,6 +1364,14 @@ limitations under the License.
         content = value;
 		bindRichText(this);
         updateContent(this);
+      },
+      
+      get uploadURL() {
+        return uploadURL;
+      },
+      
+      set uploadURL(value) {
+        uploadURL = value;
       },
       
       bind: function(data, resource) {

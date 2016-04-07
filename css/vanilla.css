@@ -1136,7 +1136,8 @@ table {
 }
 
 .richtext .form-insert-link > .fieldset,
-.richtext .form-image-url > .fieldset {
+.richtext .form-image-url > .fieldset,
+.richtext .form-upload-image > .fieldset {
   padding: 0;  
 }
 
@@ -1166,6 +1167,11 @@ table {
 
 .richtext .form-image-url > .fieldset > .field > .label {
   width: 90px;
+}
+
+.richtext .form-upload-image > .fieldset > .field > .uploader {
+  width: 390px;
+  height: 180px;
 }
 
 .search-box {
@@ -1767,7 +1773,31 @@ table {
 }
 
 .dropzone {
-  border: 2px dashed #ddd;
+  height: 100%;
+  outline: #ccc dashed 2px;
+  position: relative;
+  width: 100%;
+}
+
+.dropzone > .actions {
+  height: 80px;
+  left: 50%;
+  margin-left: -120px;
+  margin-top: -40px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 240px;
+}
+
+.dropzone > .actions > .hint {
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.dropzone.dragover {
+  outline-color: #777;
 }
 
 .app-bar {
@@ -1919,7 +1949,7 @@ table {
 }
 
 .app-global-nav > .nav > .link > i {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .app-side-nav {

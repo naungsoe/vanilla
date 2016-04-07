@@ -22,8 +22,11 @@ limitations under the License.
     var url = "",
       resource = {},
       uploadHanlder = function() {},
-      dragdropHandler = function() {},
-      changeHandler = function() {};
+      selectHandler = function() {},
+      dragoverHandler = function() {},
+      dragleaveHandler = function() {},
+      dropHandler = function() {},
+      completeHandler = function() {};
     
     function bindData(context, data, resource) {
       context.resource = resource || {};
@@ -38,22 +41,113 @@ limitations under the License.
       
       uploadHanlder = bindUpload(context);
       upload.addEventListener('click', uploadHanlder, false);
+      
+      var file = helpers.query('input', context.container);
+      file.removeEventListener('change', selectHandler, false);
+      
+      selectHandler = bindSelect(context);
+      file.addEventListener('change', selectHandler, false);
+      
+      var dropzone = helpers.query('.dropzone', context.container);
+      dropzone.removeEventListener("dragover", dragoverHandler, false);
+      dropzone.removeEventListener("dragleave", dragleaveHandler, false);
+      dropzone.removeEventListener("drop", dropHandler, false);
+      
+      dragoverHandler = bindDragover(context);
+      dropzone.addEventListener("dragover", dragoverHandler, false);
+      
+      dragleaveHandler = bindDragleave(context);
+      dropzone.addEventListener("dragleave", dragleaveHandler, false);
+      
+      dropHandler = bindDrop(context);
+      dropzone.addEventListener("drop", dropHandler, false);
     }
     
     function getDropzoneHTML(context) {
       return '<div class="dropzone">'
-        + '<button type="button" class="upload" raised>'
+        + '<div class="actions"><span class="hint">'
+        + context.resource.imageUploadDropzoneHint + '</span>'
+        + '<button type="button" class="upload" raised primary>'
         + context.resource.uploadActionRequest + '</button>'
-        + '</div>';
+        + '</div></div>'
+        + '<input type="file" class="hide" />';
     }
     
-    function bindUpload(context, callback) {
+    function bindUpload(context) {
       return function(event) {
-        callback.call(context);
+        var file = helpers.query('input', context.container);
+        var event = new CustomEvent('click', {});
+        file.dispatchEvent(event);
       };
     }
     
-    function bindChange(context, callback) {
+    function bindSelect(context) {
+      return function(event) {
+        var file = helpers.query('input', context.container);
+        var formData = new FormData();
+        formData.append('file', file.files[0]);
+        helpers.request(context.url)
+          .post(formData)
+          .then(function() {
+            var event = new CustomEvent('complete', {});
+            context.container.dispatchEvent(event);
+          });
+      };
+    }
+    
+    function bindDrag(context) {
+      return function(event) {
+        var file = helpers.query('input', context.container);
+        var event = new CustomEvent('click', {});
+        file.dispatchEvent(event);
+      };
+    }
+    
+    function bindDragover(context) {
+      return function(event) {
+        event = event || window.event;
+        event.preventDefault();
+        event.stopPropagation();
+        
+        var dropzone = helpers.query('.dropzone', context.container);
+        if (!dropzone.classList.contains('dragover')) {
+          dropzone.classList.add('dragover');
+        }
+      };
+    }
+    
+    function bindDragleave(context) {
+      return function(event) {
+        event = event || window.event;
+        event.preventDefault();
+        event.stopPropagation();
+        
+        var dropzone = helpers.query('.dropzone', context.container);
+        if (dropzone.classList.contains('dragover')) {
+          dropzone.classList.remove('dragover');
+        }
+      };
+    }
+    
+    function bindDrop(context) {
+      return function(event) {
+        event = event || window.event;
+        event.preventDefault();
+        event.stopPropagation();
+        
+        var files = event.target.files || event.dataTransfer.files;
+        var formData = new FormData();
+        formData.append('file', files[0]);
+        helpers.request(context.url)
+          .post(formData)
+          .then(function() {
+            var event = new CustomEvent('complete', {});
+            context.container.dispatchEvent(event);
+          });
+      };
+    }
+    
+    function bindComplete(context, callback) {
       return function(event) {
         callback.call(context);
       };
@@ -86,11 +180,11 @@ limitations under the License.
         return this;
       },
       
-      change: function(callback) {
-        this.container.removeEventListener('change', changeHandler, false);
+      complete: function(callback) {
+        this.container.removeEventListener('complete', completeHandler, false);
         
-        changeHandler = bindChange(this, callback);
-        this.container.addEventListener('change', changeHandler, false);
+        completeHandler = bindComplete(this, callback);
+        this.container.addEventListener('complete', completeHandler, false);
         return this;
       }
     };
