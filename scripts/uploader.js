@@ -66,9 +66,9 @@ limitations under the License.
     function getDropzoneHTML(context) {
       return '<div class="dropzone">'
         + '<div class="actions"><span class="hint">'
-        + context.resource.imageUploadDropzoneHint + '</span>'
+        + context.resource.fileUploadDropzoneHint + '</span>'
         + '<button type="button" class="upload" raised primary>'
-        + context.resource.uploadActionRequest + '</button>'
+        + context.resource.browseActionRequest + '</button>'
         + '</div></div>'
         + '<input type="file" class="hide" />';
     }

@@ -1137,23 +1137,28 @@ table {
 
 .richtext .form-insert-link > .fieldset,
 .richtext .form-image-url > .fieldset,
-.richtext .form-upload-image > .fieldset {
+.richtext .form-upload-image > .fieldset,
+.richtext .form-media-embed > .fieldset,
+.richtext .form-upload-media > .fieldset {
   padding: 0;  
 }
 
 .richtext .form-insert-link > .fieldset > .field > .label,
-.richtext .form-image-url > .fieldset > .field > .label {
+.richtext .form-image-url > .fieldset > .field > .label,
+.richtext .form-media-embed > .fieldset > .field > .label {
   padding-left: 0;
   width: 130px;
 }
 
 .richtext .form-insert-link > .fieldset > .field > .control,
-.richtext .form-image-url > .fieldset > .field > .control {
+.richtext .form-image-url > .fieldset > .field > .control,
+.richtext .form-media-embed > .fieldset > .field > .control {
   padding-right: 0;
 }
 
 .richtext .form-insert-link > .fieldset > .field > .control > input[type='text'],
-.richtext .form-image-url > .fieldset > .field > .control > input[type='text'] {
+.richtext .form-image-url > .fieldset > .field > .control > input[type='text'],
+.richtext .form-media-embed > .fieldset > .field > .control > textarea {
   width: 270px;
 }
 
@@ -1161,15 +1166,18 @@ table {
   min-width: 430px;
 }
 
-.richtext .form-image-url > .fieldset {
+.richtext .form-image-url > .fieldset,
+.richtext .form-media-embed > .fieldset {
   min-width: 390px;
 }
 
-.richtext .form-image-url > .fieldset > .field > .label {
+.richtext .form-image-url > .fieldset > .field > .label,
+.richtext .form-media-embed > .fieldset > .field > .label {
   width: 90px;
 }
 
-.richtext .form-upload-image > .fieldset > .field > .uploader {
+.richtext .form-upload-image > .fieldset > .field > .uploader,
+.richtext .form-upload-media > .fieldset > .field > .uploader {
   width: 390px;
   height: 180px;
 }
@@ -1782,12 +1790,12 @@ table {
 .dropzone > .actions {
   height: 80px;
   left: 50%;
-  margin-left: -120px;
+  margin-left: -90px;
   margin-top: -40px;
   position: absolute;
   text-align: center;
   top: 50%;
-  width: 240px;
+  width: 180px;
 }
 
 .dropzone > .actions > .hint {

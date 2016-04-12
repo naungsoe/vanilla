@@ -116,6 +116,11 @@ limitations under the License.
       return pattern.test(value);
     },
     
+    isEmbedCode: function(value) {
+      var pattern = /^<(iframe|video|audio).*(iframe|video|audio)>$/i;
+      return pattern.test(value);
+    },
+    
     toArray: function(value) {
       return Array.prototype.slice.call(value);
     },

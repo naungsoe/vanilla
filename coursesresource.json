@@ -116,6 +116,7 @@
 	"okActionRequest": "OK",
 	"insertActionRequest": "Insert",
 	"uploadActionRequest": "Upload",
+	"browseActionRequest": "Browse",
 	"cancelActionRequest": "Cancel",
 	"tryAgainRequest": "Try again?",
 	"undoActionRequest": "Undo?",
@@ -145,9 +146,15 @@
 	"linkAddressField": "URL / email address",
 	"linkTextField": "Text to display",
 	"invalidLinkAddressField": "Try with correct URL / email address.",
+    "imageModalTitle": "Insert Image",
     "imageAddressTab": "Web Address (URL)",
     "imageUploadTab": "Upload",
 	"imageAddressField": "Web address",
 	"invalidImageAddressField": "Try with correct URL.",
-	"imageUploadDropzoneHint": "Drag image file here or"
+	"mediaModalTitle": "Insert Media",
+	"mediaEmbedTab": "Embed",
+	"mediaUploadTab": "Upload",
+	"mediaEmbedField": "Embed",
+	"invalidMediaEmbedField": "Try with correct embed code.",
+	"fileUploadDropzoneHint": "Drag file here or"
 }

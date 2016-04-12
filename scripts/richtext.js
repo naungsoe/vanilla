@@ -44,6 +44,10 @@ limitations under the License.
       imageModal = {},
       imageModalTab = {},
       imageUploader = {},
+      mediaHandler = function() {},
+      mediaModal = {},
+      mediaModalTab = {},
+      mediaUploader = {},
       editLinkHandler = function() {},
       removeLinkHandler = function() {},
       frameMousedownHandler = function() {},
@@ -356,6 +360,12 @@ limitations under the License.
       
       imageHandler = bindImage(context);
       image.addEventListener('click', imageHandler, false);
+      
+      var media = helpers.query('.media', toolbar);
+      media.removeEventListener('click', mediaHandler, false);
+      
+      mediaHandler = bindMedia(context);
+      media.addEventListener('click', mediaHandler, false);
     }
     
     function execCommand(command, value, context) {
@@ -657,12 +667,10 @@ limitations under the License.
           .complete(completeImageUpload, context);
         
         var urlForm = helpers.query('.form-image-url', view),
-          uploadForm = helpers.query('.form-upload-image', view);
+          uploadForm = helpers.query('.form-upload-image', view),
+          address = helpers.query('.address', urlForm);
         urlForm.classList.remove('hide');
         uploadForm.classList.add('hide');
-        
-        var richtextId = context.container.getAttribute('id'),
-          address = helpers.query('#imageAddress-' + richtextId);
         
         formHelpers.clearError(address);
         address.value = '';
@@ -677,7 +685,8 @@ limitations under the License.
       
       return '<div class="modal">'
         + '<header class="header">'
-        + '<h3 class="title">Insert Image</h3>'
+        + '<h3 class="title">'
+        + context.resource.imageModalTitle + '</h3>'
         + '<div class="tabs"><nav class="nav">'
         + '<a href="#url" class="tab" data-value="url">'
         + context.resource.imageAddressTab + '</a>'
@@ -705,10 +714,10 @@ limitations under the License.
         + '</fieldset></form>'
         + '</section>'
         + '<nav class="actions">'
-        + '<button type="button" class="cancel" '
-        + 'flat>Cancel</button>'
-        + '<button type="button" class="proceed" '
-        + 'flat primary>Insert</button>'
+        + '<button type="button" class="cancel" flat>'
+        + context.resource.cancelActionRequest + '</button>'
+        + '<button type="button" class="proceed" flat primary>'
+        + context.resource.insertActionRequest + '</button>'
         + '</nav>'
         + '</div>';
     }
@@ -789,6 +798,137 @@ limitations under the License.
     }
     
     function completeImageUpload(context) {
+      
+    }
+    
+    function bindMedia(context) {
+      return function(event) {
+        var richtextId = context.container.getAttribute('id'),
+          mediaModalId = 'mediaModal-' + richtextId;
+        
+        var view = helpers.query('#' + mediaModalId);
+        if (helpers.isEmpty(view)) {
+          view = document.createElement('div');
+          view.setAttribute('id', mediaModalId);
+          view.innerHTML = bindMediaHTML(context);
+          context.container.appendChild(view);
+          
+          mediaModal = UI.Modal(view);
+          
+          var tabs = helpers.query('.tabs', view);
+          mediaModalTab = UI.Tab(tabs);
+          
+          var uploader = helpers.query('.uploader', view);
+          mediaUploader = UI.Uploader(uploader);
+        }
+        
+        mediaModal.bind({})
+          .proceed(insertMedia, context)
+          .cancel(cancelInsertMedia, context);
+        
+        mediaModalTab.bind({ selected: 'embed' })
+          .change(changeMediaTab, context);
+        
+        mediaUploader.bind({ url: context.uploadURL }, context.resource)
+          .complete(completeMediaUpload, context);
+        
+        var embedForm = helpers.query('.form-media-embed', view),
+          uploadForm = helpers.query('.form-upload-media', view),
+          embed = helpers.query('.embed', embedForm);
+        embedForm.classList.remove('hide');
+        uploadForm.classList.add('hide');
+        
+        formHelpers.clearError(embed);
+        embed.value = '';
+        embed.focus();
+        hideFrame(context);
+        hideMenu(context);
+      };
+    }
+    
+    function bindMediaHTML(context) {
+      var richtextId = context.container.getAttribute('id');
+      
+      return '<div class="modal">'
+        + '<header class="header">'
+        + '<h3 class="title">'
+        + context.resource.mediaModalTitle + '</h3>'
+        + '<div class="tabs"><nav class="nav">'
+        + '<a href="#embed" class="tab" data-value="embed">'
+        + context.resource.mediaEmbedTab + '</a>'
+        + '<a href="#upload" class="tab" data-value="upload">'
+        + context.resource.mediaUploadTab + '</a>'
+        + '</nav></div>'
+        + '</header>'
+        + '<section class="content">'
+        + '<form class="form form-media-embed">'
+        + '<fieldset class="fieldset">'
+        + '<div class="field">'
+        + '<label for="mediaEmbed-' + richtextId + '" '
+        + 'class="label">' + context.resource.mediaEmbedField
+        + '</label>'
+        + '<div class="control">'
+        + '<textarea id="mediaEmbed-' + richtextId + '" '
+        + 'class="embed"></textarea>'
+        + '</div></div>'
+        + '</fieldset></form>'
+        + '<form class="form form-upload-media">'
+        + '<fieldset class="fieldset">'
+        + '<div class="field">'
+        + '<div class="uploader"></div>'
+        + '</div>'
+        + '</fieldset></form>'
+        + '</section>'
+        + '<nav class="actions">'
+        + '<button type="button" class="cancel" flat>'
+        + context.resource.cancelActionRequest + '</button>'
+        + '<button type="button" class="proceed" flat primary>'
+        + context.resource.insertActionRequest + '</button>'
+        + '</nav>'
+        + '</div>';
+    }
+    
+    function insertMedia(context) {
+      if (isMediaFormValid(context)) {
+        this.container.classList.add("hide");
+        
+        var code = helpers.query('.embed', this.container).value;
+        context.restoreRange();
+        document.execCommand('insertHTML', false, code);
+      }
+    }
+    
+    function isMediaFormValid(context) {
+      var embedForm = helpers.query('.form-media-embed', context.container),
+        embed = helpers.query('.embed', embedForm);
+      
+      if (!helpers.isEmbedCode(embed.value)) {
+        formHelpers.addError(embed, context.resource.invalidMediaEmbedField);
+      }
+      else {
+        formHelpers.clearError(embed);
+      }
+      
+      var errors = helpers.queryAll('.error', embedForm);
+      return (errors.length === 0);
+    }
+    
+    function cancelInsertMedia(context) {
+      this.container.classList.add("hide");
+      context.restoreRange();
+    }
+    
+    function changeMediaTab(context) {
+      var embedForm = helpers.query('.form-media-embed', context.container),
+        uploadForm = helpers.query('.form-upload-media', context.container),
+        embed = helpers.query('.embed', embedForm);
+      
+      formHelpers.clearError(embed);
+      embedForm.classList.toggle('hide');
+      uploadForm.classList.toggle('hide');
+    }
+    
+    function completeMediaUpload(context) {
       
     }
     
