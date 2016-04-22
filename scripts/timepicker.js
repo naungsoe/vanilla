@@ -448,20 +448,20 @@ limitations under the License.
         event = event || window.event;
         
         var clock = helpers.query('.body > .hours', container),
-          ticks = helpers.queryAll('.ticks > .highlight', clock);
+          ticks = helpers.queryAll('.ticks > .highlighted', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
-          tick.classList.remove('highlight');
+          tick.classList.remove('highlighted');
         });
         
         if (event.currentTarget.classList.contains('tick')) {
-          event.currentTarget.classList.add('highlight');
+          event.currentTarget.classList.add('highlighted');
         }
         else {
           var hour = event.currentTarget.getAttribute('data-value'),
             tick = helpers.query('.tick[data-value="' + hour + '"]', clock);
           
-          tick.classList.add('highlight');
+          tick.classList.add('highlighted');
         }
         
         clock.focus();
@@ -471,10 +471,10 @@ limitations under the License.
     function bindHourMouseLeave(container) {
       return function(event) {
         var clock = helpers.query('.body > .hours', container),
-          ticks = helpers.queryAll('.ticks > .highlight', clock);
+          ticks = helpers.queryAll('.ticks > .highlighted', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
-          tick.classList.remove('highlight');
+          tick.classList.remove('highlighted');
         });
         
         clock.focus();
@@ -698,20 +698,20 @@ limitations under the License.
         event = event || window.event;
         
         var clock = helpers.query('.body > .minutes', container),
-          ticks = helpers.queryAll('.ticks > .highlight', clock);
+          ticks = helpers.queryAll('.ticks > .highlighted', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
-          tick.classList.remove('highlight');
+          tick.classList.remove('highlighted');
         });
         
         if (event.currentTarget.classList.contains('tick')) {
-          event.currentTarget.classList.add('highlight');
+          event.currentTarget.classList.add('highlighted');
         }
         else {
           var minute = event.currentTarget.getAttribute('data-value'),
             tick = helpers.query('.tick[data-value="' + minute + '"]', clock);
           
-          tick.classList.add('highlight');
+          tick.classList.add('highlighted');
         }
         
         clock.focus();
@@ -721,10 +721,10 @@ limitations under the License.
     function bindMinuteMouseLeave(container) {
       return function(event) {
         var clock = helpers.query('.body > .minutes', container),
-          ticks = helpers.queryAll('.ticks > .highlight', clock);
+          ticks = helpers.queryAll('.ticks > .highlighted', clock);
         
         helpers.toArray(ticks).forEach(function(tick) {
-          tick.classList.remove('highlight');
+          tick.classList.remove('highlighted');
         });
         
         clock.focus();
@@ -843,7 +843,7 @@ limitations under the License.
       var clock = helpers.query('.body > .hours', container);
       switch (keyCode) {
         case 13:
-          var tick = helpers.query('.highlight', clock);
+          var tick = helpers.query('.highlighted', clock);
           if (!helpers.isEmpty(tick)) {
             var event = new CustomEvent('click', {});
             tick.dispatchEvent(event);
@@ -854,7 +854,7 @@ limitations under the License.
         case 38:
         case 39:
         case 40:
-          var tick = helpers.query('.tick.highlight', clock);
+          var tick = helpers.query('.tick.highlighted', clock);
           if (helpers.isEmpty(tick)) {
             tick = helpers.query('.tick.selected', clock);
           }
@@ -883,7 +883,7 @@ limitations under the License.
       var clock = helpers.query('.body > .minutes', container);
       switch (keyCode) {
         case 13:
-          var tick = helpers.query('.highlight', clock);
+          var tick = helpers.query('.highlighted', clock);
           if (!helpers.isEmpty(tick)) {
             var event = new CustomEvent('click', {});
             tick.dispatchEvent(event);
@@ -894,7 +894,7 @@ limitations under the License.
         case 38:
         case 39:
         case 40:
-          var tick = helpers.query('.tick.highlight', clock);
+          var tick = helpers.query('.tick.highlighted', clock);
           if (helpers.isEmpty(tick)) {
             tick = helpers.query('.tick.selected', clock);
           }

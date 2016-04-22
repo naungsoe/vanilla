@@ -147,19 +147,18 @@ limitations under the License.
 		
         if ((target === container)
 		    && (container.classList.contains('open'))) {
+          event.preventDefault();
           switch (event.keyCode) {
             case 13:
-              var item = helpers.query('.plate > .highlight', container);
+              var item = helpers.query('.plate > .highlighted', container);
               if (!helpers.isEmpty(item)) {
-                container.classList.toggle('open');
-                
                 var event = new CustomEvent('click', {});
                 item.dispatchEvent(event);
               }
               break;
             
-            case 38:
-              var item = helpers.query('.plate > .highlight', container);
+            case 37:
+              var item = helpers.query('.plate > .highlighted', container);
               if (helpers.isEmpty(item)) {
                 item = helpers.query('.plate > .selected', container);
               }
@@ -168,18 +167,42 @@ limitations under the License.
                 item = helpers.query('.plate > .item:last-child', container);
               }
               else {
-                item.classList.remove('highlight');
+                item.classList.remove('highlighted');
                 item = item.previousElementSibling
                   || helpers.query('.plate > .item:last-child', container);
               }
-              item.classList.add('highlight');
+              item.classList.add('highlighted');
               
               var plate = helpers.query('.plate', container);
               plate.scrollTop = item.offsetTop;
               break;
             
-            case 40:
-              var item = helpers.query('.plate > .highlight', container);
+            case 38:
+              var item = helpers.query('.plate > .highlighted', container);
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.plate > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.plate > .item:last-child', container);
+              }
+              else {
+                item.classList.remove('highlighted');
+                for (var i = 1; i <= 6; i++) {
+                  item = item.previousElementSibling;
+                  if (helpers.isEmpty(item)) {
+                    item = helpers.query('.plate > .item:last-child', container);
+                  }
+                }
+              }
+              item.classList.add('highlighted');
+              
+              var plate = helpers.query('.plate', container);
+              plate.scrollTop = item.offsetTop;
+              break;
+            
+            case 39:
+              var item = helpers.query('.plate > .highlighted', container);
               if (helpers.isEmpty(item)) {
                 item = helpers.query('.plate > .selected', container);
               }
@@ -188,11 +211,35 @@ limitations under the License.
                 item = helpers.query('.plate > .item:first-child', container);
               }
               else {
-                item.classList.remove('highlight');
+                item.classList.remove('highlighted');
                 item = item.nextElementSibling
                   || helpers.query('.plate > .item:first-child', container);
               }
-              item.classList.add('highlight');
+              item.classList.add('highlighted');
+              
+              var plate = helpers.query('.plate', container);
+              plate.scrollTop = item.offsetTop;
+              break;
+            
+            case 40:
+              var item = helpers.query('.plate > .highlighted', container);
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.plate > .selected', container);
+              }
+              
+              if (helpers.isEmpty(item)) {
+                item = helpers.query('.plate > .item:first-child', container);
+              }
+              else {
+                item.classList.remove('highlighted');
+                for (var i = 1; i <= 6; i++) {
+                  item = item.nextElementSibling;
+                  if (helpers.isEmpty(item)) {
+                    item = helpers.query('.plate > .item:first-child', container);
+                  }
+                }
+              }
+              item.classList.add('highlighted');
               
               var plate = helpers.query('.plate', container);
               plate.scrollTop = item.offsetTop;
@@ -242,12 +289,11 @@ limitations under the License.
         event = event || window.event;
         
         var container = context.container,
-          highlight = helpers.query('.plate > .highlight', container);
-        if (!helpers.isEmpty(highlight)) {
-          highlight.classList.remove('highlight');
+          highlighted = helpers.query('.plate > .highlighted', container);
+        if (!helpers.isEmpty(highlighted)) {
+          highlighted.classList.remove('highlighted');
         }
         
-        event.currentTarget.classList.add('selected');
         context.selected = event.currentTarget.dataset.value;
         container.classList.toggle('open');
         
@@ -260,20 +306,20 @@ limitations under the License.
       return function(event) {
         event = event || window.event;
         
-        var highlight = helpers.query('.plate > .highlight', container);
-        if (!helpers.isEmpty(highlight)) {
-          highlight.classList.remove('highlight');
+        var highlighted = helpers.query('.plate > .highlighted', container);
+        if (!helpers.isEmpty(highlighted)) {
+          highlighted.classList.remove('highlighted');
         }
         
-        event.currentTarget.classList.add('highlight');
+        event.currentTarget.classList.add('highlighted');
       };
     }
     
     function bindMouseLeave(container) {
       return function(event) {
-        var highlight = helpers.query('.plate > .highlight', container);
-        if (!helpers.isEmpty(highlight)) {
-          highlight.classList.remove('highlight');
+        var highlighted = helpers.query('.plate > .highlighted', container);
+        if (!helpers.isEmpty(highlighted)) {
+          highlighted.classList.remove('highlighted');
         }
       };
     }

@@ -387,13 +387,13 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.months', container),
-          months = helpers.queryAll('.highlight', table);
+          months = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(months).forEach(function(month) {
-          month.classList.remove('highlight');
+          month.classList.remove('highlighted');
         });
         
-        event.currentTarget.classList.add('highlight');
+        event.currentTarget.classList.add('highlighted');
         table.focus();
       };
     }
@@ -401,10 +401,10 @@ limitations under the License.
     function bindMonthMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.months', container),
-          months = helpers.queryAll('.highlight', table);
+          months = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(months).forEach(function(month) {
-          month.classList.remove('highlight');
+          month.classList.remove('highlighted');
         });
         
         table.focus();
@@ -520,13 +520,13 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.years', container),
-          years = helpers.queryAll('.highlight', table);
+          years = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(years).forEach(function(year) {
-          year.classList.remove('highlight');
+          year.classList.remove('highlighted');
         });
         
-        event.currentTarget.classList.add('highlight');
+        event.currentTarget.classList.add('highlighted');
         table.focus();
       };
     }
@@ -534,10 +534,10 @@ limitations under the License.
     function bindYearMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.years', container),
-          years = helpers.queryAll('.highlight', table);
+          years = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(years).forEach(function(year) {
-          year.classList.remove('highlight');
+          year.classList.remove('highlighted');
         });
         
         table.focus();
@@ -604,13 +604,13 @@ limitations under the License.
         event = event || window.event;
         
         var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.highlight', table);
+          dates = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(dates).forEach(function(date) {
-          date.classList.remove('highlight');
+          date.classList.remove('highlighted');
         });
         
-        event.currentTarget.classList.add('highlight');
+        event.currentTarget.classList.add('highlighted');
         table.focus();
       };
     }
@@ -618,10 +618,10 @@ limitations under the License.
     function bindDateMouseLeave(container) {
       return function(event) {
         var table = helpers.query('.dates', container),
-          dates = helpers.queryAll('.highlight', table);
+          dates = helpers.queryAll('.highlighted', table);
         
         helpers.toArray(dates).forEach(function(date) {
-          date.classList.remove('highlight');
+          date.classList.remove('highlighted');
         });
         
         table.focus();
@@ -703,7 +703,7 @@ limitations under the License.
       var table = helpers.query('.dates', container);
       switch (keyCode) {
         case 13:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (!helpers.isEmpty(cell)) {
             var event = new CustomEvent('click', {});
             cell.dispatchEvent(event);
@@ -711,7 +711,7 @@ limitations under the License.
           break;
         
         case 37:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('.selected', table);
           }
@@ -725,7 +725,7 @@ limitations under the License.
             }
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             if (cell.dataset.value === '1') {
               for (var i = 31; ; i--) {
@@ -740,11 +740,11 @@ limitations under the License.
               cell = helpers.query('td[data-value="' + date + '"]', table);
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 38:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('.selected', table);
           }
@@ -758,7 +758,7 @@ limitations under the License.
             }
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var date = +cell.dataset.value;
             if (date > 7) {
@@ -777,11 +777,11 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 39:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('.selected', table);
           }
@@ -790,7 +790,7 @@ limitations under the License.
             cell = helpers.query('td[data-value="1"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var date = +cell.dataset.value + 1;
             cell = helpers.query('td[data-value="' + date + '"]', table);
@@ -798,11 +798,11 @@ limitations under the License.
               cell = helpers.query('td[data-value="1"]', table);
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 40:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('.selected', table);
           }
@@ -811,7 +811,7 @@ limitations under the License.
             cell = helpers.query('td[data-value="1"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var date = +cell.dataset.value + 7;
             cell = helpers.query('td[data-value="' + date + '"]', table);
@@ -827,7 +827,7 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
       }
     }
@@ -836,7 +836,7 @@ limitations under the License.
       var table = helpers.query('.months', container);
       switch (keyCode) {
         case 13:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (!helpers.isEmpty(cell)) {
             var event = new CustomEvent('click', {});
             cell.dispatchEvent(event);
@@ -844,12 +844,12 @@ limitations under the License.
           break;
         
         case 37:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('td[data-value="11"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             if (cell.dataset.value === '0') {
               cell = helpers.query('td[data-value="11"]', table);
@@ -859,16 +859,16 @@ limitations under the License.
               cell = helpers.query('td[data-value="' + month + '"]', table);
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 38:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('td[data-value="11"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var month = +cell.dataset.value;
             if (month >= 3) {
@@ -887,16 +887,16 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 39:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('td[data-value="0"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var month = +cell.dataset.value + 1;
             cell = helpers.query('td[data-value="' + month + '"]', table);
@@ -904,16 +904,16 @@ limitations under the License.
               cell = helpers.query('td[data-value="0"]', table);
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 40:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             cell = helpers.query('td[data-value="0"]', table);
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var month = +cell.dataset.value + 3;
             cell = helpers.query('td[data-value="' + month + '"]', table);
@@ -929,7 +929,7 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
       }
     }
@@ -938,7 +938,7 @@ limitations under the License.
       var table = helpers.query('.years', container);
       switch (keyCode) {
         case 13:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (!helpers.isEmpty(cell)) {
             var event = new CustomEvent('click', {});
             cell.dispatchEvent(event);
@@ -946,13 +946,13 @@ limitations under the License.
           break;
         
         case 37:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             var cells = helpers.queryAll('tbody > tr:last-child > td', table);
             cell = cells[cells.length - 1];
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var year = +cell.dataset.value - 1;
             cell = helpers.query('td[data-value="' + year + '"]', table);
@@ -961,17 +961,17 @@ limitations under the License.
               cell = cells[cells.length - 1];
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 38:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             var cells = helpers.queryAll('tbody > tr:last-child > td', table);
             cell = cells[cells.length - 1];
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var year = +cell.dataset.value - 3;
             cell = helpers.query('td[data-value="' + year + '"]', table);
@@ -987,17 +987,17 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 39:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             var cells = helpers.queryAll('tbody > tr:first-child > td', table);
             cell = cells[0];
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var year = +cell.dataset.value + 1;
             cell = helpers.query('td[data-value="' + year + '"]', table);
@@ -1006,17 +1006,17 @@ limitations under the License.
               cell = cells[0];
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
         
         case 40:
-          var cell = helpers.query('.highlight', table);
+          var cell = helpers.query('.highlighted', table);
           if (helpers.isEmpty(cell)) {
             var cells = helpers.queryAll('tbody > tr:first-child > td', table);
             cell = cells[0];
           }
           else {
-            cell.classList.remove('highlight');            
+            cell.classList.remove('highlighted');            
             
             var year = +cell.dataset.value + 3;
             cell = helpers.query('td[data-value="' + year + '"]', table);
@@ -1032,7 +1032,7 @@ limitations under the License.
               }
             }
           }
-          cell.classList.add('highlight');
+          cell.classList.add('highlighted');
           break;
       }
     }

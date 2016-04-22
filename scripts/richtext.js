@@ -48,6 +48,7 @@ limitations under the License.
       mediaModal = {},
       mediaModalTab = {},
       mediaUploader = {},
+      tableHandler = function() {},
       editLinkHandler = function() {},
       removeLinkHandler = function() {},
       frameMousedownHandler = function() {},
@@ -230,8 +231,11 @@ limitations under the License.
         + '<i class="fa fa-file-image-o"></i></button>'
         + '<button type="button" class="media" flat>'
         + '<i class="fa fa-film"></i></button>'
-        + '<button type="button" class="table" flat>'
-        + '<i class="fa fa-table"></i></button>'
+        + '<div class="matrixpicker table">'
+        + '<button type="button" class="toggle" flat-icon>'
+        + '<span class="text"><i class="fa fa-table"></i></span>'
+        + '<i class="fa fa-caret-down"></i></button>'
+        + '<div class="transition plate left"></div></div>'
         + '</div>';
       
       return html;
@@ -366,6 +370,10 @@ limitations under the License.
       
       mediaHandler = bindMedia(context);
       media.addEventListener('click', mediaHandler, false);
+      
+      var table = UI.MatrixPicker(helpers.query('.table', toolbar));
+      table.bind({ selected: '' })
+        .change(changeMatrix, context);
     }
     
     function execCommand(command, value, context) {
@@ -930,6 +938,24 @@ limitations under the License.
     
     function completeMediaUpload(context) {
       
+    }
+    
+    function changeMatrix(context) {
+      var dimensions = this.selected.split('x');      
+      var html = '<table><tbody>';
+      for (var i = 0; i < dimensions[0]; i++) {
+        html = html + '<tr>';
+        for (var j = 0; j < dimensions[1]; j++) {
+           html = html + '<td>&nbsp;</td>';
+        }
+        html = html + '</tr>';
+      }
+      html = html + '</tbody></table>';
+      
+      context.restoreRange();
+      document.execCommand('insertHTML', false, html);
+      
+      this.selected = '';
     }
     
     function bindEditor(context) {

@@ -343,6 +343,7 @@ table {
 .datepicker,
 .timepicker,
 .colorpicker,
+.matrixpicker,
 .popover {
   display: inline-block;
   max-height: 36px;
@@ -353,6 +354,7 @@ table {
 .datepicker > .toggle,
 .timepicker > .toggle,
 .colorpicker > .toggle,
+.matrixpicker > .toggle,
 .popover > .toggle {
   text-decoration: none;
   text-transform: capitalize;
@@ -366,6 +368,8 @@ table {
 .timepicker > .toggle > i,
 .colorpicker > .toggle > .text,
 .colorpicker > .toggle > i,
+.matrixpicker > .toggle > i,
+.matrixpicker > .toggle > .text,
 .popover > .toggle > .text,
 .popover > .toggle > i {
   display: table-cell;
@@ -376,6 +380,7 @@ table {
 .datepicker > .toggle > .date,
 .timepicker > .toggle > .time,
 .colorpicker > .toggle > .text,
+.matrixpicker > .toggle > .text,
 .popover > .toggle > .text {
   font-size: 14px;
   line-height: 20px;
@@ -386,6 +391,7 @@ table {
 .datepicker > .toggle > i,
 .timepicker > .toggle > i,
 .colorpicker > .toggle > i,
+.matrixpicker > .toggle > i,
 .popover > .toggle > i {
   font-size: 16px;
 }
@@ -394,6 +400,7 @@ table {
 .datepicker > .calendar,
 .timepicker > .picker,
 .colorpicker > .plate,
+.matrixpicker > .plate,
 .popover > .content {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -428,7 +435,7 @@ table {
   position: relative;
 }
 
-.dropdown > .menu  > .highlight {
+.dropdown > .menu  > .highlighted {
   background-color: #eee;
 }
 
@@ -477,7 +484,8 @@ table {
 .dropdown[select] > .toggle,
 .datepicker > .toggle,
 .timepicker > .toggle,
-.colorpicker > .toggle {
+.colorpicker > .toggle,
+.matrixpicker > .toggle {
   border-bottom: 1px solid #bdbdbd;
   border-radius: 0;
   line-height: 19px;
@@ -488,7 +496,8 @@ table {
 .dropdown[select] > .toggle > .text,
 .datepicker > .toggle > .date,
 .timepicker > .toggle > .time,
-.colorpicker > .toggle > .text {
+.colorpicker > .toggle > .text,
+.matrixpicker > .toggle > .text {
   color: rgba(0,0,0,.87);
 }
 
@@ -502,7 +511,8 @@ table {
 
 .datepicker > .toggle,
 .timepicker > .toggle,
-.colorpicker > .toggle {
+.colorpicker > .toggle,
+.matrixpicker > .toggle {
   text-transform: none;
 }
 
@@ -513,7 +523,8 @@ table {
 
 .datepicker > .calendar,
 .timepicker > .picker,
-.colorpicker > .plate {
+.colorpicker > .plate,
+.matrixpicker > .plate {
   left: 0;
   top: 0;
 }
@@ -617,9 +628,9 @@ table {
   border-radius: 50%;
 }
 
-.datepicker > .calendar > .body > .dates > table > tbody > tr > .highlight,
-.datepicker > .calendar > .body > .months > table > tbody > tr > .highlight,
-.datepicker > .calendar > .body > .years > table > tbody > tr > .highlight {
+.datepicker > .calendar > .body > .dates > table > tbody > tr > .highlighted,
+.datepicker > .calendar > .body > .months > table > tbody > tr > .highlighted,
+.datepicker > .calendar > .body > .years > table > tbody > tr > .highlighted {
   background-color: #eee;
 }
 
@@ -731,8 +742,8 @@ table {
   visibility: hidden;
 }
 
-.colorpicker > .plate > .highlight {
-  border: 1px solid #bdbdbd;
+.colorpicker > .plate > .highlighted {
+  border: 1px outset #bdbdbd;
 }
 
 .colorpicker > .plate > .selected > .background {
@@ -742,6 +753,31 @@ table {
 
 .colorpicker > .plate > .selected > i {
   visibility: visible;
+}
+
+.matrixpicker > .plate > table > tbody > tr {
+  border: 0;
+}
+
+.matrixpicker > .plate > table > tbody > tr:hover {
+  background-color: transparent;
+}
+
+.matrixpicker > .plate > table > tbody > tr > td {
+  border: 1px solid #ddd;
+  cursor: default;
+  height: 34px;
+  margin: 1px;
+  padding: 0;
+  width: 34px;
+}
+
+.matrixpicker > .plate > table > tbody > tr > td.highlighted {
+  background-color: #eee;
+}
+
+.matrixpicker > .plate > table > tbody > tr > td.selected {
+  background-color: #f5f5f5;
 }
 
 .popover > .content {
@@ -774,6 +810,7 @@ table {
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
 .colorpicker.open > .plate,
+.matrixpicker.open > .plate,
 .popover.open > .toggle > .arrow,
 .popover.open > .toggle > .arrow:after,
 .popover.open > .content {
@@ -785,6 +822,7 @@ table {
 .datepicker.open > .calendar,
 .timepicker.open > .picker,
 .colorpicker.open > .plate,
+.matrixpicker.open > .plate,
 .popover.open > .content {
   overflow-x: hidden;
   overflow-y: auto;
@@ -810,10 +848,12 @@ table {
 .datepicker > .toggle:focus,
 .timepicker > .toggle:focus,
 .colorpicker > .toggle:focus,
+.matrixpicker > .toggle:focus,
 .dropdown[select] > .toggle:active,
 .datepicker > .toggle:active,
 .timepicker > .toggle:active,
-.colorpicker > .toggle:active {
+.colorpicker > .toggle:active,
+.matrixpicker > .toggle:active {
   border-bottom: 2px solid #1976d2;
   padding-bottom: 7px;
 }
@@ -844,6 +884,8 @@ table {
 .richtext > .tool-bar > .secondary > .dropdown,
 .richtext > .tool-bar > .primary > .colorpicker,
 .richtext > .tool-bar > .secondary > .colorpicker,
+.richtext > .tool-bar > .primary > .matrixpicker,
+.richtext > .tool-bar > .secondary > .matrixpicker,
 .richtext > .tool-bar > .primary > .separator,
 .richtext > .tool-bar > .secondary > .separator {
   vertical-align: top;
@@ -854,7 +896,9 @@ table {
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle,
 .richtext > .tool-bar > .primary > .dropdown > .colorpicker,
-.richtext > .tool-bar > .secondary > .dropdown > .colorpicker {
+.richtext > .tool-bar > .secondary > .dropdown > .colorpicker,
+.richtext > .tool-bar > .primary > .dropdown > .matrixpicker,
+.richtext > .tool-bar > .secondary > .dropdown > .matrixpicker {
   border-radius: 0;
 }
 
@@ -863,7 +907,9 @@ table {
 .richtext > .tool-bar > .primary > .dropdown > .toggle:hover,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle:hover,
 .richtext > .tool-bar > .primary > .colorpicker > .toggle:hover,
-.richtext > .tool-bar > .secondary > .colorpicker > .toggle:hover {
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle:hover,
+.richtext > .tool-bar > .primary > .matrixpicker > .toggle:hover,
+.richtext > .tool-bar > .secondary > .matrixpicker > .toggle:hover {
   background-color: #e0e0e0;
 }
 
@@ -872,7 +918,9 @@ table {
 .richtext > .tool-bar > .primary > .dropdown > .toggle:active,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle:active,
 .richtext > .tool-bar > .primary > .colorpicker > .toggle:active,
-.richtext > .tool-bar > .secondary > .colorpicker > .toggle:active {
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle:active,
+.richtext > .tool-bar > .primary > .matrixpicker > .toggle:active,
+.richtext > .tool-bar > .secondary > .matrixpicker > .toggle:active {
   background-color: #bdbdbd;
 }
 
@@ -892,7 +940,9 @@ table {
 .richtext > .tool-bar > .primary > .dropdown > .toggle,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle,
 .richtext > .tool-bar > .primary > .colorpicker > .toggle,
-.richtext > .tool-bar > .secondary > .colorpicker > .toggle {
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle,
+.richtext > .tool-bar > .primary > .matrixpicker > .toggle,
+.richtext > .tool-bar > .secondary > .matrixpicker > .toggle {
   border: 0;
   margin: 0;
   padding: 8px 4px 8px 12px;
@@ -901,13 +951,20 @@ table {
 .richtext > .tool-bar > .primary > .dropdown > .toggle > .text,
 .richtext > .tool-bar > .secondary > .dropdown > .toggle > .text,
 .richtext > .tool-bar > .primary > .colorpicker > .toggle > .text,
-.richtext > .tool-bar > .secondary > .colorpicker > .toggle > .text {
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle > .text,
+.richtext > .tool-bar > .primary > .matrixpicker > .toggle > .text,
+.richtext > .tool-bar > .secondary > .matrixpicker > .toggle > .text {
   color: rgba(0,0,0,.54);
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .toggle > i,
-.richtext > .tool-bar > .secondary > .dropdown > .toggle > i {
+.richtext > .tool-bar > .secondary > .dropdown > .toggle > i,
+.richtext > .tool-bar > .primary > .colorpicker > .toggle > i,
+.richtext > .tool-bar > .secondary > .colorpicker > .toggle > i,
+.richtext > .tool-bar > .primary > .matrixpicker > .toggle > i,
+.richtext > .tool-bar > .secondary > .matrixpicker > .toggle > i {
   font-size: 12px;
+  width: 18px;
 }
 
 .richtext > .tool-bar > .primary > .dropdown > .menu,
@@ -920,6 +977,18 @@ table {
 .richtext > .tool-bar > .secondary > .dropdown > .menu.left {
   left: 0;
   right: auto;
+}
+
+.richtext > .tool-bar > .primary > .matrixpicker > .plate,
+.richtext > .tool-bar > .secondary > .matrixpicker > .plate {
+  left: 0;
+  right: auto;
+}
+
+.richtext > .tool-bar > .primary > .matrixpicker > .plate.left,
+.richtext > .tool-bar > .secondary > .matrixpicker > .plate.left {
+  left: auto;
+  right: 0;
 }
 
 .richtext > .tool-bar > .primary > .separator,
@@ -1235,7 +1304,7 @@ table {
   padding: 8px 0;
 }
 
-.search-box > .result > .item.highlight {
+.search-box > .result > .item.highlighted {
   background-color: #eee;
 }
 
@@ -1753,7 +1822,7 @@ table {
   fill: #1976d2;
 }
 
-.clock > .ticks > .highlight {
+.clock > .ticks > .highlighted {
   fill: #e0e0e0;
 }
 
@@ -1915,7 +1984,6 @@ table {
 
 .app-global-nav {
   background-color: #f5f5f5;
-  border-right: 1px solid #ddd;
   bottom: 0;
   left: 0;
   overflow: auto;
