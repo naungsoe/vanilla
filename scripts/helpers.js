@@ -178,6 +178,11 @@ limitations under the License.
       function sendRequest(method, url, payload) {
         return new Promise(function(resolve, reject) {
           var request = new XMLHttpRequest();
+		  if (!('withCredentials' in request)) {
+            reject({ error: 'Browser does not support CORS.' });
+            return;
+          }
+          
           request.onload = function () {
             if ((this.status >= 200) && (this.status < 300)) {
               try {
